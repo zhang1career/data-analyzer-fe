@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {EMPTY_PAGE, Page} from "./Page.ts";
 import {getGridStringOperators, GridColDef} from "@mui/x-data-grid";
+import {cookies} from "next/headers";
 
 export interface Term {
   id: number;
@@ -27,12 +28,21 @@ export function QueryFieldMap(rawField: string): string {
 }
 
 export const ListTermByCond = async (offset: number, count: number, condition?: { [key: string]: string | number }): Promise<Page<Term>> => {
+  // const cookiesList = cookies();
+  // const token = cookiesList.get('access_token');
+  const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vd3d3LnJpc2stY29ucXVlci5jb206MTgwMDIiLCJzdWIiOiJmODkxN2U2Ny0xYjdiLTVjNmMtYjMzZS1lMWQzYWJlZDM1ZjEiLCJpYXQiOjE3MzA4MzE0NTUsImV4cCI6MTczMTAwNDI1NSwibmFtZSI6InJpc2tfY29ucXVlciJ9.ByhoNolKvanbMTAZTk_8fQl5gesjpXe1GzCPUkFOnv4";
+
   try {
-    const response = await axios.get('http://54.86.102.80:18099/api/knowledge/terms', {
+    // const apiHost = process.env.API_HOST;
+    const apiHost = "http://www.risk-conquer.com/api";
+    const response = await axios.get(apiHost + '/da/knowledge/terms', {
       params: {
         term: condition?.term,
         offset: offset,
-        count: count}
+        count: count},
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     });
     console.log('List term:', response.data.data);
     return response.data.data as Page<Term>;
