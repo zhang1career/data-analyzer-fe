@@ -2,6 +2,8 @@
 
 import React from "react";
 import MuiTextField from "@mui/material/TextField";
+import {ThemeProvider} from "@mui/material";
+import {outlinedTextFieldTheme} from "@/themes/theme.ts";
 
 /**
  * TextField component
@@ -23,12 +25,14 @@ interface TextFieldProps {
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const MyTextField: React.FC<TextFieldProps> = ({ isReadOnly = false, isEditable, ...props }) => {
+const MyTextField: React.FC<TextFieldProps> = ({isReadOnly = false, isEditable, ...props}) => {
   return (
+    <ThemeProvider theme={outlinedTextFieldTheme}>
     <MuiTextField
-      inputProps={{ readOnly: isReadOnly || !isEditable }}
+      slotProps={{htmlInput: {readOnly: isReadOnly || !isEditable}}}
       {...props}
     />
+    </ThemeProvider>
   );
 }
 

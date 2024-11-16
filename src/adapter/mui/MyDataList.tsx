@@ -2,11 +2,10 @@ import * as React from 'react';
 import {useEffect, useState} from 'react';
 import {DataGrid, GridColDef, GridEventListener, GridFilterItem, GridFilterModel, GridRowId,} from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
+import MyDataFilter from "@/adapter/mui/MyDataFilter.tsx";
+import {ColumnAction} from "@/adapter/mui/MyDataColumn.tsx";
+import {useDelayEffect} from "@/utils/DelayUtil.ts";
 import {Paginate} from "@/pojo/models/Paginate.ts";
-import MyDataFilter from "./MyDataFilter.tsx";
-import {ColumnAction} from "./MyDataColumn.tsx";
-import {DelayExec} from "../../utils/DelayUtil.ts";
-import {EMPTY_STRING} from "@/consts/StrConst.ts";
 
 // data type
 type DataStateType<T> = {
@@ -23,34 +22,53 @@ interface ComponentConfig {
 
 interface DataTableProps<T> {
   columns: GridColDef[];
-  onSearch: (offset: number, count: number, condition?: { [key: string]: string|number }) => Promise<any>;
+  onSearch: (offset: number, count: number, condition?: { [key: string]: string | number }) => Promise<Paginate<T>>;
   onBuildCondition: (originCondition: { [key: string]: any }, item: GridFilterItem) => { [key: string]: any };
   pageSizeOptions?: number[];
-  onRowDelete?: (rowId: GridRowId) => () => void;
   onRowClick?: GridEventListener<'rowClick'>;
+  onRowDelete?: (rowId: GridRowId) => void;
   componentConfig?: ComponentConfig;
+  // refresh search
+  refreshSearch?: number;
+  callbackRefreshSearch?: () => void;
 }
 
+/**
+ * Data list component
+ * @param columns
+ * @param onSearch
+ * @param onBuildCondition
+ * @param pageSizeOptions
+ * @param onRowDelete
+ * @param onRowClick
+ * @param componentConfig
+ * @param refreshSearch refresh search
+ * @param callbackRefreshSearch callback refresh search
+ * @constructor
+ */
 const MyDataList: React.FC<DataTableProps<any>> = <T, >({
                                                           columns,
                                                           onSearch,
                                                           onBuildCondition,
                                                           pageSizeOptions = [10, 20, 50, 100],
-                                                          onRowDelete,
                                                           onRowClick = (params, event, detail) => {
-                                                            console.log('[datalist] row clicked, {params, event, detail}:', {
+                                                            console.log('[adapter][datalist] row clicked, {params, event, detail}:', {
                                                               params,
                                                               event,
                                                               detail
                                                             });
                                                           },
+                                                          onRowDelete = (rowId: GridRowId) => () => {
+                                                            console.warn('[adapter][datalist] onRowDelete not implemented');
+                                                          },
                                                           componentConfig = {
                                                             filterable: undefined
+                                                          },
+                                                          refreshSearch,
+                                                          callbackRefreshSearch = () => {
+                                                            console.warn('[adapter][datalist] callbackRefreshSearch not implemented');
                                                           }
                                                         }: DataTableProps<T>) => {
-  // active search handler
-  const [activeSearchAt, setActiveSearchAt] = useState(Date.now());
-
   // filter
   const [filter, setFilter] = useState<GridFilterModel>({items: []});
 
@@ -82,20 +100,20 @@ const MyDataList: React.FC<DataTableProps<any>> = <T, >({
     setFilter({...filterModel});
   }, []);
   // typo delay on filter
-  DelayExec(() => {
-    console.log('[datalist] filter changed, filter:', filter);
+  useDelayEffect(() => {
+    console.debug('[adapter][datalist] low-pass filter, filter:', filter);
     setPagination((prev) => ({...prev, ['page']: 0}));
-    setActiveSearchAt(Date.now());
+    callbackRefreshSearch();
   }, [filter]);
 
   // active search on pagination change
   useEffect(() => {
-    setActiveSearchAt(Date.now());
+    callbackRefreshSearch();
   }, [pagination.page, pagination.pageSize]);
 
   // active search on pagination change, or by handler
-  DelayExec(() => {
-    // console.log('Paginate searching, filter, pagination:', {filter, pagination});
+  useDelayEffect(() => {
+    console.debug('[adapter][datalist] search, filter:', filter, 'pagination:', pagination);
     let condition = {};
     if (filter.items.length > 0) {
       filter.items.forEach((item) => {
@@ -103,14 +121,14 @@ const MyDataList: React.FC<DataTableProps<any>> = <T, >({
       });
     }
 
-    console.log('[datalist] paginate searching, condition:', JSON.stringify(condition));
+    console.log('[adapter][datalist] paginate searching, condition:', JSON.stringify(condition));
     setData((prev) => ({...prev, ['isLoading']: true}));
     const promiseResponse = onSearch(
       pagination.page * pagination.pageSize,
       pagination.pageSize,
       condition);
     promiseResponse.then((response) => {
-      console.log('[datalist] paginate searched', response.total_num);
+      console.log('[adapter][datalist] paginate searched', response.total_num);
       setData((prev) => ({
         ...prev,
         'rows': response.data,
@@ -119,7 +137,14 @@ const MyDataList: React.FC<DataTableProps<any>> = <T, >({
         'isLoading': false
       }));
     });
-  }, [activeSearchAt], 500);
+  }, [refreshSearch], 500);
+
+  // delete row
+  const handleRowDelete = (rowId: GridRowId) => () => {
+    console.log('[adapter][datalist] delete item, itemId:', rowId);
+    onRowDelete(rowId);
+    callbackRefreshSearch();
+  };
 
   // component switch
   let slots = undefined
@@ -135,7 +160,7 @@ const MyDataList: React.FC<DataTableProps<any>> = <T, >({
       <DataGrid
         sx={{border: 0}}
 
-        columns={[...columns, ColumnAction(onRowDelete)]}
+        columns={[...columns, ColumnAction(handleRowDelete)]}
         rows={data.rows}
         loading={data.isLoading}
 

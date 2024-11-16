@@ -8,7 +8,13 @@ import MyEditableForm from "@/adapter/mui/MyEditableForm.tsx";
 import {usePathname, useRouter} from "next/navigation";
 import {createTerm} from "@/clientings/TermClienting.ts";
 
-const TermCreate: React.FC = () => {
+interface TermCreateProps {
+  callbackRefresh?: () => void;
+}
+
+const TermCreate: React.FC<TermCreateProps> = ({
+                                                 callbackRefresh
+                                               }) => {
   // context
   // protocol, host
   const [protocol, setProtocol] = useState('');
@@ -31,13 +37,18 @@ const TermCreate: React.FC = () => {
   const notifications = useNotifications();
 
   // form
-  const [formData, setFormData] = useState<Term>({
-    id: 0,
-    name: '',
-    content: '',
-    relation: [],
-  });
+  const [formData, setFormData] = useState<Term>(getEmptyFormData());
 
+  function getEmptyFormData() {
+    return {
+      id: 0,
+      name: '',
+      content: '',
+      relation: [],
+    }
+  }
+
+  // operation - create
   const handleCreate = async () => {
     console.debug('[term][create] param', formData);
     await createTerm(
@@ -53,11 +64,19 @@ const TermCreate: React.FC = () => {
       severity: 'success',
       autoHideDuration: 3000,
     });
+    // callback
+    if (callbackRefresh) {
+      callbackRefresh();
+    }
   };
 
   return (
     <MyModal title={'Add'}>
-      <MyEditableForm initEditable={true} onSetFormData={setFormData} onSave={handleCreate}>
+      <MyEditableForm
+        initEditable={true}
+        initFormData={getEmptyFormData()}
+        onSetFormData={setFormData}
+        onSave={handleCreate}>
         <MyTextField
           id="outlined-controlled"
           label="name"

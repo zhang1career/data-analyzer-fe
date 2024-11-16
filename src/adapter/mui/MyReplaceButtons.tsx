@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useState} from 'react';
+import React from 'react';
 import {Button} from '@mui/material';
 
 /**
@@ -15,30 +15,31 @@ interface ButtonProps {
 
 /**
  * Replace buttons component
- * @param initButtonA the initial button to show
  * @param buttonA
  * @param buttonB
+ * @param showButtonA show button A or B
+ * @param callbackShowButtonA callback show button A or B
  */
 interface ReplaceButtonsProps {
-  initButtonA?: boolean;
   buttonA: ButtonProps;
   buttonB: ButtonProps;
+  showButtonA: boolean;
+  callbackShowButtonA: (show: boolean) => void;
 }
 
 const MyReplaceButtons: React.FC<ReplaceButtonsProps> = ({
-                                                           initButtonA = true,
                                                            buttonA,
-                                                           buttonB
+                                                           buttonB,
+                                                           showButtonA,
+                                                           callbackShowButtonA
                                                          }) => {
-  const [showButtonA, setShowButtonA] = useState(initButtonA);
-
   const handleButtonA = () => {
-    setShowButtonA(false);
+    callbackShowButtonA(false);
     buttonA.onClick();
   };
 
   const handleButtonB = () => {
-    setShowButtonA(true);
+    callbackShowButtonA(true);
     buttonB.onClick();
   };
 

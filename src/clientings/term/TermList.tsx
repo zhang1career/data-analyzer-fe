@@ -43,15 +43,22 @@ const TermList: React.FC = () => {
   // error
   const [error, setError] = useState<any>(null);
 
-  // page refreshment
-  const [activePageAt, setActivePageAt] = useState(Date.now());
 
-  function refreshPage() {
-    setActivePageAt(Date.now());
+  // search refreshment
+  const [activeSearchAt, setActiveSearchAt] = useState(Date.now());
+
+  function refreshSearch() {
+    setActiveSearchAt(Date.now());
+  }
+
+  // item selection
+  const [selectedItem, setSelectedItem] = useState<TermVo | null>(null);
+
+  function clearItem() {
+    setSelectedItem(null);
   }
 
   // item refreshment
-  const [selectedItem, setSelectedItem] = useState<TermVo | null>(null);
   const [activeItemAt, setActiveItemAt] = useState(Date.now());
 
   function refreshRelation() {
@@ -66,6 +73,9 @@ const TermList: React.FC = () => {
 
   // operation - search
   const handleSearch = async (offset: number, count: number, condition?: { [key: string]: string | number }) => {
+    // clear item
+    clearItem();
+    // query
     try {
       return await searchTermPage(
         {
@@ -113,21 +123,21 @@ const TermList: React.FC = () => {
   }
 
   // operation - delete an item
-  const handleDelete = (rowId: GridRowId) => () => {
-    if (typeof rowId === "string") {
-      console.warn("Invalid row id:", rowId);
+  const handleDelete = async (termId: GridRowId) => {
+    if (typeof termId === "string") {
+      console.warn("[term][delete] invalid rowId:", termId);
       return;
     }
 
     try {
-      deleteTerm(
+      await deleteTerm(
         {
           router: router,
           protocol: protocol,
           host: host,
           pathname: pathname
         },
-        rowId);
+        termId);
     } catch (e: unknown) {
       if (e instanceof Error) {
         console.error('Failed to delete term.\n', e.message);
@@ -142,7 +152,9 @@ const TermList: React.FC = () => {
 
   return (
     <div>
-      <TermCreate/>
+      <TermCreate
+        callbackRefresh={refreshSearch}
+      />
 
       <MyDataList
         columns={TERM_COLUMNS}
@@ -155,14 +167,15 @@ const TermList: React.FC = () => {
         componentConfig={{
           filterable: 'toolbar'
         }}
-        key={activePageAt}
+        refreshSearch={activeSearchAt}
+        callbackRefreshSearch={refreshSearch}
       />
 
       {/* detail */}
       {selectedItem && (
         <TermDetail
           item={selectedItem}
-          callbackRefresh={refreshPage}>
+          callbackRefresh={refreshSearch}>
           <TermRelation item={selectedItem} onDetail={handleDetail} key={activeItemAt}/>
         </TermDetail>
       )}

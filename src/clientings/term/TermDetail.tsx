@@ -56,8 +56,12 @@ const TermDetail: React.FC<TermDetailProps> = ({
     relation: [],
   });
 
+  // editable form refreshment
+  const [activeEditableFormAt, setActiveEditableFormAt] = useState<number>(Date.now());
+
   useEffect(() => {
     setFormData(termVoToModel(item));
+    setActiveEditableFormAt(Date.now());
   }, [item]);
 
   // operation - save
@@ -88,7 +92,8 @@ const TermDetail: React.FC<TermDetailProps> = ({
       <MyEditableForm
         onSetFormData={setFormData}
         onSave={handleSave}
-        btnSx={{ml: "auto"}}>
+        btnSx={{ml: "auto"}}
+        key={activeEditableFormAt}>
         <MyTextField
           id="outlined-controlled"
           label="id"
