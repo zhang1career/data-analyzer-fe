@@ -1,6 +1,6 @@
 import {DependencyList, useEffect, useState} from "react";
 
-export function DelayExec(callback: () => void, dependencies: DependencyList, timeoutInSeconds: number = 500) {
+export function useDelayEffect(callback: () => void, dependencies: DependencyList, timeoutInSeconds: number = 500) {
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       callback();
