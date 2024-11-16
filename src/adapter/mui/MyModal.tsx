@@ -5,28 +5,32 @@ import {Modal as BaseModal} from '@mui/base/Modal';
 import {Button} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
+/**
+ * Modal component
+ * @param title
+ * @param children the content of the modal, properties will be passed to children as following:
+ *   onClose
+ */
 interface ModalProps {
-  title?: string;
-  onOpen?: () => void;
-  onClose?: () => void;
+  title: string;
   children?: React.ReactNode;
 }
 
 const MyModal: React.FC<ModalProps> = ({
-                                         title = 'Open a modal',
-                                         onOpen = () => {},
-                                         onClose = () => {},
+                                         title,
                                          children = undefined
                                        }) => {
+
   const [open, setOpen] = React.useState(false);
+
   const handleOpen = () => {
     setOpen(true);
-    onOpen();
   }
+
   const handleClose = () => {
     setOpen(false);
-    onClose();
   }
+
 
   return (
     <div>
@@ -40,7 +44,9 @@ const MyModal: React.FC<ModalProps> = ({
         slots={{backdrop: StyledBackdrop}}
       >
         <ModalContent sx={{width: 400}}>
-          {children}
+          {React.Children.map(children, (child) => {
+            return React.cloneElement(child as React.ReactElement, {onClose: handleClose});
+          })}
         </ModalContent>
       </Modal>
     </div>

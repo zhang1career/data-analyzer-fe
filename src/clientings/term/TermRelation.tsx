@@ -3,8 +3,9 @@ import CytoscapeComponent from "react-cytoscapejs";
 import cola from 'cytoscape-cola';
 import cytoscape, {ElementDefinition, LayoutOptions, SingularElementArgument} from "cytoscape";
 import {Md5} from "ts-md5";
-import {Term} from "../../models/Term.ts";
-import {Diff} from "../../utils/MapUtil.ts";
+import {diff} from "@/utils/MapUtil.ts";
+
+import {TermVo} from "@/pojo/vos/TermVo.ts";
 
 cytoscape.use(cola);
 
@@ -20,8 +21,8 @@ type Edge = ElementDefinition & { group: 'edges' };
 
 
 interface TermRelationProps {
-  item: Term;
-  onDetail: (termId: number) => Promise<Term>;
+  item: TermVo;
+  onDetail: (termId: number) => Promise<TermVo | null>;
   onGrowRelation?: (relationList: RelationGrowthProps[]) => void;
 }
 
@@ -37,8 +38,13 @@ const TermRelation: React.FC<TermRelationProps> = ({
     cy.on('tap', 'node', (event) => {
       const node = event.target;
       console.log('Node tapped:', node);
-      const focusTerm = onDetail(parseInt(node.data().id))
+      const focusTerm = onDetail(parseInt(node.data().id));
+
       focusTerm.then((_term) => {
+        if (_term === null) {
+          console.error('Term not found:', node.data().id);
+          return;
+        }
         const newElementMap = buildElementMapFromTerm(_term);
         if (newElementMap.size > 0) {
           addRelation(cy, newElementMap, onGrowRelation);
@@ -75,7 +81,7 @@ const TermRelation: React.FC<TermRelationProps> = ({
   );
 };
 
-function buildElementMapFromTerm(term: Term): Map<string, ElementDefinition> {
+function buildElementMapFromTerm(term: TermVo): Map<string, ElementDefinition> {
   const nodeList: ElementDefinition[] = []
   const edgeList: ElementDefinition[] = []
   // addNode with origin node
@@ -113,14 +119,14 @@ function buildElementMapFromTerm(term: Term): Map<string, ElementDefinition> {
   return elementMap;
 }
 
-function addTerm(nodeList: ElementDefinition[], addTerm: Term) {
+function addTerm(nodeList: ElementDefinition[], addTerm: TermVo) {
   addNode(nodeList, addTerm.id.toString(), addTerm.name);
 }
 
 function addRelatingTerm(nodeList: ElementDefinition[],
                          edgeList: ElementDefinition[],
-                         addTerm: Term,
-                         srcTerm: Term, destTerm: Term, relateType: string) {
+                         addTerm: TermVo,
+                         srcTerm: TermVo, destTerm: TermVo, relateType: string) {
   addNode(nodeList, addTerm.id.toString(), addTerm.name);
 
   const srcId = srcTerm.id.toString();
@@ -184,7 +190,7 @@ function addRelation(cy: cytoscape.Core,
     }
   }
 
-  const addingElementMap = Diff(toAddElementMap, originElementMap);
+  const addingElementMap = diff(toAddElementMap, originElementMap);
   if (addingElementMap.size === 0) {
     console.debug("Node and edges unchanged, nothing adding.");
     return

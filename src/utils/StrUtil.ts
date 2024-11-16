@@ -1,4 +1,12 @@
 /**
+ * Check if the string is empty
+ * @param str
+ */
+export function checkEmpty(str: string | undefined | null): boolean {
+  return str == null || !str || str.length <= 0;
+}
+
+/**
  * Convert the first character of the string to uppercase
  * @param str
  * @constructor

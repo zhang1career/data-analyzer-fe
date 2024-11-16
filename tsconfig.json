@@ -9,6 +9,7 @@
 
     "allowImportingTsExtensions": true,
     "allowJs": true,
+    "downlevelIteration": true,
     "esModuleInterop": true,
     "incremental": true,
     "isolatedModules": true,

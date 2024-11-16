@@ -1,23 +1,8 @@
 import axios from 'axios';
-import {EMPTY_PAGE, Page} from "./Page.ts";
-import {getGridStringOperators, GridColDef} from "@mui/x-data-grid";
-import {cookies} from "next/headers";
-
-export interface Term {
-  id: number;
-  name: string;
-  content: string;
-  src_term: Map<string, Term>;
-  dest_term: Map<string, Term>;
-  relate_type: string;
-}
-
-export const TERM_COLUMNS: GridColDef[] = [
-  {field: 'id', headerName: 'ID', width: 70, filterable: false},
-  {field: 'name', headerName: 'Name', width: 130, filterable: true,
-    filterOperators: getGridStringOperators().filter(op => op.value === 'equals')},
-  {field: 'content', headerName: 'Content', width: 130, filterable: false},
-];
+import {getCookie} from "@/app/server_utils/CookieUtil.ts";
+import {ACCESS_TOKEN} from "@/app/server_consts/AccessConst.ts";
+import {EMPTY_JSON} from "@/consts/StrConst.ts";
+import {Term} from "@/models/Term.ts";
 
 export const TERM_QUERY_FIELD_MAP: { [key: string]: string } = {
   'name': 'term',
@@ -27,10 +12,12 @@ export function QueryFieldMap(rawField: string): string {
   return TERM_QUERY_FIELD_MAP[rawField] || rawField;
 }
 
-export const ListTermByCond = async (offset: number, count: number, condition?: { [key: string]: string | number }): Promise<Page<Term>> => {
-  // const cookiesList = cookies();
-  // const token = cookiesList.get('access_token');
-  const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vd3d3LnJpc2stY29ucXVlci5jb206MTgwMDIiLCJzdWIiOiJmODkxN2U2Ny0xYjdiLTVjNmMtYjMzZS1lMWQzYWJlZDM1ZjEiLCJpYXQiOjE3MzA4MzE0NTUsImV4cCI6MTczMTAwNDI1NSwibmFtZSI6InJpc2tfY29ucXVlciJ9.ByhoNolKvanbMTAZTk_8fQl5gesjpXe1GzCPUkFOnv4";
+
+export const pageTermByCond = async (offset: number,
+                                     count: number,
+                                     condition?: { [key: string]: string | number }): Promise<any> => {
+  // get access_token
+  const token = getCookie(ACCESS_TOKEN);
 
   try {
     // const apiHost = process.env.API_HOST;
@@ -39,16 +26,17 @@ export const ListTermByCond = async (offset: number, count: number, condition?: 
       params: {
         term: condition?.term,
         offset: offset,
-        count: count},
+        count: count
+      },
       headers: {
         Authorization: `Bearer ${token}`
       }
     });
     console.log('List term:', response.data.data);
-    return response.data.data as Page<Term>;
+    return response.data.data; // as Paginate<Term>;
   } catch (error) {
     console.error('Error listing term:', error);
-    return EMPTY_PAGE;
+    return EMPTY_JSON;
   }
 }
 

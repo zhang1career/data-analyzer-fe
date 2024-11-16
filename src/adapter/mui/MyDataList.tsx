@@ -2,10 +2,11 @@ import * as React from 'react';
 import {useEffect, useState} from 'react';
 import {DataGrid, GridColDef, GridEventListener, GridFilterItem, GridFilterModel, GridRowId,} from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
-import {Page} from "../models/Page.ts";
+import {Paginate} from "@/pojo/models/Paginate.ts";
 import MyDataFilter from "./MyDataFilter.tsx";
 import {ColumnAction} from "./MyDataColumn.tsx";
-import {DelayExec} from "../utils/DelayUtil.ts";
+import {DelayExec} from "../../utils/DelayUtil.ts";
+import {EMPTY_STRING} from "@/consts/StrConst.ts";
 
 // data type
 type DataStateType<T> = {
@@ -22,7 +23,7 @@ interface ComponentConfig {
 
 interface DataTableProps<T> {
   columns: GridColDef[];
-  onSearch: (offset: number, count: number, condition?: { [key: string]: string|number }) => Promise<Page<T>>;
+  onSearch: (offset: number, count: number, condition?: { [key: string]: string|number }) => Promise<any>;
   onBuildCondition: (originCondition: { [key: string]: any }, item: GridFilterItem) => { [key: string]: any };
   pageSizeOptions?: number[];
   onRowDelete?: (rowId: GridRowId) => () => void;
@@ -35,11 +36,9 @@ const MyDataList: React.FC<DataTableProps<any>> = <T, >({
                                                           onSearch,
                                                           onBuildCondition,
                                                           pageSizeOptions = [10, 20, 50, 100],
-                                                          onRowDelete = (rowId) => () => {
-                                                            console.log('Row deleted, rowId:', rowId);
-                                                          },
+                                                          onRowDelete,
                                                           onRowClick = (params, event, detail) => {
-                                                            console.log('Row clicked, {params, event, detail}:', {
+                                                            console.log('[datalist] row clicked, {params, event, detail}:', {
                                                               params,
                                                               event,
                                                               detail
@@ -84,7 +83,7 @@ const MyDataList: React.FC<DataTableProps<any>> = <T, >({
   }, []);
   // typo delay on filter
   DelayExec(() => {
-    console.log('Filter changed, filter:', filter);
+    console.log('[datalist] filter changed, filter:', filter);
     setPagination((prev) => ({...prev, ['page']: 0}));
     setActiveSearchAt(Date.now());
   }, [filter]);
@@ -96,7 +95,7 @@ const MyDataList: React.FC<DataTableProps<any>> = <T, >({
 
   // active search on pagination change, or by handler
   DelayExec(() => {
-    // console.log('Page searching, filter, pagination:', {filter, pagination});
+    // console.log('Paginate searching, filter, pagination:', {filter, pagination});
     let condition = {};
     if (filter.items.length > 0) {
       filter.items.forEach((item) => {
@@ -104,19 +103,19 @@ const MyDataList: React.FC<DataTableProps<any>> = <T, >({
       });
     }
 
-    console.log('Page searching, condition:', {condition});
+    console.log('[datalist] paginate searching, condition:', JSON.stringify(condition));
     setData((prev) => ({...prev, ['isLoading']: true}));
-    const promisePage = onSearch(
+    const promiseResponse = onSearch(
       pagination.page * pagination.pageSize,
       pagination.pageSize,
       condition);
-    promisePage.then((res) => {
-      console.log('Page searched', res.total_num);
+    promiseResponse.then((response) => {
+      console.log('[datalist] paginate searched', response.total_num);
       setData((prev) => ({
         ...prev,
-        'rows': res.data,
-        'totalRows': res.total_num,
-        'hasNextPage': (pagination.page + 1) * pagination.pageSize < res.total_num,
+        'rows': response.data,
+        'totalRows': response.total_num,
+        'hasNextPage': (pagination.page + 1) * pagination.pageSize < response.total_num,
         'isLoading': false
       }));
     });

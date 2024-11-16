@@ -1,8 +1,9 @@
 import axios from 'axios';
-import {EMPTY_PAGE, Page} from "./Page.ts";
+import {Paginate} from "./Paginate.ts";
 import {GridColDef} from "@mui/x-data-grid";
 import {Implode} from "../utils/ArrayUtil.ts";
 import AutocompleteTagFilterOperators from "../components/filter/AutocompleteTagFilterOperators.tsx";
+import {EMPTY_PAGINATE} from "@/app/server_consts/PaginateConst.ts";
 
 export interface News {
   id: number;
@@ -27,7 +28,7 @@ export function QueryFieldMap(rawField: string): string {
   return NEWS_QUERY_FIELD_MAP[rawField] || rawField;
 }
 
-export const ListNewsByCond = async (offset: number, count: number, condition?: { [key: string]: string | number }): Promise<Page<News>> => {
+export const ListNewsByCond = async (offset: number, count: number, condition?: { [key: string]: string | number }): Promise<Paginate<News>> => {
   try {
     const response = await axios.get('http://54.86.102.80:18099/api/knowledge/news', {
       params: {
@@ -37,10 +38,10 @@ export const ListNewsByCond = async (offset: number, count: number, condition?: 
       }
     });
     console.debug('List news:', response.data.data);
-    return response.data.data as Page<News>;
+    return response.data.data as Paginate<News>;
   } catch (error) {
     console.error('Error listing news:', error);
-    return EMPTY_PAGE;
+    return EMPTY_PAGINATE;
   }
 }
 

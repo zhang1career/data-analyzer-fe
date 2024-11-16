@@ -1,9 +1,10 @@
-import NextAuth from 'next-auth';
+import NextAuth, {User} from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import type {Provider} from 'next-auth/providers';
-import {LoginFuncType, LoginQo, User} from '@/models/User';
+import {LoginFuncType, LoginQo, UserPlus} from '@/pojo/models/UserPlus.ts';
 import {Login} from '@/sdks/fusio/Consumer';
-import {saveLogin} from "@/services/LoginService";
+import {saveAccess} from "@/app/server_models/Access.ts";
+import {PATH_SIGNIN} from "@/consts/UrlConst.ts";
 
 const providers: Provider[] = [
   Credentials({
@@ -13,17 +14,23 @@ const providers: Provider[] = [
       password: {label: 'Password', type: 'password'},
     },
     async authorize(credentials, request) {
-      const user: User = await Login({
+      const userPlus: UserPlus = await Login({
         username: String(credentials.email),
         password: String(credentials.password),
         activeAt: Date.now(),
       });
-      saveLogin(user);
-      return {
-        id: user.id,
-        name: String(user.name),
+      if (!userPlus) {
+        return null;
+      }
+
+      saveAccess(userPlus);
+
+      const user: User = {
+        id: String(userPlus.id),
+        name: userPlus.name,
         email: String(credentials.email),
-      };
+      }
+      return user;
     },
   }),
 ];
@@ -40,17 +47,15 @@ export const {handlers, auth, signIn, signOut} = NextAuth({
   providers,
   secret: process.env.AUTH_SECRET,
   pages: {
-    signIn: '/auth/signin',
+    signIn: PATH_SIGNIN,
   },
   callbacks: {
     authorized({auth: session, request: {nextUrl}}) {
       const isLoggedIn = !!session?.user;
       const isPublicPage = nextUrl.pathname.startsWith('/public');
-
       if (isPublicPage || isLoggedIn) {
         return true;
       }
-
       return false; // Redirect unauthenticated users to login page
     },
   },

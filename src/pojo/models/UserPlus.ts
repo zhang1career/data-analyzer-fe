@@ -1,4 +1,4 @@
-export interface User {
+export interface UserPlus {
   id: number;
   name: string;
   email: string;
@@ -15,6 +15,6 @@ export interface LoginQo {
   activeAt: number;
 }
 
-export type LoginFuncType = (loginQo: LoginQo) => Promise<User>;
+export type LoginFuncType = (loginQo: LoginQo) => Promise<UserPlus>;
 
-export type SaveLoginFuncType = (user: User) => void;
+export type SaveLoginFuncType = (user: UserPlus) => void;
