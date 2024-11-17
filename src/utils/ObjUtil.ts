@@ -1,6 +1,7 @@
 /**
  * Check if the object is empty
  * @param obj
+ * @returns boolean
  */
 export function checkEmpty(obj: { [key: string]: any } | undefined | null): boolean {
   return obj == null || !obj || Object.keys(obj).length <= 0;

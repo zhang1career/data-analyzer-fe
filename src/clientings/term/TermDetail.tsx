@@ -1,13 +1,12 @@
-import React, {useEffect, useState} from "react";
-
-import {usePathname, useRouter} from "next/navigation";
+import React, {useContext, useEffect, useState} from "react";
 import MyEditableForm from "@/adapter/mui/MyEditableForm.tsx";
 import MyTextField from "@/adapter/mui/MyTextField.tsx";
 import {updateTerm} from "@/clientings/TermClienting.ts";
 import {termVoToModel} from "@/repo/TermRepo.ts";
 import {Term} from "@/pojo/models/Term.ts";
 import {TermVo} from "@/pojo/vos/TermVo.ts";
-import {useNotifications} from "@toolpad/core/useNotifications";
+import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
+import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
 
 interface TermDetailProps {
   item: TermVo;
@@ -28,25 +27,8 @@ const TermDetail: React.FC<TermDetailProps> = ({
                                                  children = undefined
                                                }) => {
   // context
-  // protocol, host
-  const [protocol, setProtocol] = useState('');
-  const [host, setHost] = useState('');
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setProtocol(window.location.protocol);
-      setHost(window.location.host);
-    }
-  }, []);
-
-  // pathname
-  const pathname = usePathname();
-
-  // router
-  const router = useRouter();
-
-  // notice
-  const notifications = useNotifications();
+  const routing = useContext(RoutingContext);
+  const noticing = useContext(NoticingContext);
 
   // form
   const [formData, setFormData] = useState<Term>({
@@ -68,16 +50,11 @@ const TermDetail: React.FC<TermDetailProps> = ({
   const handleSave = async () => {
     console.debug('[term][update] param', formData);
     await updateTerm(
-      {
-        router: router,
-        protocol: protocol,
-        host: host,
-        pathname: pathname
-      },
+      routing,
       item.id,
       formData);
     // notice
-    notifications.show('Term created!', {
+    noticing('Term updated!', {
       severity: 'success',
       autoHideDuration: 3000,
     });

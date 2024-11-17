@@ -5,7 +5,8 @@ import {SessionProvider} from 'next-auth/react';
 import {auth} from '@/auth';
 import {AUTHENTICATION} from "@/configs/Auth";
 import {BRANDING} from "@/configs/Branding";
-import {NAVIGATION} from "@/configs/Navigator";
+import {NAVIGATION} from "@/configs/Navigating.tsx";
+import AppContextProvider from "@/components/AppContextProvider.tsx";
 
 export default async function RootLayout(props: { children: React.ReactNode }) {
   const session = await auth();
@@ -19,7 +20,9 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
                      session={session}
                      branding={BRANDING}
                      navigation={NAVIGATION}>
-          {props.children}
+          <AppContextProvider>
+            {props.children}
+          </AppContextProvider>
         </AppProvider>
       </AppRouterCacheProvider>
     </SessionProvider>

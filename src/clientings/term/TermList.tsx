@@ -1,7 +1,6 @@
 'use client';
 
-import React, {useEffect, useState} from "react";
-import {usePathname, useRouter} from "next/navigation";
+import React, {useContext, useState} from "react";
 import {GridFilterItem, GridRowId} from "@mui/x-data-grid";
 import {TERM_COLUMNS, translateQueryField} from "@/schema/TermSchema.ts";
 import MyDataList from "@/adapter/mui/MyDataList.tsx";
@@ -11,6 +10,7 @@ import TermRelation from "@/clientings/term/TermRelation.tsx";
 import {deleteTerm, getTerm, searchTermPage} from "@/clientings/TermClienting.ts";
 import {EMPTY_PAGE} from "@/consts/PaginateConst.ts";
 import {TermVo} from "@/pojo/vos/TermVo.ts";
+import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
 
 function handleBuildCondition(originCondition: { [key: string]: any }, item: GridFilterItem): { [key: string]: any } {
   if (item.operator !== 'equals') {
@@ -22,23 +22,7 @@ function handleBuildCondition(originCondition: { [key: string]: any }, item: Gri
 
 const TermList: React.FC = () => {
   // context
-  // protocol, host
-  const [protocol, setProtocol] = useState('');
-  const [host, setHost] = useState('');
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setProtocol(window.location.protocol);
-      setHost(window.location.host);
-    }
-  }, []);
-
-  // pathname
-  const pathname = usePathname();
-
-  // router
-  const router = useRouter();
-
+  const routing = useContext(RoutingContext);
 
   // error
   const [error, setError] = useState<any>(null);
@@ -78,12 +62,7 @@ const TermList: React.FC = () => {
     // query
     try {
       return await searchTermPage(
-        {
-          router: router,
-          protocol: protocol,
-          host: host,
-          pathname: pathname
-        },
+        routing,
         offset,
         count,
         condition);
@@ -103,12 +82,7 @@ const TermList: React.FC = () => {
   const handleDetail = async (termId: number) => {
     try {
       return await getTerm(
-        {
-          router: router,
-          protocol: protocol,
-          host: host,
-          pathname: pathname
-        },
+        routing,
         termId);
     } catch (e: unknown) {
       if (e instanceof Error) {
@@ -131,12 +105,7 @@ const TermList: React.FC = () => {
 
     try {
       await deleteTerm(
-        {
-          router: router,
-          protocol: protocol,
-          host: host,
-          pathname: pathname
-        },
+        routing,
         termId);
     } catch (e: unknown) {
       if (e instanceof Error) {

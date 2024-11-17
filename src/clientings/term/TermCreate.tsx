@@ -1,12 +1,12 @@
-import React, {useEffect, useState} from 'react';
-import {useNotifications} from '@toolpad/core/useNotifications';
+import React, {useContext, useState} from 'react';
 import MyModal from '@/adapter/mui/MyModal.tsx';
 
 import {Term} from "@/pojo/models/Term.ts";
 import MyTextField from "@/adapter/mui/MyTextField.tsx";
 import MyEditableForm from "@/adapter/mui/MyEditableForm.tsx";
-import {usePathname, useRouter} from "next/navigation";
 import {createTerm} from "@/clientings/TermClienting.ts";
+import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
+import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
 
 interface TermCreateProps {
   callbackRefresh?: () => void;
@@ -16,25 +16,8 @@ const TermCreate: React.FC<TermCreateProps> = ({
                                                  callbackRefresh
                                                }) => {
   // context
-  // protocol, host
-  const [protocol, setProtocol] = useState('');
-  const [host, setHost] = useState('');
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setProtocol(window.location.protocol);
-      setHost(window.location.host);
-    }
-  }, []);
-
-  // pathname
-  const pathname = usePathname();
-
-  // router
-  const router = useRouter();
-
-  // notice
-  const notifications = useNotifications();
+  const routing = useContext(RoutingContext);
+  const noticing = useContext(NoticingContext);
 
   // form
   const [formData, setFormData] = useState<Term>(getEmptyFormData());
@@ -52,15 +35,10 @@ const TermCreate: React.FC<TermCreateProps> = ({
   const handleCreate = async () => {
     console.debug('[term][create] param', formData);
     await createTerm(
-      {
-        router: router,
-        protocol: protocol,
-        host: host,
-        pathname: pathname
-      },
+      routing,
       formData);
     // notice
-    notifications.show('Term created!', {
+    noticing('Term created!', {
       severity: 'success',
       autoHideDuration: 3000,
     });

@@ -52,21 +52,21 @@ const MyDataList: React.FC<DataTableProps<any>> = <T, >({
                                                           onBuildCondition,
                                                           pageSizeOptions = [10, 20, 50, 100],
                                                           onRowClick = (params, event, detail) => {
-                                                            console.log('[adapter][datalist] row clicked, {params, event, detail}:', {
+                                                            console.log('[adaptr][datalist] row clicked, {params, event, detail}:', {
                                                               params,
                                                               event,
                                                               detail
                                                             });
                                                           },
                                                           onRowDelete = (rowId: GridRowId) => () => {
-                                                            console.warn('[adapter][datalist] onRowDelete not implemented');
+                                                            console.warn('[adaptr][datalist] onRowDelete not implemented');
                                                           },
                                                           componentConfig = {
                                                             filterable: undefined
                                                           },
                                                           refreshSearch,
                                                           callbackRefreshSearch = () => {
-                                                            console.warn('[adapter][datalist] callbackRefreshSearch not implemented');
+                                                            console.warn('[adaptr][datalist] callbackRefreshSearch not implemented');
                                                           }
                                                         }: DataTableProps<T>) => {
   // filter
@@ -101,7 +101,7 @@ const MyDataList: React.FC<DataTableProps<any>> = <T, >({
   }, []);
   // typo delay on filter
   useDelayEffect(() => {
-    console.debug('[adapter][datalist] low-pass filter, filter:', filter);
+    console.debug('[adaptr][datalist] low-pass filter, filter:', filter);
     setPagination((prev) => ({...prev, ['page']: 0}));
     callbackRefreshSearch();
   }, [filter]);
@@ -113,7 +113,7 @@ const MyDataList: React.FC<DataTableProps<any>> = <T, >({
 
   // active search on pagination change, or by handler
   useDelayEffect(() => {
-    console.debug('[adapter][datalist] search, filter:', filter, 'pagination:', pagination);
+    console.debug('[adaptr][datalist] search, filter:', filter, 'pagination:', pagination);
     let condition = {};
     if (filter.items.length > 0) {
       filter.items.forEach((item) => {
@@ -121,14 +121,14 @@ const MyDataList: React.FC<DataTableProps<any>> = <T, >({
       });
     }
 
-    console.log('[adapter][datalist] paginate searching, condition:', JSON.stringify(condition));
+    console.log('[adaptr][datalist] paginate searching, condition:', JSON.stringify(condition));
     setData((prev) => ({...prev, ['isLoading']: true}));
     const promiseResponse = onSearch(
       pagination.page * pagination.pageSize,
       pagination.pageSize,
       condition);
     promiseResponse.then((response) => {
-      console.log('[adapter][datalist] paginate searched', response.total_num);
+      console.log('[adaptr][datalist] paginate searched', response.total_num);
       setData((prev) => ({
         ...prev,
         'rows': response.data,
@@ -141,7 +141,7 @@ const MyDataList: React.FC<DataTableProps<any>> = <T, >({
 
   // delete row
   const handleRowDelete = (rowId: GridRowId) => () => {
-    console.log('[adapter][datalist] delete item, itemId:', rowId);
+    console.log('[adaptr][datalist] delete item, itemId:', rowId);
     onRowDelete(rowId);
     callbackRefreshSearch();
   };

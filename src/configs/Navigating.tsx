@@ -6,7 +6,7 @@ import TextSnippetIcon from "@mui/icons-material/TextSnippet";
 
 export const NAVIGATION: Navigation = [
   {
-    segment: 'home',
+    segment: '',
     title: 'Home',
     icon: <HomeIcon />,
   },
