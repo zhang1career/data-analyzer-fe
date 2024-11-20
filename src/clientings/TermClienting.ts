@@ -1,10 +1,10 @@
 import {MyRouting} from "@/adapter/next/MyRouting.ts";
-import {Paginate} from "@/pojo/models/Paginate.ts";
-import {Term} from "@/pojo/models/Term.ts";
 import requestApiHub from "@/clientings/ApiHubClienting.tsx";
+import {Paginate} from "@/models/Paginate.ts";
+import {Term} from "@/models/Term.ts";
+import {TermVo} from "@/pojo/vos/TermVo.ts";
 import {getValueSafely} from "@/utils/ObjUtil.ts";
 import {EMPTY_STRING} from "@/consts/StrConst.ts";
-import {TermVo} from "@/pojo/vos/TermVo.ts";
 
 
 export async function searchTermPage(context: MyRouting,
@@ -63,7 +63,7 @@ export async function updateTerm(context: MyRouting,
     });
 }
 
-export async function deleteTerm(routing: MyRouting,
+export async function deleteTerm(context: MyRouting,
                                  termId: number): Promise<void> {
   await requestApiHub(
     {
@@ -72,6 +72,6 @@ export async function deleteTerm(routing: MyRouting,
       pathVariable: {
         termId: termId,
       },
-      context: routing
+      context: context
     });
 }

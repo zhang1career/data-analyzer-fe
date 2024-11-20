@@ -1,12 +1,14 @@
+'use client';
+
 import React, {useContext, useEffect, useState} from "react";
 import MyEditableForm from "@/adapter/mui/MyEditableForm.tsx";
 import MyTextField from "@/adapter/mui/MyTextField.tsx";
 import {updateTerm} from "@/clientings/TermClienting.ts";
-import {termVoToModel} from "@/repo/TermRepo.ts";
-import {Term} from "@/pojo/models/Term.ts";
+import {Term} from "@/models/Term.ts";
 import {TermVo} from "@/pojo/vos/TermVo.ts";
 import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
+import {voToModel} from "@/mapper/TermMapper.ts";
 
 interface TermDetailProps {
   item: TermVo;
@@ -42,7 +44,7 @@ const TermDetail: React.FC<TermDetailProps> = ({
   const [activeEditableFormAt, setActiveEditableFormAt] = useState<number>(Date.now());
 
   useEffect(() => {
-    setFormData(termVoToModel(item));
+    setFormData(voToModel(item));
     setActiveEditableFormAt(Date.now());
   }, [item]);
 
@@ -69,7 +71,7 @@ const TermDetail: React.FC<TermDetailProps> = ({
       <MyEditableForm
         onSetFormData={setFormData}
         onSave={handleSave}
-        btnSx={{ml: "auto"}}
+        sxButton={{ml: "auto"}}
         key={activeEditableFormAt}>
         <MyTextField
           id="outlined-controlled"

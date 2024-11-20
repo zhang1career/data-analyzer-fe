@@ -7,22 +7,25 @@ import {outlinedTextFieldTheme} from "@/themes/theme.ts";
 
 /**
  * TextField component
- * @param id
- * @param label
- * @param name
- * @param value
+ * Can be switched between read only and editable.
+ *
  * @param isReadOnly if true, the field is read only
  * @param isEditable if true and isReadOnly is false, the field is editable
- * @param onChange
  */
 interface TextFieldProps {
-  id: string;
-  label: string;
-  name: string;
-  value: number | string;
-  isReadOnly?: boolean;
-  isEditable?: boolean;
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  // Custom props
+  isReadOnly?: boolean,
+  isEditable?: boolean,
+  // Mui props
+  fullWidth?: boolean,
+  id: string,
+  label: string,
+  multiline?: boolean,
+  name: string,
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void,
+  rows?: number,
+  value: number | string,
+  variant?: 'filled' | 'outlined' | 'standard'
 }
 
 const MyTextField: React.FC<TextFieldProps> = ({isReadOnly = false, isEditable, ...props}) => {

@@ -1,10 +1,11 @@
+'use client';
+
 import React, {useContext, useState} from 'react';
 import MyModal from '@/adapter/mui/MyModal.tsx';
-
-import {Term} from "@/pojo/models/Term.ts";
 import MyTextField from "@/adapter/mui/MyTextField.tsx";
 import MyEditableForm from "@/adapter/mui/MyEditableForm.tsx";
 import {createTerm} from "@/clientings/TermClienting.ts";
+import {Term} from "@/models/Term.ts";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
 import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
 
@@ -20,16 +21,7 @@ const TermCreate: React.FC<TermCreateProps> = ({
   const noticing = useContext(NoticingContext);
 
   // form
-  const [formData, setFormData] = useState<Term>(getEmptyFormData());
-
-  function getEmptyFormData() {
-    return {
-      id: 0,
-      name: '',
-      content: '',
-      relation: [],
-    }
-  }
+  const [formData, setFormData] = useState<Term>(buildEmptyFormData());
 
   // operation - create
   const handleCreate = async () => {
@@ -52,7 +44,7 @@ const TermCreate: React.FC<TermCreateProps> = ({
     <MyModal title={'Add'}>
       <MyEditableForm
         initEditable={true}
-        initFormData={getEmptyFormData()}
+        initFormData={buildEmptyFormData()}
         onSetFormData={setFormData}
         onSave={handleCreate}>
         <MyTextField
@@ -70,6 +62,15 @@ const TermCreate: React.FC<TermCreateProps> = ({
       </MyEditableForm>
     </MyModal>
   );
+}
+
+function buildEmptyFormData() {
+  return {
+    id: 0,
+    name: '',
+    content: '',
+    relation: [],
+  }
 }
 
 export default TermCreate;

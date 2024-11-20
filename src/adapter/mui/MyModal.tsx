@@ -2,7 +2,7 @@ import * as React from 'react';
 import clsx from 'clsx';
 import {css, styled} from '@mui/system';
 import {Modal as BaseModal} from '@mui/base/Modal';
-import {Button} from "@mui/material";
+import {Box, Button} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import {GREY} from "@/themes/color.ts";
 
@@ -35,9 +35,14 @@ const MyModal: React.FC<ModalProps> = ({
 
   return (
     <div>
-      <Button startIcon={<AddIcon/>} onClick={handleOpen}>
-        {title}
-      </Button>
+      <Box
+        display="flex"
+        justifyContent="flex-end"
+      >
+        <Button startIcon={<AddIcon/>} onClick={handleOpen}>
+          {title}
+        </Button>
+      </Box>
 
       <Modal
         open={open}

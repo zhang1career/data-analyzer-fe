@@ -20,7 +20,7 @@ export async function POST(request: Request, response: Response) {
   // check token if missing or expired
   const token = getCookie(ACCESS_TOKEN);
   if (!token) {
-    console.warn('[apihub][skip] token not found');
+    console.warn('[apihub][server][skip] token not found');
     return NextResponse.json(
       null,
       {
@@ -54,7 +54,7 @@ export async function POST(request: Request, response: Response) {
     if (error instanceof AxiosError) {
       const status = error.response?.status;
       const message = error.response?.data?.message;
-      console.error('[apihub][skip] failed querying:', url, 'status:', status, 'message:', message);
+      console.error('[apihub][server][skip] failed querying:', url, 'status:', status, 'message:', message);
       return NextResponse.json(
         {},
         {
@@ -80,7 +80,7 @@ async function _doGet(url: string, token: String): Promise<ApiHubResponse> {
       Authorization: `Bearer ${token}`
     }
   });
-  console.log('[apihub] GET:', url, 'resp:', response.data);
+  console.log('[apihub][server] GET:', url, 'resp:', response.data);
   return response.data as ApiHubResponse;
 }
 
@@ -90,7 +90,7 @@ async function _doPost(url: string, body: BodyType, token: String): Promise<ApiH
       Authorization: `Bearer ${token}`
     }
   });
-  console.log('[apihub] POST:', url, 'body:', body, 'resp:', response.data);
+  console.log('[apihub][server] POST:', url, 'body:', body, 'resp:', response.data);
   return response.data as ApiHubResponse;
 }
 
@@ -100,7 +100,7 @@ async function _doPut(url: string, body: BodyType, token: String): Promise<ApiHu
       Authorization: `Bearer ${token}`
     }
   });
-  console.log('[apihub] PUT:', url, 'body:', body, 'resp:', response.data);
+  console.log('[apihub][server] PUT:', url, 'body:', body, 'resp:', response.data);
   return response.data as ApiHubResponse;
 }
 
@@ -110,7 +110,7 @@ async function _doPatch(url: string, body: BodyType, token: String): Promise<Api
       Authorization: `Bearer ${token}`
     }
   });
-  console.log('[apihub] PATCH:', url, 'body:', body, 'resp:', response.data);
+  console.log('[apihub][server] PATCH:', url, 'body:', body, 'resp:', response.data);
   return response.data as ApiHubResponse;
 }
 
@@ -120,6 +120,6 @@ async function _doDelete(url: string, token: String): Promise<ApiHubResponse> {
       Authorization: `Bearer ${token}`
     }
   });
-  console.log('[apihub] DELETE:', url, 'resp:', response.data);
+  console.log('[apihub][server] DELETE:', url, 'resp:', response.data);
   return response.data as ApiHubResponse;
 }

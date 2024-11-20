@@ -1,11 +1,11 @@
 import * as React from 'react';
 import {useEffect, useState} from 'react';
-import {DataGrid, GridColDef, GridEventListener, GridFilterItem, GridFilterModel, GridRowId,} from '@mui/x-data-grid';
+import {DataGrid, GridColDef, GridEventListener, GridFilterItem, GridFilterModel, GridRowId} from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
 import MyDataFilter from "@/adapter/mui/MyDataFilter.tsx";
 import {ColumnAction} from "@/adapter/mui/MyDataColumn.tsx";
 import {useDelayEffect} from "@/utils/DelayUtil.ts";
-import {Paginate} from "@/pojo/models/Paginate.ts";
+import {Paginate} from "@/models/Paginate.ts";
 
 // data type
 type DataStateType<T> = {

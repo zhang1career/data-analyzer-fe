@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import CytoscapeComponent from "react-cytoscapejs";
 import cola from 'cytoscape-cola';

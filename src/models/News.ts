@@ -1,8 +1,8 @@
 import axios from 'axios';
 import {Paginate} from "./Paginate.ts";
 import {GridColDef} from "@mui/x-data-grid";
-import {Implode} from "../utils/ArrayUtil.ts";
-import AutocompleteTagFilterOperators from "../components/filter/AutocompleteTagFilterOperators.tsx";
+import {Implode} from "@/utils/ArrayUtil.ts";
+import AutocompleteTagFilterOperators from "@/components/filter/AutocompleteTagFilterOperators.tsx";
 import {EMPTY_PAGINATE} from "@/app/server_consts/PaginateConst.ts";
 
 export interface News {
@@ -10,7 +10,7 @@ export interface News {
   content: string;
   url_id: number;
   published_at: string;
-  tags: Map<string, string>;
+  tags: Map<number, string>;
 }
 
 export const NEWS_COLUMNS: GridColDef[] = [

@@ -1,8 +1,9 @@
 'use client';
 
 import * as React from "react";
-import {Dispatch, SetStateAction, useEffect, useState} from "react";
+import {Dispatch, SetStateAction, useState} from "react";
 import MyReplaceButtons from "@/adapter/mui/MyReplaceButtons.tsx";
+import {Box, Stack, SxProps} from "@mui/material";
 
 interface EditableFormProps<T> {
   initEditable?: boolean;
@@ -10,7 +11,7 @@ interface EditableFormProps<T> {
   onSetFormData: Dispatch<SetStateAction<T>>;
   onSave?: () => void;
   onClose?: () => void;
-  btnSx?: object;
+  sxButton?: SxProps;
   children?: React.ReactNode;
 }
 
@@ -21,7 +22,7 @@ interface EditableFormProps<T> {
  * @param onSetFormData
  * @param onSave
  * @param onClose
- * @param btnSx
+ * @param sxButton
  * @param children the form fields, properties will be passed to children as following:
  *   onChange
  *   isEditable
@@ -33,7 +34,7 @@ const MyEditableForm: React.FC<EditableFormProps<any>> = <T, >({
                                                                  onSetFormData,
                                                                  onSave,
                                                                  onClose,
-                                                                 btnSx,
+                                                                 sxButton,
                                                                  children
                                                                }: EditableFormProps<T>) => {
   // readonly / editable
@@ -78,24 +79,32 @@ const MyEditableForm: React.FC<EditableFormProps<any>> = <T, >({
     text: 'Save',
     onClick: handleSave,
   };
-  if (btnSx) {
-    Object.assign(buttonAProps, {sx: btnSx});
-    Object.assign(buttonAProps, {sx: btnSx});
+  if (sxButton) {
+    Object.assign(buttonAProps, {sx: sxButton});
+    Object.assign(buttonAProps, {sx: sxButton});
   }
 
   return (
-    <>
-      <MyReplaceButtons
-        buttonA={buttonAProps}
-        buttonB={buttonBProps}
-        showButtonA={showButtonA}
-        callbackShowButtonA={setShowButtonA}
-      />
+    <Box
+      display="flex"
+      alignItems="center"
+      justifyContent="space-between"
+    >
+      <Stack direction="column" spacing={0.2}>
+        {React.Children.map(children, (child) => {
+          return React.cloneElement(child as React.ReactElement, {onChange: handleChange, isEditable});
+        })}
+      </Stack>
 
-      {React.Children.map(children, (child) => {
-        return React.cloneElement(child as React.ReactElement, {onChange: handleChange, isEditable});
-      })}
-    </>
+      <Box alignItems="flex-start">
+        <MyReplaceButtons
+          buttonA={buttonAProps}
+          buttonB={buttonBProps}
+          showButtonA={showButtonA}
+          callbackShowButtonA={setShowButtonA}
+        />
+      </Box>
+    </Box>
   );
 }
 
