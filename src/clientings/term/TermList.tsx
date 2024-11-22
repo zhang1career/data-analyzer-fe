@@ -1,6 +1,7 @@
 'use client';
 
 import React, {useContext, useState} from "react";
+import {Grid2} from "@mui/material";
 import {GridFilterItem, GridRowId} from "@mui/x-data-grid";
 import {TERM_COLUMNS, translateQueryField} from "@/schema/TermSchema.ts";
 import MyDataList from "@/adapter/mui/MyDataList.tsx";
@@ -11,6 +12,7 @@ import {deleteTerm, getTerm, searchTermPage} from "@/clientings/TermClienting.ts
 import {EMPTY_PAGE} from "@/consts/PaginateConst.ts";
 import {TermVo} from "@/pojo/vos/TermVo.ts";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
+import {size_1_of_3, size_2_of_3} from "@/lookings/size.ts";
 
 function handleBuildCondition(originCondition: { [key: string]: any }, item: GridFilterItem): { [key: string]: any } {
   if (item.operator !== 'equals') {
@@ -120,35 +122,39 @@ const TermList: React.FC = () => {
   }
 
   return (
-    <div>
-      <TermCreate
-        callbackRefresh={refreshSearch}
-      />
+    <Grid2 container spacing={2}>
+      <Grid2 size={size_2_of_3}>
+        <TermCreate
+          callbackRefresh={refreshSearch}
+        />
 
-      <MyDataList
-        columns={TERM_COLUMNS}
-        onSearch={handleSearch}
-        onBuildCondition={handleBuildCondition}
-        onRowDelete={handleDelete}
-        onRowClick={(params) => {
-          handleClickItem(params.row as TermVo);
-        }}
-        componentConfig={{
-          filterable: 'toolbar'
-        }}
-        refreshSearch={activeSearchAt}
-        callbackRefreshSearch={refreshSearch}
-      />
+        <MyDataList
+          columns={TERM_COLUMNS}
+          onSearch={handleSearch}
+          onBuildCondition={handleBuildCondition}
+          onRowDelete={handleDelete}
+          onRowClick={(params) => {
+            handleClickItem(params.row as TermVo);
+          }}
+          componentConfig={{
+            filterable: 'toolbar'
+          }}
+          refreshSearch={activeSearchAt}
+          callbackRefreshSearch={refreshSearch}
+        />
+      </Grid2>
 
-      {/* detail */}
-      {selectedItem && (
-        <TermDetail
-          item={selectedItem}
-          callbackRefresh={refreshSearch}>
-          <TermRelation item={selectedItem} onDetail={handleDetail} key={activeItemAt}/>
-        </TermDetail>
-      )}
-    </div>
+      <Grid2 size={size_1_of_3}>
+        {/* detail */}
+        {selectedItem && (
+          <TermDetail
+            item={selectedItem}
+            callbackRefresh={refreshSearch}>
+            <TermRelation item={selectedItem} onDetail={handleDetail} key={activeItemAt}/>
+          </TermDetail>
+        )}
+      </Grid2>
+    </Grid2>
   );
 };
 

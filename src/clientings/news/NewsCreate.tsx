@@ -55,6 +55,7 @@ const NewsCreate: React.FC<NewsCreateProps> = ({
           label={'content'}
           name={'content'}
           value={formData['content']}
+          required={true}
           multiline
           rows={4}
           variant="outlined"
@@ -65,19 +66,21 @@ const NewsCreate: React.FC<NewsCreateProps> = ({
           label={'url'}
           name={'url'}
           value={formData['url']}
+          required={true}
         />
         <MyTextField
           id={'published_at'}
           label={'published_at'}
           name={'published_at'}
           value={formData['published_at']}
+          required={true}
         />
         <MyAutocompleteTextField
           id={'tags'}
           label={'tags'}
           placeholder={'tags'}
           initOptions={formData['tags']}
-          values={formData['tags']}
+          value={formData['tags']}
           onSetValues={(value) => {
             setFormData((prevObject) => ({...prevObject, ['tags']: value}));
           }}

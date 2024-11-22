@@ -33,7 +33,7 @@ function MyAutocompleteFilterInputFactory(
           label={fieldName}
           placeholder={fieldName}
           initOptions={filter[fieldName]}
-          values={filter[fieldName]}
+          value={filter[fieldName]}
           onSetValues={(value) => setFilter((prevObject) => ({...prevObject, [fieldName]: value}))}
           onSearch={onSearch}
           isEditable={true}

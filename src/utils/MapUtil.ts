@@ -1,8 +1,8 @@
-import {EMPTY_MAP} from "@/consts/MapConst.ts";
-
 export function checkEmpty(map: Map<string, any>): boolean {
   return map != null && Object.keys(map).length > 0;
 }
+
+export const EMPTY_MAP = new Map();
 
 /**
  * Deep clone an object to a new map.

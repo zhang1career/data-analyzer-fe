@@ -82,6 +82,7 @@ const NewsDetail: React.FC<NewsDetailProps> = ({
           label={'content'}
           name={'content'}
           value={formData['content']}
+          required={true}
           multiline
           rows={4}
           variant={'outlined'}
@@ -106,7 +107,7 @@ const NewsDetail: React.FC<NewsDetailProps> = ({
           label={'tags'}
           placeholder={'tags'}
           initOptions={formData['tags']}
-          values={formData['tags']}
+          value={formData['tags']}
           onSetValues={(value) => {
             setFormData((prevObject) => ({...prevObject, ['tags']: value}));
           }}

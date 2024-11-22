@@ -1,3 +1,12 @@
+export const WHEEL = {
+  'light_green': '#84DBB2',
+  'light_blue': '#84CADB',
+  'main_green': '#83DBCF',
+  'dark_green': '#84DB94',
+  'dark_blue': '#84AFDB',
+  'main_blue': '#BEDBD7',
+}
+
 export const GREY = {
   50: '#F3F6F9',
   100: '#E5EAF2',

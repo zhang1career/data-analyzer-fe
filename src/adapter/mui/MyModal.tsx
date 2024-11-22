@@ -4,7 +4,7 @@ import {css, styled} from '@mui/system';
 import {Modal as BaseModal} from '@mui/base/Modal';
 import {Box, Button} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import {GREY} from "@/themes/color.ts";
+import {GREY} from "@/lookings/color.ts";
 
 /**
  * Modal component

@@ -11,7 +11,6 @@ import {useDelayEffect} from "@/utils/DelayUtil.ts";
  * @param isReadOnly if true, the field is read only
  * @param isEditable if true and isReadOnly is false, the field is editable
  * @param label the field label
- * @param placeholder the field placeholder
  * @param initOptions the initial options
  * @param values the set values
  * @param onSetValues the callback to set values
@@ -21,29 +20,32 @@ interface AutocompleteTextFieldProps {
   // Custom props
   isReadOnly?: boolean,
   isEditable?: boolean,
-  label: string;
-  placeholder: string;
-  initOptions: string[];
-  values: string[];
-  onSetValues: (value: string[]) => void;
-  onSearch: (searchText: string) => Promise<string[]>;
   // Mui props
+  error?: boolean,
+  helperText?: string,
   id: string;
-  sx: SxProps;
+  initOptions: string[];
+  label: string;
+  name?: string;
+  onSearch: (searchText: string) => Promise<string[]>;
+  onSetValues: (value: string[]) => void;
+  placeholder?: any;
+  required?: boolean,
+  sx?: SxProps;
+  value: string[];
 }
 
-export const MyAutocompleteTextField: React.FC<AutocompleteTextFieldProps> = (props: AutocompleteTextFieldProps) => {
-  const {
-    isReadOnly = false,
-    isEditable,
-    label,
-    placeholder,
-    initOptions,
-    values,
-    onSetValues,
-    onSearch,
-    ...rest} = props;
-
+export const MyAutocompleteTextField: React.FC<AutocompleteTextFieldProps> = ({
+                                                                                isReadOnly = false,
+                                                                                isEditable,
+                                                                                label,
+                                                                                placeholder,
+                                                                                initOptions,
+                                                                                value,
+                                                                                onSetValues,
+                                                                                onSearch,
+                                                                                ...rest
+                                                                              }) => {
   // options
   const [options, setOptions] = useState<string[]>(initOptions);
 
@@ -94,13 +96,13 @@ export const MyAutocompleteTextField: React.FC<AutocompleteTextFieldProps> = (pr
           slotProps={{htmlInput: {...inputProps, readOnly: isReadOnly || !isEditable}}}
           label={label}
           placeholder={placeholder}
-          value={values}
+          value={value}
         />
       )}
       autoSelect
       freeSolo
       multiple
-      disableClearable={isReadOnly || !isEditable}
+      readOnly={isReadOnly || !isEditable}
     />
   );
 }
