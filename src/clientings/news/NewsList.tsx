@@ -6,12 +6,13 @@ import {GridFilterItem, GridRowId} from "@mui/x-data-grid";
 import {NEWS_COLUMNS, translateQueryField} from "@/schema/NewsSchema.ts";
 import MyDataList from "@/adapter/mui/MyDataList.tsx";
 import NewsDetail from "@/clientings/news/NewsDetail.tsx";
-import {getNews, searchNewsPage} from "@/clientings/NewsClienting.ts";
+import {getNews, searchNewsPage} from "@/client_io/NewsIO.ts";
+import NewsCreate from "@/clientings/news/NewsCreate.tsx";
+import NewsAudit from "@/clientings/news/NewsAudit.tsx";
 import {EMPTY_PAGE} from "@/consts/PaginateConst.ts";
 import {NewsVo} from "@/pojo/vos/NewsVo.ts";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
-import NewsCreate from "@/clientings/news/NewsCreate.tsx";
-import {size_1_of_3, size_2_of_3} from "@/lookings/size.ts";
+import {width_1_of_2} from "@/lookings/size.ts";
 
 function handleBuildCondition(originCondition: { [key: string]: any }, item: GridFilterItem): { [key: string]: any } {
   if (item.operator !== 'contains all') {
@@ -134,7 +135,7 @@ const NewsList: React.FC = () => {
 
   return (
     <Grid2 container spacing={2}>
-      <Grid2 size={size_2_of_3}>
+      <Grid2 size={width_1_of_2}>
         <NewsCreate
           callbackRefresh={refreshSearch}
         />
@@ -155,12 +156,13 @@ const NewsList: React.FC = () => {
         />
       </Grid2>
 
-      <Grid2 size={size_1_of_3}>
+      <Grid2 size={width_1_of_2}>
         {/* detail */}
         {selectedItem && (
           <NewsDetail
             item={selectedItem}
             callbackRefresh={refreshSearch}>
+            <NewsAudit/>
           </NewsDetail>
         )}
       </Grid2>

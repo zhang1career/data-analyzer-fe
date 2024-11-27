@@ -1,5 +1,5 @@
 import {createTheme} from "@mui/material";
-import {GREY} from "@/themes/color.ts";
+import {GREY} from "@/lookings/color.ts";
 
 export const outlinedTextFieldTheme = createTheme({
   components: {

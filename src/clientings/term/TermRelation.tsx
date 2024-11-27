@@ -6,8 +6,10 @@ import cola from 'cytoscape-cola';
 import cytoscape, {ElementDefinition, LayoutOptions, SingularElementArgument} from "cytoscape";
 import {Md5} from "ts-md5";
 import {diff} from "@/utils/MapUtil.ts";
-
 import {TermVo} from "@/pojo/vos/TermVo.ts";
+import {TermGraph} from "@/models/Term.ts";
+import {WHEEL} from "@/lookings/color.ts";
+
 
 cytoscape.use(cola);
 
@@ -23,17 +25,25 @@ type Edge = ElementDefinition & { group: 'edges' };
 
 
 interface TermRelationProps {
-  item: TermVo;
+  item?: TermVo;
+  graph?: TermGraph;
   onDetail: (termId: number) => Promise<TermVo | null>;
   onGrowRelation?: (relationList: RelationGrowthProps[]) => void;
 }
 
 const TermRelation: React.FC<TermRelationProps> = ({
-                                                     item,
+                                                     item = undefined,
+                                                     graph = undefined,
                                                      onDetail,
                                                      onGrowRelation = undefined,
                                                    }) => {
-  const initElementMap = buildElementMapFromTerm(item);
+  let initElementMap = new Map<string, ElementDefinition>();
+  if (item) {
+    initElementMap = buildElementMapFromNode(item);
+  }
+  if (graph) {
+    initElementMap = buildElementMapFromGraph(graph);
+  }
 
   const cyHandler = (cy: cytoscape.Core) => {
     // Listen for tap events on nodes
@@ -47,7 +57,7 @@ const TermRelation: React.FC<TermRelationProps> = ({
           console.error('Term not found:', node.data().id);
           return;
         }
-        const newElementMap = buildElementMapFromTerm(_term);
+        const newElementMap = buildElementMapFromNode(_term);
         if (newElementMap.size > 0) {
           addRelation(cy, newElementMap, onGrowRelation);
         }
@@ -75,7 +85,7 @@ const TermRelation: React.FC<TermRelationProps> = ({
       <CytoscapeComponent
         elements={Array.from(initElementMap.values())}
         style={style}
-        layout={layoutOptions}
+        layout={layout}
         stylesheet={stylesheet}
         cy={cyHandler}
       />
@@ -83,7 +93,7 @@ const TermRelation: React.FC<TermRelationProps> = ({
   );
 };
 
-function buildElementMapFromTerm(term: TermVo): Map<string, ElementDefinition> {
+function buildElementMapFromNode(term: TermVo): Map<string, ElementDefinition> {
   const nodeList: ElementDefinition[] = []
   const edgeList: ElementDefinition[] = []
   // addNode with origin node
@@ -103,6 +113,31 @@ function buildElementMapFromTerm(term: TermVo): Map<string, ElementDefinition> {
     });
   }
 
+  return buildElementMap(nodeList, edgeList);
+}
+
+function buildElementMapFromGraph(graph: TermGraph): Map<string, ElementDefinition> {
+  const nodeList: ElementDefinition[] = []
+  const edgeList: ElementDefinition[] = []
+
+  graph.nodes.forEach(node => {
+    nodeList.push(createNode(String(node.id), node.label));
+  });
+  graph.edges.forEach(edge => {
+      const _edge = createEdge({
+        edgeId: String(edge.id),
+        label: String(edge.label),
+        srcId: String(edge.src_id),
+        destId: String(edge.dest_id),
+        eSpeech: edge.speech_type,    // edge speech type
+      });
+      edgeList.push(_edge);
+    }
+  );
+  return buildElementMap(nodeList, edgeList);
+}
+
+function buildElementMap(nodeList: cytoscape.ElementDefinition[], edgeList: cytoscape.ElementDefinition[]) {
   const elementMap = new Map<string, ElementDefinition>();
   nodeList.forEach(element => {
     if (element.data.id === undefined) {
@@ -143,7 +178,14 @@ function addNode(nodeList: ElementDefinition[], nodeId: string, nodeLabel: strin
 
 function addEdge(edgeList: ElementDefinition[],
                  edgeId: string, edgeSrcId: string, edgeDestId: string, edgeLabel: string) {
-  edgeList.push(createEdge(edgeId, edgeSrcId, edgeDestId, edgeLabel));
+  edgeList.push(
+    createEdge({
+      edgeId: edgeId,
+      label: edgeLabel,
+      srcId: edgeSrcId,
+      destId: edgeDestId
+    })
+  );
 }
 
 function createNode(nodeId: string, nodeLabel: string) {
@@ -151,9 +193,37 @@ function createNode(nodeId: string, nodeLabel: string) {
   return node;
 }
 
-function createEdge(edgeId: string, edgeSrcId: string, edgeDestId: string, edgeLabel: string) {
-  const edge: Edge = {data: {id: edgeId, source: edgeSrcId, target: edgeDestId, label: edgeLabel}, group: 'edges'};
-  return edge;
+/**
+ * Create an edge between two nodes.
+ * @param edgeId
+ * @param label
+ * @param srcId
+ * @param destId
+ * @param isReverse is reverse edge
+ * @param eSpeech edge speech type
+ */
+interface EdgeProps {
+  // cytoscape properties
+  edgeId: string;
+  label: string;
+  srcId: string;
+  destId: string;
+  // user defined properties
+  isReverse?: boolean;
+  eSpeech?: number;
+}
+
+function createEdge({
+                      edgeId,
+                      label,
+                      srcId,
+                      destId,
+                      ...rest
+                    }: EdgeProps): Edge {
+  return {
+    group: 'edges',
+    data: {id: edgeId, source: srcId, target: destId, label: label, ...rest}
+  };
 }
 
 function addElementMap(map: Map<string, ElementDefinition>, element: SingularElementArgument) {
@@ -165,7 +235,12 @@ function addElementMap(map: Map<string, ElementDefinition>, element: SingularEle
   } else {
     map.set(
       element.data().id,
-      createEdge(element.data().id, element.data().source, element.data().target, element.data().label)
+      createEdge({
+        edgeId: element.data().id,
+        label: element.data().label,
+        srcId: element.data().source,
+        destId: element.data().target
+      })
     );
   }
 }
@@ -281,28 +356,59 @@ const style = {
   border: '1px solid #ccc',
 };
 
+const DEFAULT_NODE_STYLE = {
+  'width': 15,
+  'height': 15,
+  'background-color': WHEEL['main_green'],
+  'background-fit': 'cover',
+  'border-color': 'black',
+  'border-width': 1,
+  'border-opacity': 0.1,
+  'label': 'data(label)',
+  'font-size': 6,
+};
+
+const DEFAULT_EDGE_STYLE = {
+  'width': 3,
+  'line-color': 'gray',
+  'target-arrow-shape': 'triangle',
+  'target-arrow-color': 'gray',
+  'curve-style': 'bezier',
+  'label': 'data(label)',
+  'font-size': 6,
+};
+
 const stylesheet = [
   {
+    selector: 'node',
+    style: DEFAULT_NODE_STYLE
+  },
+  {
     selector: 'edge',
+    style: DEFAULT_EDGE_STYLE
+  },
+  {
+    selector: '[eSpeech = 0]',
     style: {
-      'width': 3,
-      'line-color': 'blue',
-      'target-arrow-shape': 'triangle',
-      'target-arrow-color': 'blue',
-      'curve-style': 'bezier',
-      'label': 'data(label)'
+      ...DEFAULT_EDGE_STYLE,
+      'line-color': WHEEL['light_green'],
+      'target-arrow-color': WHEEL['light_green'],
     }
   },
   {
-    selector: 'node',
+    selector: '[eSpeech = 1]',
     style: {
-      'width': 50,
-      'height': 50,
-      'background-color': 'green',
-      'label': 'data(label)'
+      ...DEFAULT_EDGE_STYLE,
+      'line-color': WHEEL['dark_blue'],
+      'target-arrow-color': WHEEL['dark_blue'],
     }
   }
 ];
+
+const layout = {
+  name: 'cola',
+  directed: true
+};
 
 const layoutOptions: LayoutOptions = {
   name: 'cola',

@@ -1,10 +1,11 @@
 import {MyRouting} from "@/adapter/next/MyRouting.ts";
-import requestApiHub from "@/clientings/ApiHubClienting.tsx";
+import requestApiHub from "@/client_io/ApiHubIO.tsx";
 import {Paginate} from "@/models/Paginate.ts";
 import {Term} from "@/models/Term.ts";
 import {TermVo} from "@/pojo/vos/TermVo.ts";
 import {getValueSafely} from "@/utils/ObjUtil.ts";
 import {EMPTY_STRING} from "@/consts/StrConst.ts";
+import {GraphVo} from "@/pojo/vos/GraphVo.ts";
 
 
 export async function searchTermPage(context: MyRouting,
@@ -74,4 +75,19 @@ export async function deleteTerm(context: MyRouting,
       },
       context: context
     });
+}
+
+export async function searchTermGraph(context: MyRouting,
+                                      termName: string,
+                                      relation_type: string): Promise<GraphVo> {
+  return await requestApiHub(
+    {
+      method: 'GET',
+      url: '/da/knowledge/term-travels',
+      queryParam: {
+        term: termName,
+        relation_type: relation_type
+      },
+      context: context
+    }) as Promise<GraphVo>;
 }

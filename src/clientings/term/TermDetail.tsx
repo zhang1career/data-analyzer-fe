@@ -3,7 +3,7 @@
 import React, {useContext, useEffect, useState} from "react";
 import MyEditableForm from "@/adapter/mui/MyEditableForm.tsx";
 import MyTextField from "@/adapter/mui/MyTextField.tsx";
-import {updateTerm} from "@/clientings/TermClienting.ts";
+import {updateTerm} from "@/client_io/TermIO.ts";
 import {Term} from "@/models/Term.ts";
 import {TermVo} from "@/pojo/vos/TermVo.ts";
 import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";

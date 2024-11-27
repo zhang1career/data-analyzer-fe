@@ -4,13 +4,14 @@ import React, {useContext, useState} from 'react';
 import MyModal from '@/adapter/mui/MyModal.tsx';
 import MyTextField from '@/adapter/mui/MyTextField.tsx';
 import MyEditableForm from '@/adapter/mui/MyEditableForm.tsx';
-import {createNews} from '@/clientings/NewsClienting.ts';
+import {createNews} from '@/client_io/NewsIO.ts';
 import {News} from '@/models/News.ts';
 import {RoutingContext} from '@/components/providers/RoutingProvider.tsx';
 import {NoticingContext} from '@/components/providers/NoticingProvider.tsx';
 import {modelToDto} from '@/mapper/NewsMapper.ts';
 import {MyAutocompleteTextField} from '@/adapter/mui/MyAutocompleteTextField.tsx';
-import {searchSimilarTagNameList} from "@/clientings/TagClienting.ts";
+import {searchSimilarTagNameList} from "@/client_io/TagIO.ts";
+import {buildEmptyFormData} from "@/clientings/news/NewsBase.tsx";
 
 interface NewsCreateProps {
   callbackRefresh?: () => void;
@@ -90,16 +91,6 @@ const NewsCreate: React.FC<NewsCreateProps> = ({
       </MyEditableForm>
     </MyModal>
   );
-}
-
-function buildEmptyFormData(): News {
-  return {
-    id: 0,
-    content: '',
-    url: '',
-    published_at: '',
-    tags: [],
-  }
 }
 
 export default NewsCreate;

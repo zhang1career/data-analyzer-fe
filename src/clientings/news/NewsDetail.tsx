@@ -3,13 +3,13 @@
 import React, {useContext, useEffect, useState} from "react";
 import MyEditableForm from "@/adapter/mui/MyEditableForm.tsx";
 import MyTextField from "@/adapter/mui/MyTextField.tsx";
-import {updateNews} from "@/clientings/NewsClienting.ts";
+import {updateNews} from "@/client_io/NewsIO.ts";
 import {News} from "@/models/News.ts";
 import {NewsVo} from "@/pojo/vos/NewsVo.ts";
 import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
 import {modelToDto, voToModel} from "@/mapper/NewsMapper.ts";
-import {searchSimilarTagNameList} from "@/clientings/TagClienting.ts";
+import {searchSimilarTagNameList} from "@/client_io/TagIO.ts";
 import {MyAutocompleteTextField} from "@/adapter/mui/MyAutocompleteTextField.tsx";
 
 interface NewsDetailProps {
@@ -64,7 +64,7 @@ const NewsDetail: React.FC<NewsDetailProps> = ({
   };
 
   return (
-    <div>
+    <>
       <MyEditableForm
         onSetFormData={setFormData}
         onSave={handleSave}
@@ -115,8 +115,11 @@ const NewsDetail: React.FC<NewsDetailProps> = ({
           sx={{width: '100%'}}
         />
       </MyEditableForm>
-      {children}
-    </div>
+
+      {React.Children.map(children, (child) => {
+        return React.cloneElement(child as React.ReactElement, {formData: formData});
+      })}
+    </>
   );
 }
 
