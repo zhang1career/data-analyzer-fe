@@ -81,7 +81,7 @@ const TermList: React.FC = () => {
   }
 
   // operation - detail an item
-  const handleDetail = async (termId: number) => {
+  const handleDetail = async (termId: number): Promise<TermVo | null> => {
     try {
       return await getTerm(
         routing,

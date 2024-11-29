@@ -15,7 +15,7 @@ function termGraphNodeVoToModel(vo: GraphNodeVo): TermGraphNode {
   };
 }
 
-function termGraphEdgeVoToModel(vo: GraphEdgeVo): TermGraphEdge {
+export function termGraphEdgeVoToModel(vo: GraphEdgeVo): TermGraphEdge {
   return {
     id: vo.id,
     src_id: vo.sid,

@@ -5,6 +5,15 @@ export interface Term {
   relation: TermRelation[];
 }
 
+export function newTerm(name: string): Term {
+  return {
+    id: 0,
+    name: name,
+    content: '',
+    relation: [],
+  };
+}
+
 export interface TermRelation {
   name: string;
   relation_type: string;

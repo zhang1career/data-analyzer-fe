@@ -4,7 +4,7 @@ import React, {useContext, useEffect, useState} from "react";
 import MyEditableForm from "@/adapter/mui/MyEditableForm.tsx";
 import MyTextField from "@/adapter/mui/MyTextField.tsx";
 import {updateTerm} from "@/client_io/TermIO.ts";
-import {Term} from "@/models/Term.ts";
+import {newTerm, Term} from "@/models/Term.ts";
 import {TermVo} from "@/pojo/vos/TermVo.ts";
 import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
@@ -33,12 +33,7 @@ const TermDetail: React.FC<TermDetailProps> = ({
   const noticing = useContext(NoticingContext);
 
   // form
-  const [formData, setFormData] = useState<Term>({
-    id: 0,
-    name: '',
-    content: '',
-    relation: [],
-  });
+  const [formData, setFormData] = useState<Term>(newTerm(''));
 
   // editable form refreshment
   const [activeEditableFormAt, setActiveEditableFormAt] = useState<number>(Date.now());

@@ -1,7 +1,7 @@
 'use client';
 
 import React, {useContext, useState} from "react";
-import {TermGraph, TermGraphSearch} from "@/models/Term.ts";
+import {Term, TermGraph, TermGraphSearch} from "@/models/Term.ts";
 import MySearchBar from "@/adapter/mui/MySearchBar.tsx";
 import {InputBase} from "@mui/material";
 import MyDropdownList from "@/adapter/mui/MyDropdownList.tsx";
@@ -13,6 +13,7 @@ import {voToModel} from "@/mapper/TermGraphMapper.ts";
 import TermRelation from "@/clientings/term/TermRelation.tsx";
 import {News} from "@/models/News.ts";
 import {buildEmptyFormData, buildEmptyQueryParam} from "@/clientings/news/NewsBase.tsx";
+import {newTermVo, TermVo} from "@/pojo/vos/TermVo.ts";
 
 interface NewsAuditProps {
   formData?: News;
@@ -28,15 +29,26 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
   // query param
   const [queryParam, setQueryParam] = useState<TermGraphSearch>(buildEmptyQueryParam());
 
+  // item refreshment
+  const [activeAuditAt, setActiveAuditAt] = useState(Date.now());
+
+  function refreshRelation() {
+    setActiveAuditAt(Date.now());
+  }
+
   // query result
+  const [selectedTerm, setSelectedTerm] = useState<TermVo | null>(null);
   const [termGraph, setTermGraph] = useState<TermGraph | null>(null);
 
   const handleSearch = async () => {
+    const termVo = newTermVo(queryParam['name']);
     const termGraphVo = await searchTermGraph(
       routing,
       queryParam['name'],
       queryParam['relation_type']) as GraphVo;
+    setSelectedTerm(termVo);
     setTermGraph(voToModel(termGraphVo));
+    refreshRelation();
   }
 
   // operation - detail an item
@@ -76,7 +88,7 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
       </MySearchBar>
 
       {termGraph && (
-        <TermRelation graph={termGraph} onDetail={handleDetail}/>
+        <TermRelation item={selectedTerm} graph={termGraph} onDetail={handleDetail} key={activeAuditAt}/>
       )}
     </div>
   );
