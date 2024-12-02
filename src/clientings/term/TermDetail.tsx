@@ -5,10 +5,10 @@ import MyEditableForm from "@/adapter/mui/MyEditableForm.tsx";
 import MyTextField from "@/adapter/mui/MyTextField.tsx";
 import {updateTerm} from "@/client_io/TermIO.ts";
 import {newTerm, Term} from "@/models/Term.ts";
-import {TermVo} from "@/pojo/vos/TermVo.ts";
+import {TermVo} from "@/pojo/vo/TermVo.ts";
 import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
-import {voToModel} from "@/mapper/TermMapper.ts";
+import {voToModel} from "@/mappers/TermMapper.ts";
 
 interface TermDetailProps {
   item: TermVo;

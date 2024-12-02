@@ -5,11 +5,11 @@ import CytoscapeComponent from "react-cytoscapejs";
 import cola from 'cytoscape-cola';
 import cytoscape, {ElementDefinition, LayoutOptions, SingularElementArgument} from "cytoscape";
 import {diff} from "@/utils/MapUtil.ts";
-import {TermVo} from "@/pojo/vos/TermVo.ts";
+import {TermVo} from "@/pojo/vo/TermVo.ts";
 import {newTerm, Term, TermGraph} from "@/models/Term.ts";
 import {WHEEL} from "@/lookings/color.ts";
-import {termGraphEdgeVoToModel} from "@/mapper/TermGraphMapper.ts";
-import {voToModel} from "@/mapper/TermMapper.ts";
+import {termGraphEdgeVoToModel} from "@/mappers/TermGraphMapper.ts";
+import {voToModel} from "@/mappers/TermMapper.ts";
 
 
 cytoscape.use(cola);
@@ -26,7 +26,7 @@ type Edge = ElementDefinition & { group: 'edges' };
 
 
 interface TermRelationProps {
-  item: TermVo;
+  item: TermVo | null;
   graph?: TermGraph | null;
   onDetail: (termId: number) => Promise<TermVo | null>;
   onGrowRelation?: (relationList: RelationGrowthProps[]) => void;
@@ -44,7 +44,10 @@ const TermRelation: React.FC<TermRelationProps> = ({
   const [startTerm, setStartTerm] = useState<Term>(newTerm(''));
 
   useEffect(() => {
-    console.log('TermRelation item:', item);
+    if (item === null) {
+      setStartTerm(newTerm(''));
+      return;
+    }
     setStartTerm(voToModel(item));
   }, [item]);
 
@@ -392,7 +395,6 @@ const DEFAULT_EDGE_STYLE = {
 
 function buildStyleSheet(startNodeLabel: string) {
   const selectorStartNode = 'node[label = "' + startNodeLabel + '"]';
-  console.log('Start node:', selectorStartNode);
 
   return [
     {

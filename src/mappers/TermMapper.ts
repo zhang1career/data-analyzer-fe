@@ -1,4 +1,4 @@
-import {TermVo} from "@/pojo/vos/TermVo.ts";
+import {TermVo} from "@/pojo/vo/TermVo.ts";
 import {Term, TermRelation} from "@/models/Term.ts";
 
 export function voToModel(vo: TermVo): Term {

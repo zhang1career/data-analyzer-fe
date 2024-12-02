@@ -2,22 +2,22 @@
 
 import * as React from "react";
 import {Grid2} from "@mui/material";
-import {width_1_of_3, width_2_of_3, size_full} from "@/lookings/size.ts";
+import {GRID_WIDTH_1_OF_3, GRID_WIDTH_2_OF_3, GRID_WIDTH_FULL} from "@/lookings/size.ts";
 
 const MyComponnet: React.FC = () => {
 
   return (
     <Grid2 container>
-      <Grid2 size={width_2_of_3}>
+      <Grid2 size={GRID_WIDTH_2_OF_3}>
         {'2 of 3'}
       </Grid2>
 
-      <Grid2 size={width_1_of_3}>
+      <Grid2 size={GRID_WIDTH_1_OF_3}>
         {'1 of 3'}
 
         <div>
           <Grid2 container>
-            <Grid2 size={size_full}>
+            <Grid2 size={GRID_WIDTH_FULL}>
               {'3 of 3'}
             </Grid2>
           </Grid2>

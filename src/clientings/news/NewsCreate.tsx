@@ -8,7 +8,7 @@ import {createNews} from '@/client_io/NewsIO.ts';
 import {News} from '@/models/News.ts';
 import {RoutingContext} from '@/components/providers/RoutingProvider.tsx';
 import {NoticingContext} from '@/components/providers/NoticingProvider.tsx';
-import {modelToDto} from '@/mapper/NewsMapper.ts';
+import {modelToDto} from '@/mappers/NewsMapper.ts';
 import {MyAutocompleteTextField} from '@/adapter/mui/MyAutocompleteTextField.tsx';
 import {searchSimilarTagNameList} from "@/client_io/TagIO.ts";
 import {buildEmptyFormData} from "@/clientings/news/NewsBase.tsx";

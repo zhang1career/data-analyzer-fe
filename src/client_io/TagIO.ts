@@ -3,7 +3,8 @@ import {Paginate} from "@/models/Paginate.ts";
 import requestApiHub from "@/client_io/ApiHubIO.tsx";
 import {getValueSafely} from "@/utils/ObjUtil.ts";
 import {EMPTY_STRING} from "@/consts/StrConst.ts";
-import {TagVo} from "@/pojo/vos/TagVo.ts";
+import {TagParseResultVo, TagVo} from "@/pojo/vo/TagVo.ts";
+import {implode} from "@/utils/ArrayUtil.ts";
 
 
 export async function searchTagPage(context: MyRouting,
@@ -23,13 +24,13 @@ export async function searchTagPage(context: MyRouting,
     }) as Paginate<TagVo>;
 }
 
-export async function searchSimilarTagList(tag_like: string): Promise<TagVo[]> {
+async function searchSimilarTagList(tagLike: string): Promise<TagVo[]> {
   const page = await requestApiHub(
     {
       method: 'GET',
       url: '/da/knowledge/tags',
       queryParam: {
-        tag_like: tag_like,
+        tag_like: tagLike,
         offset: 0,
         count: 10,
       },
@@ -38,7 +39,20 @@ export async function searchSimilarTagList(tag_like: string): Promise<TagVo[]> {
   return page.data;
 }
 
-export async function searchSimilarTagNameList(tag_like: string): Promise<string[]> {
-  const tagList = await searchSimilarTagList(tag_like);
+export async function searchSimilarTagNameList(tagLike: string): Promise<string[]> {
+  const tagList = await searchSimilarTagList(tagLike);
   return tagList.map((tag) => tag.name);
+}
+
+export async function parseTag(context: MyRouting,
+                               tagList: string): Promise<TagParseResultVo[]> {
+  return await requestApiHub(
+    {
+      method: 'POST',
+      url: '/da/knowledge/tag-parses',
+      body: {
+        tags: implode([tagList]),
+      },
+      context: context
+    }) as TagParseResultVo[];
 }

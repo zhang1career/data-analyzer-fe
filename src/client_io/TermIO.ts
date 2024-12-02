@@ -2,10 +2,10 @@ import {MyRouting} from "@/adapter/next/MyRouting.ts";
 import requestApiHub from "@/client_io/ApiHubIO.tsx";
 import {Paginate} from "@/models/Paginate.ts";
 import {Term} from "@/models/Term.ts";
-import {TermVo} from "@/pojo/vos/TermVo.ts";
+import {TermVo} from "@/pojo/vo/TermVo.ts";
 import {getValueSafely} from "@/utils/ObjUtil.ts";
 import {EMPTY_STRING} from "@/consts/StrConst.ts";
-import {GraphVo} from "@/pojo/vos/GraphVo.ts";
+import {GraphVo} from "@/pojo/vo/GraphVo.ts";
 
 
 export async function searchTermPage(context: MyRouting,

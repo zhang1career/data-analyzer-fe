@@ -1,5 +1,5 @@
 import {TermGraph, TermGraphEdge, TermGraphNode} from "@/models/Term.ts";
-import {GraphEdgeVo, GraphNodeVo, GraphVo} from "@/pojo/vos/GraphVo.ts";
+import {GraphEdgeVo, GraphNodeVo, GraphVo} from "@/pojo/vo/GraphVo.ts";
 
 export function voToModel(vo: GraphVo): TermGraph {
   return {

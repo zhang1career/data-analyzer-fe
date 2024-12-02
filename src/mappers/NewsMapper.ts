@@ -1,6 +1,6 @@
 import {News} from "@/models/News.ts";
 import {NewsDto} from "@/pojo/dto/NewsDto.ts";
-import {NewsTagRelationType, NewsVo} from "@/pojo/vos/NewsVo.ts";
+import {NewsTagRelationType, NewsVo} from "@/pojo/vo/NewsVo.ts";
 
 export function modelToDto(model: News): NewsDto {
   return {

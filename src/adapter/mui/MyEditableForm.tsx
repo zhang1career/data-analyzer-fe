@@ -4,6 +4,7 @@ import * as React from "react";
 import {Dispatch, SetStateAction, useState} from "react";
 import MyReplaceButtons from "@/adapter/mui/MyReplaceButtons.tsx";
 import {Box, Stack, SxProps} from "@mui/material";
+import {handleNamedInputChange} from "@/adapter/base/MyNamedInput.ts";
 
 interface EditableFormProps<T> {
   initEditable?: boolean;
@@ -42,7 +43,7 @@ const MyEditableForm: React.FC<EditableFormProps<any>> = <T, >({
 
   // form
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    onSetFormData((prevObject) => ({...prevObject, [event.target.name]: event.target.value}));
+    handleNamedInputChange<T>(event, onSetFormData);
   };
 
   // edit / save button

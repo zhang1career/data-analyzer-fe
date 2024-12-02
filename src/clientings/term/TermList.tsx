@@ -10,9 +10,9 @@ import TermDetail from "@/clientings/term/TermDetail.tsx";
 import TermRelation from "@/clientings/term/TermRelation.tsx";
 import {deleteTerm, getTerm, searchTermPage} from "@/client_io/TermIO.ts";
 import {EMPTY_PAGE} from "@/consts/PaginateConst.ts";
-import {TermVo} from "@/pojo/vos/TermVo.ts";
+import {TermVo} from "@/pojo/vo/TermVo.ts";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
-import {width_1_of_3, width_2_of_3} from "@/lookings/size.ts";
+import {GRID_WIDTH_1_OF_3, GRID_WIDTH_2_OF_3} from "@/lookings/size.ts";
 
 function handleBuildCondition(originCondition: { [key: string]: any }, item: GridFilterItem): { [key: string]: any } {
   if (item.operator !== 'equals') {
@@ -123,7 +123,7 @@ const TermList: React.FC = () => {
 
   return (
     <Grid2 container spacing={2}>
-      <Grid2 size={width_1_of_3}>
+      <Grid2 size={GRID_WIDTH_1_OF_3}>
         <TermCreate
           callbackRefresh={refreshSearch}
         />
@@ -144,7 +144,7 @@ const TermList: React.FC = () => {
         />
       </Grid2>
 
-      <Grid2 size={width_2_of_3}>
+      <Grid2 size={GRID_WIDTH_2_OF_3}>
         {/* detail */}
         {selectedItem && (
           <TermDetail

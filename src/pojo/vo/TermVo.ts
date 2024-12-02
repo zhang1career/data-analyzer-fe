@@ -1,4 +1,4 @@
-import {GraphEdgeVo} from "@/pojo/vos/GraphVo.ts";
+import {GraphEdgeVo} from "@/pojo/vo/GraphVo.ts";
 
 export interface TermVo {
   id: number;

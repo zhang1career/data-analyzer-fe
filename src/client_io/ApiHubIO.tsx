@@ -40,14 +40,14 @@ async function requestApiHub({method, url, pathVariable, queryParam, body, conte
     for (const [key, value] of Object.entries(queryParam)) {
       destParamObj[key] = String(value);
     }
-    console.debug('[apihub][client] queryParam=', destParamObj);
+    console.debug('[apihub][client] queryParam:', destParamObj);
     const urlSearchParams = new URLSearchParams(destParamObj);
-    console.debug('[apihub][client] urlSearchParams=', urlSearchParams);
+    console.debug('[apihub][client] urlSearchParams:', urlSearchParams);
     destBodyMap.set('_dest_url_', `${destUrl}?${urlSearchParams.toString()}`);
   }
 
   const destBody = Object.fromEntries(destBodyMap);
-  console.debug('[apihub][client] request=', destBody);
+  console.debug('[apihub][client] request:', destBody);
   const response = await fetch(API_HUB_URL, {
     method: 'POST',
     headers: {
@@ -57,8 +57,10 @@ async function requestApiHub({method, url, pathVariable, queryParam, body, conte
   });
 
   if (!response.ok) {
+    console.error('[apihub][client][skip] failure:', response.statusText);
     return handleError(context, response);
   }
+
   return response.json();
 }
 

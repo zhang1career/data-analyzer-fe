@@ -20,12 +20,6 @@ export interface TermRelation {
   is_reverse?: boolean;
 }
 
-export interface TermGraphSearch {
-  name: string;
-  relation_type: string;
-  is_reverse?: boolean;
-}
-
 export interface TermGraph {
   nodes: TermGraphNode[];
   edges: TermGraphEdge[];

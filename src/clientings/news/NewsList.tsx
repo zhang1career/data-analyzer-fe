@@ -10,9 +10,9 @@ import {getNews, searchNewsPage} from "@/client_io/NewsIO.ts";
 import NewsCreate from "@/clientings/news/NewsCreate.tsx";
 import NewsAudit from "@/clientings/news/NewsAudit.tsx";
 import {EMPTY_PAGE} from "@/consts/PaginateConst.ts";
-import {NewsVo} from "@/pojo/vos/NewsVo.ts";
+import {NewsVo} from "@/pojo/vo/NewsVo.ts";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
-import {width_1_of_2} from "@/lookings/size.ts";
+import {GRID_WIDTH_1_OF_2} from "@/lookings/size.ts";
 
 function handleBuildCondition(originCondition: { [key: string]: any }, item: GridFilterItem): { [key: string]: any } {
   if (item.operator !== 'contains all') {
@@ -135,7 +135,7 @@ const NewsList: React.FC = () => {
 
   return (
     <Grid2 container spacing={2}>
-      <Grid2 size={width_1_of_2}>
+      <Grid2 size={GRID_WIDTH_1_OF_2}>
         <NewsCreate
           callbackRefresh={refreshSearch}
         />
@@ -156,13 +156,17 @@ const NewsList: React.FC = () => {
         />
       </Grid2>
 
-      <Grid2 size={width_1_of_2}>
+      <Grid2 size={GRID_WIDTH_1_OF_2}>
         {/* detail */}
         {selectedItem && (
           <NewsDetail
             item={selectedItem}
-            callbackRefresh={refreshSearch}>
-            <NewsAudit/>
+            callbackRefresh={refreshSearch}
+            key={activeItemAt}
+          >
+            <NewsAudit
+              key={activeItemAt}
+            />
           </NewsDetail>
         )}
       </Grid2>

@@ -4,7 +4,7 @@ import {NewsDto} from "@/pojo/dto/NewsDto.ts";
 import requestApiHub from "@/client_io/ApiHubIO.tsx";
 import {getValueSafely} from "@/utils/ObjUtil.ts";
 import {EMPTY_STRING} from "@/consts/StrConst.ts";
-import {NewsVo} from "@/pojo/vos/NewsVo.ts";
+import {NewsVo} from "@/pojo/vo/NewsVo.ts";
 
 
 export async function searchNewsPage(context: MyRouting,
