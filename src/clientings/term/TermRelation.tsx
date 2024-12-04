@@ -1,54 +1,68 @@
 'use client';
 
-import React, {useEffect, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import CytoscapeComponent from "react-cytoscapejs";
 import cola from 'cytoscape-cola';
 import cytoscape, {ElementDefinition, LayoutOptions, SingularElementArgument} from "cytoscape";
 import {diff} from "@/utils/MapUtil.ts";
 import {TermVo} from "@/pojo/vo/TermVo.ts";
-import {newTerm, Term, TermGraph} from "@/models/Term.ts";
+import {Term, TermGraph} from "@/models/Term.ts";
 import {WHEEL} from "@/lookings/color.ts";
 import {termGraphEdgeVoToModel} from "@/mappers/TermGraphMapper.ts";
 import {voToModel} from "@/mappers/TermMapper.ts";
+import {GraphPath} from "@/models/GraphPath.ts";
+import {EMPTY_STRING} from "@/consts/StrConst.ts";
+import {checkEmpty} from "@/utils/StrUtil.ts";
+import {useDelayEffect} from "@/utils/DelayUtil.ts";
+import makeStyles from '@mui/styles/makeStyles';
+import {MyAssembleProps} from "@/adapter/defines/MyAssembleProps.ts";
 
 
+// cytoscape
+// plugin
 cytoscape.use(cola);
-
-export interface RelationGrowthProps {
-  originTerm: string;
-  addingTerm: string;
-  relation: string;
-  isReverse: boolean;
-}
-
+// data
 type Node = ElementDefinition & { group: 'nodes' };
 type Edge = ElementDefinition & { group: 'edges' };
 
+// style
+const warningLightStyles = makeStyles({
+  flashBorder: {
+    border: '1px solid red',
+    transition: '0.2s border-color ease-in-out',
+  },
+  regularBorder: {
+    transition: '0.2s border-color ease-in-out',
+  },
+});
 
-interface TermRelationProps {
+interface TermRelationProps extends MyAssembleProps {
   item: TermVo | null;
   graph?: TermGraph | null;
-  onDetail: (termId: number) => Promise<TermVo | null>;
-  onGrowRelation?: (relationList: RelationGrowthProps[]) => void;
+  onDetailNode: (termId: number) => Promise<TermVo | null>;
+  onTravelPath?: (graphPathList: GraphPath) => void;
 }
 
-const TermRelation: React.FC<TermRelationProps> = ({
-                                                     item,
-                                                     graph,
-                                                     onDetail,
-                                                     onGrowRelation = undefined,
-                                                   }: TermRelationProps) => {
-
-
-  // editable form refreshment
-  const [startTerm, setStartTerm] = useState<Term>(newTerm(''));
+const TermRelation: FC<TermRelationProps> = ({
+                                               item,
+                                               graph,
+                                               onDetailNode,
+                                               onTravelPath = undefined,
+                                             }: TermRelationProps) => {
+  // data state
+  // start term
+  const [startTerm, setStartTerm] = useState<Term | null>(null);
+  // traveled node
+  const [traveledNodeSet, setTraveledNodeSet] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (item === null) {
-      setStartTerm(newTerm(''));
+      setStartTerm(null);
+      setTraveledNodeSet(new Set());
       return;
     }
     setStartTerm(voToModel(item));
+    setTraveledNodeSet(new Set([String(item.id)]));
   }, [item]);
 
   // if graph is given, use graph; otherwise, use item
@@ -63,8 +77,8 @@ const TermRelation: React.FC<TermRelationProps> = ({
     // Listen for tap events on nodes
     cy.on('tap', 'node', (event) => {
       const node = event.target;
-      console.log('Node tapped:', node);
-      const focusTerm = onDetail(parseInt(node.data().id));
+      console.debug('Node tapped:', node);
+      const focusTerm = onDetailNode(parseInt(node.data().id));
 
       focusTerm.then((_term) => {
         if (_term === null) {
@@ -73,15 +87,22 @@ const TermRelation: React.FC<TermRelationProps> = ({
         }
         const newElementMap = buildElementMapFromNode(_term);
         if (newElementMap.size > 0) {
-          addRelation(cy, newElementMap, onGrowRelation);
+          addRelation(cy, newElementMap);
         }
       })
     });
 
     // Listen for tap events on edges
     cy.on('tap', 'edge', (event) => {
+      if (!onTravelPath) {
+        console.warn('Edge travel is not available.');
+        return;
+      }
+      // get param
       const edge = event.target;
-      console.log('Edge tapped:', edge.data());
+      console.debug('Edge tapped:', edge.data());
+      // travel
+      travel(edge.data(), onTravelPath);
     });
 
     // Listen for tap events on the background (core)
@@ -92,15 +113,77 @@ const TermRelation: React.FC<TermRelationProps> = ({
     });
   }
 
+  const travel = (data: any,
+                  onTravelGraph: ((graphPathList: GraphPath) => void) | undefined) => {
+    const srcId = data.source;
+    const destId = data.target;
+    // check param
+    if (srcId === undefined || destId === undefined) {
+      throw new Error('Edge source or target is undefined.');
+    }
+    if (!traveledNodeSet.has(srcId) && !traveledNodeSet.has(destId)) {
+      console.log('[term][relation][skip] The edge tapped is invalid to travel.')
+      setError(true);
+      return;
+    }
+    if (traveledNodeSet.has(srcId) && traveledNodeSet.has(destId)) {
+      console.log('[term][relation][skip] Circling edge is invalid to travel.')
+      setError(true);
+      return;
+    }
+    // travel
+    let _path: GraphPath;
+    if (traveledNodeSet.has(srcId)) { // forward
+      _path = {
+        id: data.id,
+        startId: srcId,
+        stopId: destId,
+        label: data.label,
+        isReverse: false
+      }
+    } else { // backward
+      _path = {
+        id: data.id,
+        startId: destId,
+        stopId: srcId,
+        label: data.label,
+        isReverse: true
+      }
+    }
+    setTraveledNodeSet((prevSet) => {
+      const newSet = new Set(prevSet);
+      newSet.add(_path.stopId);
+      return newSet;
+    });
+    if (onTravelGraph) {
+      onTravelGraph(_path);
+    }
+  }
+
+  // style
+  const classes = warningLightStyles();
+
+  const [error, setError] = useState(false);
+
+  useDelayEffect(() => {
+    setError(false);
+  }, [error]);
+
+  // element
   const elementRef = React.useRef<HTMLDivElement>(null);
 
   return (
-    <div style={{width: '800px', height: '400px'}} ref={elementRef}>
+    <div
+      className={error ? classes.flashBorder : classes.regularBorder}
+      style={{width: '800px', height: '400px'}}
+      ref={elementRef}
+    >
       <CytoscapeComponent
         elements={Array.from(initElementMap.values())}
         style={style}
         layout={layout}
-        stylesheet={buildStyleSheet(startTerm.name)}
+        stylesheet={startTerm ? buildStyleSheet(startTerm.name) : buildStyleSheet(EMPTY_STRING)}
+        userZoomingEnabled={false}
         cy={cyHandler}
       />
     </div>
@@ -265,8 +348,7 @@ function addElementMap(map: Map<string, ElementDefinition>, element: SingularEle
 }
 
 function addRelation(cy: cytoscape.Core,
-                     toAddElementMap: Map<string, ElementDefinition>,
-                     onAppendTrace: ((traceList: RelationGrowthProps[]) => void) | undefined) {
+                     toAddElementMap: Map<string, ElementDefinition>) {
   if (toAddElementMap.size === 0) {
     console.debug("Node and edges unchanged, no to-add given.");
     return
@@ -305,64 +387,7 @@ function addRelation(cy: cytoscape.Core,
     })
   })
 
-  // calc trace
-  if (onAppendTrace !== undefined) {
-    const appendingTraceList = calcTrace(originElementMap, addingElementMap);
-    if (appendingTraceList.length > 0) {
-      onAppendTrace(appendingTraceList);
-    }
-  }
-
   console.debug('Node and edges added:', addingElementMap.values());
-}
-
-function calcTrace(originElementMap: Map<string, cytoscape.ElementDefinition>,
-                   addingElementMap: Map<string, cytoscape.ElementDefinition>): RelationGrowthProps[] {
-  const traceList: RelationGrowthProps[] = [];
-
-  for (const addingElement of addingElementMap.values()) {
-    // skip nodes
-    if (addingElement.group === 'nodes') {
-      continue;
-    }
-    // originNode -addingElement-> addingNode
-    if (originElementMap.has(addingElement.data.source)
-      && addingElementMap.has(addingElement.data.target)) {
-      const srcNode = originElementMap.get(addingElement.data.source);
-      const destNode = addingElementMap.get(addingElement.data.target);
-      if (srcNode === undefined || destNode === undefined) {
-        console.warn('Invalid edge:', addingElement);
-        continue;
-      }
-      traceList.push({
-        originTerm: srcNode.data.label,
-        addingTerm: destNode.data.label,
-        relation: addingElement.data.label,
-        isReverse: false
-      });
-      continue;
-    }
-    // addingNode -addingElement-> originNode
-    if (originElementMap.has(addingElement.data.target)
-      && addingElementMap.has(addingElement.data.source)) {
-      const srcNode = addingElementMap.get(addingElement.data.source);
-      const destNode = originElementMap.get(addingElement.data.target);
-      if (srcNode === undefined || destNode === undefined) {
-        console.warn('Invalid edge:', addingElement);
-        continue;
-      }
-      traceList.push({
-        originTerm: destNode.data.label,
-        addingTerm: srcNode.data.label,
-        relation: addingElement.data.label,
-        isReverse: true
-      });
-      continue;
-    }
-    console.warn('Ring detected:', addingElement);
-  }
-
-  return traceList;
 }
 
 const style = {
@@ -394,19 +419,10 @@ const DEFAULT_EDGE_STYLE = {
 };
 
 function buildStyleSheet(startNodeLabel: string) {
-  const selectorStartNode = 'node[label = "' + startNodeLabel + '"]';
-
-  return [
+  const retList = [
     {
       selector: 'node',
       style: DEFAULT_NODE_STYLE
-    },
-    {
-      selector: selectorStartNode,
-      style: {
-        ...DEFAULT_NODE_STYLE,
-        'background-color': 'red',
-      }
     },
     {
       selector: 'edge',
@@ -429,6 +445,21 @@ function buildStyleSheet(startNodeLabel: string) {
       }
     }
   ];
+
+  if (!checkEmpty(startNodeLabel)) {
+    const _startNode = 'node[label = "' + startNodeLabel + '"]';
+    retList.push(
+      {
+        selector: _startNode,
+        style: {
+          ...DEFAULT_NODE_STYLE,
+          'background-color': 'red',
+        }
+      }
+    );
+  }
+
+  return retList;
 }
 
 const layout = {

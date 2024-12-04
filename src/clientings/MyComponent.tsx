@@ -1,30 +1,31 @@
 'use client';
 
-import * as React from "react";
-import {Grid2} from "@mui/material";
-import {GRID_WIDTH_1_OF_3, GRID_WIDTH_2_OF_3, GRID_WIDTH_FULL} from "@/lookings/size.ts";
+import * as React from 'react';
+import {useState} from 'react';
+import MyEditableForm from "@/adapter/mui/MyEditableForm.tsx";
 
-const MyComponnet: React.FC = () => {
+
+function MyComponnet() {
+
+  const [formData, setFormData] = useState<''>('');
+
+  const handleSave = () => {
+    console.log('saving...')
+  }
 
   return (
-    <Grid2 container>
-      <Grid2 size={GRID_WIDTH_2_OF_3}>
-        {'2 of 3'}
-      </Grid2>
-
-      <Grid2 size={GRID_WIDTH_1_OF_3}>
-        {'1 of 3'}
-
-        <div>
-          <Grid2 container>
-            <Grid2 size={GRID_WIDTH_FULL}>
-              {'3 of 3'}
-            </Grid2>
-          </Grid2>
-        </div>
-      </Grid2>
-    </Grid2>
-  )
+    <MyEditableForm
+      initEditable={true}
+      onSetFormData={setFormData}
+      onSave={handleSave}
+      isVerbose={true}
+      sxButton={{ml: 'auto'}}
+    >
+      <p>{'qwer'}</p>
+      <p>{'asdf'}</p>
+      <p>{'zxcv'}</p>
+    </MyEditableForm>
+  );
 }
 
 export default MyComponnet;

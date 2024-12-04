@@ -5,13 +5,12 @@ import MyModal from '@/adapter/mui/MyModal.tsx';
 import MyTextField from '@/adapter/mui/MyTextField.tsx';
 import MyEditableForm from '@/adapter/mui/MyEditableForm.tsx';
 import {createNews} from '@/client_io/NewsIO.ts';
-import {News} from '@/models/News.ts';
+import {buildEmptyNews, News} from '@/models/News.ts';
 import {RoutingContext} from '@/components/providers/RoutingProvider.tsx';
 import {NoticingContext} from '@/components/providers/NoticingProvider.tsx';
 import {modelToDto} from '@/mappers/NewsMapper.ts';
 import {MyAutocompleteTextField} from '@/adapter/mui/MyAutocompleteTextField.tsx';
 import {searchSimilarTagNameList} from "@/client_io/TagIO.ts";
-import {buildEmptyFormData} from "@/clientings/news/NewsBase.tsx";
 
 interface NewsCreateProps {
   callbackRefresh?: () => void;
@@ -25,7 +24,7 @@ const NewsCreate: React.FC<NewsCreateProps> = ({
   const noticing = useContext(NoticingContext);
 
   // form
-  const [formData, setFormData] = useState<News>(buildEmptyFormData());
+  const [formData, setFormData] = useState<News>(buildEmptyNews());
 
   // operation - create
   const handleCreate = async () => {
@@ -48,7 +47,7 @@ const NewsCreate: React.FC<NewsCreateProps> = ({
     <MyModal title={'Add'}>
       <MyEditableForm
         initEditable={true}
-        initFormData={buildEmptyFormData()}
+        initFormData={buildEmptyNews()}
         onSetFormData={setFormData}
         onSave={handleCreate}>
         <MyTextField

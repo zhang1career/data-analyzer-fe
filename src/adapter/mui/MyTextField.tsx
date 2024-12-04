@@ -3,7 +3,7 @@
 import React, {useState} from "react";
 import MuiTextField from "@mui/material/TextField";
 import {ThemeProvider} from "@mui/material";
-import {outlinedTextFieldTheme} from "@/lookings/theme.ts";
+import {outlinedTextFieldTheme} from "@/lookings/themes/textFieldTheme.ts";
 import {EMPTY_STRING} from "@/consts/StrConst.ts";
 
 /**

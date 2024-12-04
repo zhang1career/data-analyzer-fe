@@ -1,16 +1,18 @@
 'use client';
 
 import React from 'react';
-import {Button} from '@mui/material';
+import {MyClickableProps} from "@/adapter/defines/MyClickableProps.tsx";
+import {PropertibleProps} from "@/defines/abilities/PropertibleProps.ts";
+import MyButton from "@/adapter/mui/MyButton.tsx";
+
 
 /**
- * Button component
- * @param text
+ * ButtonProps defines a button property.
+ * @param label
  * @param onClick
+ * @param props
  */
-interface ButtonProps {
-  text: string;
-  onClick: () => void;
+interface ButtonProps extends MyClickableProps, PropertibleProps {
 }
 
 /**
@@ -46,9 +48,17 @@ const MyReplaceButtons: React.FC<ReplaceButtonsProps> = ({
   return (
     <div>
       {showButtonA ? (
-        <Button variant="contained" onClick={handleButtonA}>{buttonA.text}</Button>
+        <MyButton
+          label={buttonA.label}
+          onClick={handleButtonA}
+          props={buttonA.props}
+        />
       ) : (
-        <Button variant="contained" onClick={handleButtonB}>{buttonB.text}</Button>
+        <MyButton
+          label={buttonB.label}
+          onClick={handleButtonB}
+          props={buttonB.props}
+        />
       )}
     </div>
   );

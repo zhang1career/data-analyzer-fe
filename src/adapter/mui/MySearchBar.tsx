@@ -1,9 +1,11 @@
-import React, {Dispatch, SetStateAction, useEffect, useState} from 'react';
+import React, {Children, Dispatch, FC, ReactElement, SetStateAction, useEffect, useState} from 'react';
 import {Button, Stack, Toolbar} from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import {handleNamedInputChange} from "@/adapter/base/MyNamedInput.ts";
+import {MyAssembleProps} from "@/adapter/defines/MyAssembleProps.ts";
 
-interface SearchBarProps<T> {
+
+interface SearchBarProps<T> extends MyAssembleProps {
   onSetFormData: Dispatch<SetStateAction<T>>;
   onSubmit?: () => void;
   label?: string;
@@ -22,15 +24,15 @@ interface SearchBarProps<T> {
  * @param children
  * @constructor
  */
-const MySearchBar: React.FC<SearchBarProps<any>> = <T, >({
-                                                           onSetFormData,
-                                                           onSubmit = () => {
-                                                             console.warn('SearchBarProps.onSubmit is not set');
-                                                           },
-                                                           label = '',
-                                                           isAutoSubmit = false,
-                                                           children
-                                                         }: SearchBarProps<T>) => {
+const MySearchBar: FC<SearchBarProps<any>> = <T, >({
+                                                     onSetFormData,
+                                                     onSubmit = () => {
+                                                       console.warn('SearchBarProps.onSubmit is not set');
+                                                     },
+                                                     label = '',
+                                                     isAutoSubmit = false,
+                                                     children
+                                                   }: SearchBarProps<T>) => {
   // onChange version, initial null
   const [onChangeAt, setOnChangeAt] = useState<number | null>(null);
 
@@ -51,8 +53,8 @@ const MySearchBar: React.FC<SearchBarProps<any>> = <T, >({
   return (
     <Toolbar>
       <Stack direction="row" spacing={0.2}>
-        {React.Children.map(children, (child) => {
-          return React.cloneElement(child as React.ReactElement, {onChange: handleChange});
+        {Children.map(children, (child) => {
+          return React.cloneElement(child as ReactElement, {onChange: handleChange});
         })}
       </Stack>
       {!isAutoSubmit && (

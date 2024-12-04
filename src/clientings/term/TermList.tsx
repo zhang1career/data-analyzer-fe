@@ -149,8 +149,13 @@ const TermList: React.FC = () => {
         {selectedItem && (
           <TermDetail
             item={selectedItem}
-            callbackRefresh={refreshSearch}>
-            <TermRelation item={selectedItem} onDetail={handleDetail} key={activeItemAt}/>
+            callbackRefresh={refreshSearch}
+          >
+            <TermRelation
+              item={selectedItem}
+              onDetailNode={handleDetail}
+              key={activeItemAt}
+            />
           </TermDetail>
         )}
       </Grid2>

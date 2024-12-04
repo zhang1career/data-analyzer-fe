@@ -1,42 +1,64 @@
 'use client';
 
 import React, {useContext, useEffect, useState} from "react";
-import {Checkbox} from "@mui/material";
 import MyDropdownList from "@/adapter/mui/MyDropdownList.tsx";
 import MySearchBar from "@/adapter/mui/MySearchBar.tsx";
-import MyTextField from "@/adapter/mui/MyTextField.tsx";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
 import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
 import {ObjMap} from "@/components/helpers/ObjMap.ts";
 import TermRelation from "@/clientings/term/TermRelation.tsx";
-import {buildEmptyFormData} from "@/clientings/news/NewsBase.tsx";
 import {getTerm, searchTermGraph} from "@/client_io/TermIO.ts";
 import {parseTag} from "@/client_io/TagIO.ts";
-import {createThinking} from "@/client_io/ThinkingIO.ts";
 import {getMiscDict} from "@/client_io/MiscIO.ts";
 import {voToModel} from "@/mappers/TermGraphMapper.ts";
-import {graphVectorVoToMapBatch} from "@/mappers/GraphMapper.ts";
+import {speechVectorVoToMapBatch} from "@/mappers/SpeechMapper.ts";
 import {parseResultVoToTermMretOptBatch} from "@/mappers/TagMapper.ts";
-import {modelToDto} from "@/mappers/ThinkingMapper.ts";
-import {News} from "@/models/News.ts";
+import {buildEmptyNews, News} from "@/models/News.ts";
 import {TermGraph} from "@/models/Term.ts";
 import {Thinking} from "@/models/Thinking.ts";
-import {GraphVectorType} from "@/pojo/map/GraphVectorMap.ts";
 import {TermMretOpt} from "@/pojo/opt/TermMretOpt.ts";
 import {buildEmptySearchTermGraphQo, SearchTermGraphQo} from "@/pojo/qo/TermQo.ts";
 import {buildEmptyParseTagQo, ParseTagQo} from "@/pojo/qo/TagQo.ts";
-import {newTermVo, TermVo} from "@/pojo/vo/TermVo.ts";
-import {GraphVectorVo, GraphVo} from "@/pojo/vo/GraphVo.ts";
-import {ThinkingResultVo} from "@/pojo/vo/ThinkingVo.ts";
+import {TermVo} from "@/pojo/vo/TermVo.ts";
+import {GraphNodeVo, SpeechVectorVo, SpeechVo} from "@/pojo/vo/SpeechVo.ts";
 import {TEXTBOX_WIDTH_MIN_PX} from "@/lookings/size.ts";
+import ThinkingCreate from "@/clientings/thinking/ThinkingCreate.tsx";
+import {DICT_SPEECH_VECTOR} from "@/consts/Misc.ts";
+import {SpeechVector} from "@/models/SpeechVector.ts";
+import {GraphPath} from "@/models/GraphPath.ts";
+import MyStepper from "@/adapter/mui/MyStepper.tsx";
+import {COLOR} from "@/lookings/color.ts";
 
 
 interface NewsAuditProps {
   formData?: News;
 }
 
+function buildTerm(searchTermGraphQo: SearchTermGraphQo, graphNodeVoList: GraphNodeVo[]): TermVo {
+  // prepare data
+  // name
+  const name = searchTermGraphQo['name'];
+  // id
+  let id = 0;
+  for (const graphNodeVo of graphNodeVoList) {
+    if (graphNodeVo.l === name) {
+      id = graphNodeVo.id;
+      break;
+    }
+  }
+
+  return {
+    id: id,
+    name: name,
+    content: '',
+    src_term: new Map(),
+    dest_term: new Map(),
+    r: new Map(),
+  };
+}
+
 const NewsAudit: React.FC<NewsAuditProps> = ({
-                                               formData = buildEmptyFormData()
+                                               formData = buildEmptyNews()
                                              }) => {
   // context
   const routing = useContext(RoutingContext);
@@ -44,24 +66,22 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
 
   // prepare data
   // graph vector map
-  const [graphVectorMap, setGraphVectorMap] = useState<ObjMap<GraphVectorType, string>>(new ObjMap());
+  const [speechVectorMap, setSpeechVectorMap] = useState<ObjMap<SpeechVector, string>>(new ObjMap());
 
   useEffect(() => {
     const miscDictPromise = getMiscDict(
       routing,
-      ['graph_vector'],
+      [DICT_SPEECH_VECTOR],
       {});
     miscDictPromise.then((miscDict) => {
-      const graphVectorVoList = miscDict['graph_vector'] as GraphVectorVo[];
-      setGraphVectorMap(graphVectorVoToMapBatch(graphVectorVoList));
+      const speechVectorVoList = miscDict[DICT_SPEECH_VECTOR] as SpeechVectorVo[];
+      setSpeechVectorMap(speechVectorVoToMapBatch(speechVectorVoList));
     });
   }, []);
 
   // query param
   const [parseTagQo, setParseTagQo] = useState<ParseTagQo>(buildEmptyParseTagQo());
-
   const [termMretOpts, setTermMretOpts] = useState<TermMretOpt[] | null>(null);
-
   const [searchTermGraphQo, setSearchTermGraphQo] = useState<SearchTermGraphQo>(buildEmptySearchTermGraphQo());
 
   // data mapping
@@ -69,7 +89,6 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
     if (!termMretOpts) {
       return;
     }
-
     // when name is selected, set the term and mret to the search qo
     let term = '';
     let mret: string | undefined = undefined;
@@ -108,6 +127,7 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
     setActiveAuditAt(Date.now());
   }
 
+  // function
   // parse tag
   const handleParseTag = async () => {
     if (!parseTagQo['tags']) {
@@ -126,12 +146,11 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
 
   const handleSearchTermGraph = async () => {
     console.log('[news][audit] search term graph', searchTermGraphQo, thinking);
-    const termVo = newTermVo(searchTermGraphQo['name']);
     const termGraphVo = await searchTermGraph(
       routing,
       searchTermGraphQo['name'],
-      searchTermGraphQo['relation_type']) as GraphVo;
-    setSelectedTerm(termVo);
+      searchTermGraphQo['relation_type']) as SpeechVo;
+    setSelectedTerm(buildTerm(searchTermGraphQo, termGraphVo.nodes));
     setTermGraph(voToModel(termGraphVo));
     refreshRelation();
   }
@@ -152,41 +171,77 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
     }
   }
 
+  // operation - travel path
+  const [graphPathMap, setGraphPathMap] = useState<Map<string, GraphPath> | null>(null);
+
+  function handleSetTravelPath(graphPath: GraphPath) {
+    console.debug('[news][audit][path] Set travel path:', graphPath);
+    if (!graphPathMap) {
+      setGraphPathMap(new Map([[graphPath.id, graphPath]]));
+      return;
+    }
+    setGraphPathMap((prevMap) => {
+      const newMap = new Map(prevMap);
+      newMap.set(graphPath.id, graphPath);
+      return newMap;
+    });
+  }
+
+  useEffect(() => {
+    console.info('[news][audit][vector] param:', graphPathMap);
+
+    const len = graphPathMap?.size;
+    if (!len || len <= 1) {
+      console.info('[news][audit][vector][skip] No path to think.');
+      return;
+    }
+
+    let attrPath: GraphPath | undefined;
+    let predPath: GraphPath | undefined;
+    for (const [_path_id, _path] of graphPathMap) {
+      if (!attrPath) {
+        attrPath = _path;
+        continue;
+      }
+      if (!predPath) {
+        predPath = _path;
+        break;
+      }
+    }
+    if (!attrPath || !predPath) {
+      console.info('[news][audit][vector][skip] Invalid path to think.');
+      return;
+    }
+
+    console.info('[news][audit][vector] setThinking:', attrPath, predPath);
+    setThinking({
+      ...thinking,
+      attribute: attrPath.label,
+      isAttrReverse: attrPath.isReverse,
+      predicate: predPath.label,
+      isPredReverse: predPath.isReverse,
+    });
+  }, [graphPathMap]);
+
   // build thinking
   const [thinking, setThinking] = useState<Thinking | null>(null);
 
-  // create thinking
-  const [thinkingResult, setThinkingResult] = useState<ThinkingResultVo | null>(null);
-
-  // operation - create
-  const handleCreateThinking = async () => {
-    if (!thinking) {
-      throw new Error('[news][audit] No thinking form specified.');
-    }
-    const thinkingDto = modelToDto(thinking, graphVectorMap);
-    console.info('[thinking][create] param', thinkingDto);
-    const thinkingResultObj = await createThinking(
-      routing,
-      thinkingDto);
-    if (!thinkingResultObj) {
-      throw new Error('[news][audit] No thinking result returned.');
-    }
-    Object.entries(thinkingResultObj).forEach(([key, value]) => {
-      setThinkingResult(value);
-    });
-    // notice
-    noticing('Thinking created!', {
-      severity: 'success',
-      autoHideDuration: 3000,
-    });
+  // stepper
+  const stepperProps = {
+    sx: {backgroundColor: COLOR.light_yellow},
   };
 
   return (
-    <div>
+    <MyStepper
+      props={stepperProps}
+    >
       <MySearchBar
+        label={'choose subject'}
         onSetFormData={setParseTagQo}
         onSubmit={handleParseTag}
-        isAutoSubmit={true}>
+        isAutoSubmit={true}
+        isNextEnabled={!!termMretOpts}
+      >
         <MyDropdownList
           id={'subject_tag'}
           label={'tag_subject_tag'}
@@ -197,82 +252,46 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
         />
       </MySearchBar>
 
-      {termMretOpts && (
-        <MySearchBar
-          onSetFormData={setSearchTermGraphQo}
-          onSubmit={handleSearchTermGraph}>
-
-          <MyDropdownList
-            id={'term_mret'}
-            label={'term_mret'}
-            name={'term_mret'}
-            value={searchTermGraphQo['term_mret']}
-            options={termMretOpts}
-          />
-
-          <MyDropdownList
-            id={'relation_type'}
-            label={'relation_type'}
-            name={'relation_type'}
-            value={searchTermGraphQo['relation_type']}
-            options={formData['tags']}
-          />
-        </MySearchBar>
-      )}
-
-      {termGraph && (
-        <TermRelation
-          item={selectedTerm}
-          graph={termGraph}
-          onDetail={handleDetail}
-          key={activeAuditAt}
+      <MySearchBar
+        label={'choose term-mret and predicate'}
+        onSetFormData={setSearchTermGraphQo}
+        onSubmit={handleSearchTermGraph}
+        isNextEnabled={!!termGraph}
+      >
+        <MyDropdownList
+          id={'term_mret'}
+          label={'term_mret'}
+          name={'term_mret'}
+          value={searchTermGraphQo['term_mret']}
+          options={termMretOpts}
         />
-      )}
+        <MyDropdownList
+          id={'relation_type'}
+          label={'relation_type'}
+          name={'relation_type'}
+          value={searchTermGraphQo['relation_type']}
+          options={formData['tags']}
+        />
+      </MySearchBar>
 
-      {termGraph && thinking && (
-        <MySearchBar
-          onSetFormData={setThinking}
-          onSubmit={handleCreateThinking}>
+      <TermRelation
+        label={'review graph'}
+        item={selectedTerm}
+        graph={termGraph}
+        onDetailNode={handleDetail}
+        onTravelPath={handleSetTravelPath}
+        isNextEnabled={!!termGraph}
+        key={activeAuditAt}
+      />
 
-          <MyTextField
-            id={'attribute'}
-            label={'attribute'}
-            name={'attribute'}
-            value={thinking['attribute']}
-            isEditable={true}
-          />
-          <Checkbox
-            id={'isAttrReverse'}
-            name={'isAttrReverse'}
-            checked={thinking['isAttrReverse']}
-          />
-          <MyTextField
-            id={'predicate'}
-            label={'predicate'}
-            name={'predicate'}
-            value={thinking['predicate']}
-            isEditable={true}
-          />
-          <Checkbox
-            id={'isPredReverse'}
-            name={'isPredReverse'}
-            checked={thinking['isPredReverse']}
-          />
-        </MySearchBar>
-      )}
-
-      {thinkingResult && (
-        <div>
-          <p>news_id: {thinkingResult.news_id}</p>
-          <p>content: {thinkingResult.content}</p>
-          <p>refer: {JSON.stringify(thinkingResult.refer)}</p>
-          <p>recover_tag: {thinkingResult.recover_tag}</p>
-          <p>thinking: {thinkingResult.thinking}</p>
-          <p>trace: {JSON.stringify(thinkingResult.trace)}</p>
-          <p>score: {thinkingResult.score}</p>
-        </div>
-      )}
-    </div>
+      <ThinkingCreate
+        label={'thinking'}
+        formData={thinking}
+        onSetFormData={setThinking}
+        speechVectorMap={speechVectorMap}
+        isNextEnabled={true}
+      />
+    </MyStepper>
   );
 }
 

@@ -19,3 +19,11 @@ export const GREY = {
   800: '#303740',
   900: '#1C2025',
 };
+
+export const COLOR = {
+  'white': '#FFFFFF',
+  'light_yellow': '#FFF2CC',
+  'yellow': '#FFBF00',
+  'purple': '#7E57C2',
+  'blue': '#3F51B5',
+};

@@ -1,13 +1,13 @@
 import {MenuItem, Select, SelectChangeEvent} from "@mui/material";
 import React from "react";
 import {BaseSelectProps} from "@mui/material/Select/Select";
-import {checkLabeledValue, MyLabeledValue} from "@/adapter/base/MyLabeledValue.ts";
+import {checkLabeledValue, MyLabeledValueProps} from "@/adapter/defines/MyLabeledValueProps.ts";
 
 
 interface DropdownListProps<Value> extends BaseSelectProps<Value> {
   // Custom props
   name?: string,
-  options?: string[] | MyLabeledValue[],
+  options?: string[] | MyLabeledValueProps[] | null,
   // Mui props
   id: string,
   label: string,
@@ -29,13 +29,9 @@ const MyDropdownList: React.FC<DropdownListProps<string>> = ({
         {...rest}
         value={value}
         onChange={onChange}
-        variant={'outlined'}>
-        {/*{options.map((option) => (*/}
-        {/*  <MenuItem key={option} value={option}>*/}
-        {/*    {option}*/}
-        {/*  </MenuItem>*/}
-        {/*))}*/}
-        {options.map((option, index) => {
+        variant={'outlined'}
+      >
+        {options && options.map((option, index) => {
             const isLabeledValue = checkLabeledValue(option);
             return (
               <MenuItem key={index} value={isLabeledValue ? option.value : option}>

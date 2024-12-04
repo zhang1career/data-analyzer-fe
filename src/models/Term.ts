@@ -5,10 +5,10 @@ export interface Term {
   relation: TermRelation[];
 }
 
-export function newTerm(name: string): Term {
+export function buildEmptyTerm(): Term {
   return {
     id: 0,
-    name: name,
+    name: '',
     content: '',
     relation: [],
   };

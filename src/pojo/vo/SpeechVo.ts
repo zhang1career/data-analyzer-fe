@@ -1,4 +1,4 @@
-export interface GraphVo {
+export interface SpeechVo {
   nodes: GraphNodeVo[];
   edges: GraphEdgeVo[];
 }
@@ -25,7 +25,7 @@ export interface GraphEdgeVo {
  *   v: prompt
  *   c: cancelable
  */
-export interface GraphVectorVo {
+export interface SpeechVectorVo {
   a: string;
   ad: boolean;
   p: string;

@@ -1,16 +1,17 @@
 import {Thinking} from "@/models/Thinking.ts";
 import {ThinkingDto} from "@/pojo/dto/ThinkingDto.ts";
-import {GraphVectorKey, GraphVectorType} from "@/pojo/map/GraphVectorMap.ts";
+import {SpeechVectorKey} from "@/pojo/map/SpeechVectorMap.ts";
 import {ObjMap} from "@/components/helpers/ObjMap.ts";
+import {SpeechVector} from "@/models/SpeechVector.ts";
 
 
-export function modelToDto(m: Thinking, graphVectorMap: ObjMap<GraphVectorType, string>): ThinkingDto {
-  const k = new GraphVectorKey(m.attribute, m.isAttrReverse, m.predicate, m.isPredReverse);
-  console.log('Graph vector map:', k, graphVectorMap);
-  if (!graphVectorMap.has(k)) {
-    throw new Error('Graph vector not found: ' + k.toString());
+export function modelToDto(m: Thinking, speechVectorMap: ObjMap<SpeechVector, string>): ThinkingDto {
+  const k = new SpeechVectorKey(m.attribute, m.isAttrReverse, m.predicate, m.isPredReverse);
+  console.log('Speech vector map:', k, speechVectorMap);
+  if (!speechVectorMap.has(k)) {
+    throw new Error('Speech vector not found: ' + k.toString());
   }
-  const thinking = graphVectorMap.get(k) || '';
+  const thinking = speechVectorMap.get(k) || '';
 
   // base info
   const dto: ThinkingDto = {
@@ -20,7 +21,7 @@ export function modelToDto(m: Thinking, graphVectorMap: ObjMap<GraphVectorType, 
   };
   // further thinking
   if (m.further) {
-    dto.further = m.further.map((f) => modelToDto(f, graphVectorMap));
+    dto.further = m.further.map((f) => modelToDto(f, speechVectorMap));
   }
 
   return dto;

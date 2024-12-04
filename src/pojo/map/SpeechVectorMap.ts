@@ -1,15 +1,7 @@
 import {Stringable} from "@/components/helpers/ObjMap.ts";
+import {SpeechVector} from "@/models/SpeechVector.ts";
 
-export type GraphVectorMap = Map<GraphVectorType, string>;
-
-export interface GraphVectorType {
-  attribute: string;
-  isAttrReverse: boolean;
-  predicate: string;
-  isPredReverse: boolean;
-}
-
-export class GraphVectorKey implements GraphVectorType, Stringable {
+export class SpeechVectorKey implements SpeechVector, Stringable {
   attribute: string;
   isAttrReverse: boolean;
   predicate: string;
@@ -26,6 +18,6 @@ export class GraphVectorKey implements GraphVectorType, Stringable {
   }
 
   toString() {
-    return `GraphVectorKey(${this.attribute}, ${this.isAttrReverse}, ${this.predicate}, ${this.isPredReverse})`;
+    return `SpeechVectorKey(${this.attribute}, ${this.isAttrReverse}, ${this.predicate}, ${this.isPredReverse})`;
   }
 }

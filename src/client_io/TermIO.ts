@@ -5,7 +5,7 @@ import {Term} from "@/models/Term.ts";
 import {TermVo} from "@/pojo/vo/TermVo.ts";
 import {getValueSafely} from "@/utils/ObjUtil.ts";
 import {EMPTY_STRING} from "@/consts/StrConst.ts";
-import {GraphVo} from "@/pojo/vo/GraphVo.ts";
+import {SpeechVo} from "@/pojo/vo/SpeechVo.ts";
 
 
 export async function searchTermPage(context: MyRouting,
@@ -79,7 +79,7 @@ export async function deleteTerm(context: MyRouting,
 
 export async function searchTermGraph(context: MyRouting,
                                       termName: string,
-                                      relation_type: string): Promise<GraphVo> {
+                                      relation_type: string): Promise<SpeechVo> {
   return await requestApiHub(
     {
       method: 'GET',
@@ -89,5 +89,5 @@ export async function searchTermGraph(context: MyRouting,
         relation_type: relation_type
       },
       context: context
-    }) as Promise<GraphVo>;
+    }) as Promise<SpeechVo>;
 }

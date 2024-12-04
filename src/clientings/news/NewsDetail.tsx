@@ -4,18 +4,18 @@ import React, {useContext, useEffect, useState} from "react";
 import MyEditableForm from "@/adapter/mui/MyEditableForm.tsx";
 import MyTextField from "@/adapter/mui/MyTextField.tsx";
 import {updateNews} from "@/client_io/NewsIO.ts";
-import {News} from "@/models/News.ts";
+import {buildEmptyNews, News} from "@/models/News.ts";
 import {NewsVo} from "@/pojo/vo/NewsVo.ts";
 import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
 import {modelToDto, voToModel} from "@/mappers/NewsMapper.ts";
 import {searchSimilarTagNameList} from "@/client_io/TagIO.ts";
 import {MyAutocompleteTextField} from "@/adapter/mui/MyAutocompleteTextField.tsx";
+import {DerivableProps} from "@/defines/abilities/DerivableProps.ts";
 
-interface NewsDetailProps {
+interface NewsDetailProps extends DerivableProps {
   item: NewsVo;
   callbackRefresh?: () => void;
-  children?: React.ReactNode;
 }
 
 /**
@@ -35,7 +35,7 @@ const NewsDetail: React.FC<NewsDetailProps> = ({
   const noticing = useContext(NoticingContext);
 
   // form
-  const [formData, setFormData] = useState<News>(buildEmptyFormData());
+  const [formData, setFormData] = useState<News>(buildEmptyNews());
 
   // editable form refreshment
   const [activeEditableFormAt, setActiveEditableFormAt] = useState<number>(Date.now());
@@ -68,6 +68,7 @@ const NewsDetail: React.FC<NewsDetailProps> = ({
       <MyEditableForm
         onSetFormData={setFormData}
         onSave={handleSave}
+        isVerbose={true}
         sxButton={{ml: 'auto'}}
         key={activeEditableFormAt}>
         <MyTextField
@@ -121,16 +122,6 @@ const NewsDetail: React.FC<NewsDetailProps> = ({
       })}
     </>
   );
-}
-
-function buildEmptyFormData(): News {
-  return {
-    id: 0,
-    content: '',
-    url: '',
-    published_at: '',
-    tags: [],
-  }
 }
 
 export default NewsDetail;

@@ -1,7 +1,22 @@
 import {DependencyList, useEffect, useState} from "react";
 
-export function useDelayEffect(callback: () => void, dependencies: DependencyList, timeoutInSeconds: number = 500) {
+export function useDelayEffect(callback: () => void,
+                               dependencies: DependencyList,
+                               timeoutInSeconds: number = 500) {
   useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      callback();
+    }, timeoutInSeconds);
+    return () => clearTimeout(timeoutId);
+  }, dependencies);
+}
+
+export function useDelayRSEffect(preCallback: () => void,
+                                 callback: () => void,
+                                 dependencies: DependencyList,
+                                 timeoutInSeconds: number = 500) {
+  useEffect(() => {
+    preCallback();
     const timeoutId = setTimeout(() => {
       callback();
     }, timeoutInSeconds);
@@ -20,5 +35,7 @@ export function ExpirableState<T>(expireInSeconds: number): [() => T | undefined
     return () => clearTimeout(timeoutId);
   }, [data]);
 
-  return [(() => {return data;}), setData] as const;
+  return [(() => {
+    return data;
+  }), setData] as const;
 }

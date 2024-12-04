@@ -1,4 +1,4 @@
-import {GraphEdgeVo} from "@/pojo/vo/GraphVo.ts";
+import {GraphEdgeVo} from "@/pojo/vo/SpeechVo.ts";
 
 export interface TermVo {
   id: number;
@@ -7,15 +7,4 @@ export interface TermVo {
   src_term: Map<string, TermVo>;
   dest_term: Map<string, TermVo>;
   r: Map<string, GraphEdgeVo>;
-}
-
-export function newTermVo(name: string): TermVo {
-  return {
-    id: 0,
-    name: name,
-    content: "",
-    src_term: new Map<string, TermVo>(),
-    dest_term: new Map<string, TermVo>(),
-    r: new Map<string, GraphEdgeVo>(),
-  };
 }
