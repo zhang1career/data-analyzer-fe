@@ -166,6 +166,7 @@ const TermRelation: FC<TermRelationProps> = ({
   const [error, setError] = useState(false);
 
   useDelayEffect(() => {
+    console.log('asdf......')
     setError(false);
   }, [error]);
 

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import {MyClickableProps} from "@/adapter/defines/MyClickableProps.tsx";
+import {MyClickableProps} from "@/adapter/defines/MyClickableProps.ts";
 import {PropertibleProps} from "@/defines/abilities/PropertibleProps.ts";
 import MyButton from "@/adapter/mui/MyButton.tsx";
 
@@ -51,13 +51,13 @@ const MyReplaceButtons: React.FC<ReplaceButtonsProps> = ({
         <MyButton
           label={buttonA.label}
           onClick={handleButtonA}
-          props={buttonA.props}
+          {...buttonA.props}
         />
       ) : (
         <MyButton
           label={buttonB.label}
           onClick={handleButtonB}
-          props={buttonB.props}
+          {...buttonB.props}
         />
       )}
     </div>

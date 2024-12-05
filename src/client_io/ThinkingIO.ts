@@ -1,7 +1,7 @@
 import {MyRouting} from "@/adapter/next/MyRouting.ts";
 import requestApiHub from "@/client_io/ApiHubIO.tsx";
 import {ThinkingDto} from "@/pojo/dto/ThinkingDto.ts";
-import {ThinkingResultVo} from "@/pojo/vo/ThinkingVo.ts";
+import {ThinkingResultVo} from "@/pojo/vo/ThinkingResultVo.ts";
 
 
 export async function createThinking(context: MyRouting,

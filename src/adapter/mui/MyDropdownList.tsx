@@ -1,47 +1,48 @@
-import {MenuItem, Select, SelectChangeEvent} from "@mui/material";
-import React from "react";
-import {BaseSelectProps} from "@mui/material/Select/Select";
-import {checkLabeledValue, MyLabeledValueProps} from "@/adapter/defines/MyLabeledValueProps.ts";
+import Box from '@mui/material/Box';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import {checkLabeledValue} from "@/defines/combines/LabeledValueProps.ts";
+import {MyOptionableProps} from "@/adapter/defines/MyOptionalbeProps.ts";
 
 
-interface DropdownListProps<Value> extends BaseSelectProps<Value> {
-  // Custom props
-  name?: string,
-  options?: string[] | MyLabeledValueProps[] | null,
-  // Mui props
-  id: string,
-  label: string,
-  onChange?: (value: SelectChangeEvent<Value>, child: React.ReactNode) => void,
-  value?: Value | ''
+interface DropdownListProps<Value> extends MyOptionableProps<Value> {
 }
 
 const MyDropdownList: React.FC<DropdownListProps<string>> = ({
+                                                               id,
+                                                               label,
+                                                               value = '',
                                                                options = [],
                                                                onChange = () => {
                                                                  console.warn('[adaptr][dropdown] onChange is not implemented');
                                                                },
-                                                               value = '',
+                                                               sx,
                                                                ...rest
                                                              }) => {
   return (
-    <div>
-      <Select
-        {...rest}
-        value={value}
-        onChange={onChange}
-        variant={'outlined'}
-      >
-        {options && options.map((option, index) => {
-            const isLabeledValue = checkLabeledValue(option);
-            return (
-              <MenuItem key={index} value={isLabeledValue ? option.value : option}>
-                {isLabeledValue ? option.label : option}
-              </MenuItem>
-            );
-          }
-        )}
-      </Select>
-    </div>
+    <Box sx={sx}>
+      <FormControl fullWidth>
+        <InputLabel>{label}</InputLabel>
+        <Select
+          {...rest}
+          value={value}
+          onChange={onChange}
+          variant={'outlined'}
+        >
+          {options && options.map((option, index) => {
+              const isLabeledValue = checkLabeledValue(option);
+              return (
+                <MenuItem key={index} value={isLabeledValue ? option.value : option}>
+                  {isLabeledValue ? option.label : option}
+                </MenuItem>
+              );
+            }
+          )}
+        </Select>
+      </FormControl>
+    </Box>
   );
 };
 

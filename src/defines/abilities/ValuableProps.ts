@@ -1,3 +1,3 @@
-export interface ValuableProps {
-  value?: string;
+export interface ValuableProps<Value> {
+  value?: Value | '';
 }

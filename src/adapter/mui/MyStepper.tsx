@@ -9,10 +9,10 @@ import StepContent from "@mui/material/StepContent";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import {MyAssembleProps} from "@/adapter/defines/MyAssembleProps.ts";
-import {PropertibleProps} from "@/defines/abilities/PropertibleProps.ts";
+import {ComponentProps} from "@/defines/combines/ComponentProps.ts";
 
 
-interface StepperProps extends PropertibleProps {
+interface StepperProps extends ComponentProps {
   finishText?: string;
   isResetable?: boolean;
   children: ReactElement<MyAssembleProps>[];
@@ -21,8 +21,8 @@ interface StepperProps extends PropertibleProps {
 const MyStepper: FC<StepperProps> = ({
                                        finishText = 'All steps completed - you\'re finished',
                                        isResetable = false,
-                                       props,
-                                       children
+                                       children,
+                                       ...rest
                                      }) => {
   const [activeStep, setActiveStep] = React.useState(0);
   const [canProceed, setCanProceed] = useState<boolean>(true);
@@ -59,10 +59,10 @@ const MyStepper: FC<StepperProps> = ({
       <Stepper
         activeStep={activeStep}
         orientation="vertical"
-        {...props}
+        {...rest}
       >
         {children.map((child, index) => (
-          <Step key={child.props.label ? child.props.label : index}>
+          <Step key={child.props.title ? child.props.title : index}>
             <StepLabel
               optional={
                 index === children.length - 1 ? (
@@ -70,7 +70,7 @@ const MyStepper: FC<StepperProps> = ({
                 ) : null
               }
             >
-              {child.props.label}
+              {child.props.title}
             </StepLabel>
 
             <StepContent>

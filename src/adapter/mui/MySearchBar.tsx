@@ -1,35 +1,33 @@
 import React, {Children, Dispatch, FC, ReactElement, SetStateAction, useEffect, useState} from 'react';
 import {Button, Stack, Toolbar} from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import {handleNamedInputChange} from "@/adapter/base/MyNamedInput.ts";
+import {handleNamedValueInputChange} from "@/adapter/base/MyNamedValueInput.ts";
 import {MyAssembleProps} from "@/adapter/defines/MyAssembleProps.ts";
+import {MyClickableProps} from "@/adapter/defines/MyClickableProps.ts";
+import {ComponentProps} from "@/defines/combines/ComponentProps.ts";
 
 
-interface SearchBarProps<T> extends MyAssembleProps {
+interface SearchBarProps<T> extends MyAssembleProps, MyClickableProps, ComponentProps {
   onSetFormData: Dispatch<SetStateAction<T>>;
-  onSubmit?: () => void;
-  label?: string;
   isAutoSubmit?: boolean;
-  children?: React.ReactNode;
 }
 
 /**
  * SearchBarProps
  * When isAutoSubmit is true, the search button will be hidden, and the search will be triggered automatically when any of the input fields changes.
- *
- * @param onSetFormData
- * @param onSubmit
  * @param label
+ * @param onSetFormData
+ * @param onClick
  * @param isAutoSubmit
  * @param children
  * @constructor
  */
 const MySearchBar: FC<SearchBarProps<any>> = <T, >({
+                                                     label = 'Search',
                                                      onSetFormData,
-                                                     onSubmit = () => {
+                                                     onClick: onClick = () => {
                                                        console.warn('SearchBarProps.onSubmit is not set');
                                                      },
-                                                     label = '',
                                                      isAutoSubmit = false,
                                                      children
                                                    }: SearchBarProps<T>) => {
@@ -38,7 +36,7 @@ const MySearchBar: FC<SearchBarProps<any>> = <T, >({
 
   // wrap the input change event with named_input
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    handleNamedInputChange<T>(event, onSetFormData);
+    handleNamedValueInputChange<T>(event, onSetFormData);
     setOnChangeAt(Date.now());
   };
 
@@ -46,7 +44,7 @@ const MySearchBar: FC<SearchBarProps<any>> = <T, >({
   useEffect(() => {
     // if auto submit and changed
     if (isAutoSubmit && onChangeAt !== null) {
-      onSubmit();
+      onClick();
     }
   }, [onChangeAt]);
 
@@ -60,7 +58,7 @@ const MySearchBar: FC<SearchBarProps<any>> = <T, >({
       {!isAutoSubmit && (
         <Button
           startIcon={<SearchIcon/>}
-          onClick={onSubmit}
+          onClick={onClick}
         >
           {label}
         </Button>

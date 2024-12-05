@@ -1,0 +1,1 @@
+export type ThinkingResultNewsTitleMap = Map<number, Set<string>>;

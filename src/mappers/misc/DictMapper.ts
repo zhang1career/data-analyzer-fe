@@ -1,8 +1,9 @@
 import {DictVo} from "@/pojo/vo/misc/DictVo.ts";
-import {MyLabeledValueProps} from "@/adapter/defines/MyLabeledValueProps.ts";
 
-export function dictVoToOptBatch(vos: DictVo[]): MyLabeledValueProps[] {
-  const retList: MyLabeledValueProps[] = [];
+import {LabeledValueProps} from "@/defines/combines/LabeledValueProps.ts";
+
+export function dictVoToOptBatch(vos: DictVo[]): LabeledValueProps[] {
+  const retList: LabeledValueProps[] = [];
   vos.forEach(vo => {
     retList.push({
       label: vo.k,

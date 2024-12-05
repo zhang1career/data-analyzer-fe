@@ -1,6 +1,6 @@
-import {MyLabeledValueProps} from "@/adapter/defines/MyLabeledValueProps.ts";
+import {LabeledValueProps} from "@/defines/combines/LabeledValueProps.ts";
 
-export interface TermMretOpt extends MyLabeledValueProps {
+export interface TermMretOpt extends LabeledValueProps<string> {
   // Custom props
   term: string;
   mret?: string;

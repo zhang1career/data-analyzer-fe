@@ -1,36 +1,44 @@
 'use client';
 
 import React, {FC, useContext, useEffect, useState} from 'react';
-import {Checkbox} from "@mui/material";
+import {Checkbox, List, ListItem} from "@mui/material";
 import {RoutingContext} from '@/components/providers/RoutingProvider.tsx';
 import {NoticingContext} from '@/components/providers/NoticingProvider.tsx';
 import MySearchBar from "@/adapter/mui/MySearchBar.tsx";
 import {createThinking} from "@/client_io/ThinkingIO.ts";
 import {Thinking} from "@/models/Thinking.ts";
 import {modelToDto} from "@/mappers/ThinkingMapper.ts";
-import {ThinkingResultVo} from "@/pojo/vo/ThinkingVo.ts";
 import {ObjMap} from "@/components/helpers/ObjMap.ts";
 import {getMiscDict} from "@/client_io/MiscIO.ts";
 import {DictVo} from "@/pojo/vo/misc/DictVo.ts";
 import {dictVoToOptBatch} from "@/mappers/misc/DictMapper.ts";
-import {MyLabeledValueProps} from "@/adapter/defines/MyLabeledValueProps.ts";
 import MyDropdownList from "@/adapter/mui/MyDropdownList.tsx";
 import {DICT_SPEECH_ATTR, DICT_SPEECH_PRED} from "@/consts/Misc.ts";
-import {SpeechVector} from "@/models/SpeechVector.ts";
 import {MyAssembleProps} from "@/adapter/defines/MyAssembleProps.ts";
 import {EMPTY_STRING} from "@/consts/StrConst.ts";
+import {LabeledValueProps} from "@/defines/combines/LabeledValueProps.ts";
+import {TEXTBOX_WIDTH_MIN_PX} from "@/lookings/size.ts";
+import {SpeechVectorKey} from "@/pojo/map/SpeechVectorMap.ts";
+import {voToNewsTitleMap} from "@/mappers/ThinkingResultMapper.ts";
+import {ThinkingResultNewsTitleMap} from "@/models/ThinkingResult.ts";
+import {ThinkingResultVo} from "@/pojo/vo/ThinkingResultVo.ts";
+import Typography from "@mui/material/Typography";
 
 
 interface ThinkingCreateProps extends MyAssembleProps {
   formData: Thinking | null
   onSetFormData: (thinking: Thinking) => void
-  speechVectorMap?: ObjMap<SpeechVector, string>
+  speechVectorMap?: ObjMap<SpeechVectorKey, string>
+  onSetResultData?: (result: ThinkingResultNewsTitleMap) => void
 }
 
 const ThinkingCreate: FC<ThinkingCreateProps> = ({
                                                    formData,
                                                    onSetFormData,
-                                                   speechVectorMap = new ObjMap()
+                                                   speechVectorMap = new ObjMap(),
+                                                   onSetResultData = (result) => {
+                                                     console.warn('[thinking][create] No result data setter specified.');
+                                                   },
                                                  }) => {
   // context
   const routing = useContext(RoutingContext);
@@ -38,8 +46,8 @@ const ThinkingCreate: FC<ThinkingCreateProps> = ({
 
   // prepare data
   // graph vector map
-  const [attrOpts, setAttrOpts] = useState<MyLabeledValueProps[] | null>(null);
-  const [predOpts, setPredOpts] = useState<MyLabeledValueProps[] | null>(null);
+  const [attrOpts, setAttrOpts] = useState<LabeledValueProps<string>[] | null>(null);
+  const [predOpts, setPredOpts] = useState<LabeledValueProps<string>[] | null>(null);
 
   useEffect(() => {
     const miscDictPromise = getMiscDict(
@@ -57,7 +65,7 @@ const ThinkingCreate: FC<ThinkingCreateProps> = ({
   }, []);
 
   // thinking result
-  const [thinkingResult, setThinkingResult] = useState<ThinkingResultVo | null>(null);
+  const [thinkingResultObj, setThinkingResultObj] = useState<{ [key: string]: ThinkingResultVo } | null>(null);
 
   // operation - create
   const handleCreateThinking = async () => {
@@ -73,9 +81,9 @@ const ThinkingCreate: FC<ThinkingCreateProps> = ({
     if (!thinkingResultObj) {
       throw new Error('[news][audit] No thinking result returned.');
     }
-    Object.entries(thinkingResultObj).forEach(([_, value]) => {
-      setThinkingResult(value);
-    });
+    setThinkingResultObj(thinkingResultObj);
+    const newsTitleMap = voToNewsTitleMap(thinkingResultObj);
+    onSetResultData(newsTitleMap);
     // notice
     noticing('Thinking created!', {
       severity: 'success',
@@ -87,7 +95,7 @@ const ThinkingCreate: FC<ThinkingCreateProps> = ({
     <>
       <MySearchBar
         onSetFormData={onSetFormData}
-        onSubmit={handleCreateThinking}
+        onClick={handleCreateThinking}
       >
         <MyDropdownList
           id={'attribute'}
@@ -95,6 +103,7 @@ const ThinkingCreate: FC<ThinkingCreateProps> = ({
           name={'attribute'}
           value={formData ? formData['attribute'] : EMPTY_STRING}
           options={attrOpts}
+          sx={{width: TEXTBOX_WIDTH_MIN_PX}}
         />
         <Checkbox
           id={'isAttrReverse'}
@@ -107,6 +116,7 @@ const ThinkingCreate: FC<ThinkingCreateProps> = ({
           name={'predicate'}
           value={formData ? formData['predicate'] : EMPTY_STRING}
           options={predOpts}
+          sx={{width: TEXTBOX_WIDTH_MIN_PX}}
         />
         <Checkbox
           id={'isPredReverse'}
@@ -115,16 +125,21 @@ const ThinkingCreate: FC<ThinkingCreateProps> = ({
         />
       </MySearchBar>
 
-      {thinkingResult && (
-        <div>
-          <p>news_id: {thinkingResult.news_id}</p>
-          <p>content: {thinkingResult.content}</p>
-          <p>refer: {JSON.stringify(thinkingResult.refer)}</p>
-          <p>recover_tag: {thinkingResult.recover_tag}</p>
-          <p>thinking: {thinkingResult.thinking}</p>
-          <p>trace: {JSON.stringify(thinkingResult.trace)}</p>
-          <p>score: {thinkingResult.score}</p>
-        </div>
+      {thinkingResultObj && (
+        <List>
+          {Object.entries(thinkingResultObj).map(([_title, _vo]) => (
+            <ListItem key={_title}>
+              <Typography>{_title}</Typography>
+              <Typography>{_vo.news_id}</Typography>
+              <Typography>{_vo.content}</Typography>
+              <Typography>{_vo.refer.toString()}</Typography>
+              <Typography>{_vo.recover_tag}</Typography>
+              <Typography>{_vo.thinking}</Typography>
+              <Typography>{_vo.trace.toString()}</Typography>
+              <Typography>{_vo.score}</Typography>
+            </ListItem>
+          ))}
+        </List>
       )}
     </>
   );

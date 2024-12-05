@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useContext, useEffect, useState} from "react";
+import React, {FC, useContext, useEffect, useState} from "react";
 import MyDropdownList from "@/adapter/mui/MyDropdownList.tsx";
 import MySearchBar from "@/adapter/mui/MySearchBar.tsx";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
@@ -24,10 +24,11 @@ import {GraphNodeVo, SpeechVectorVo, SpeechVo} from "@/pojo/vo/SpeechVo.ts";
 import {TEXTBOX_WIDTH_MIN_PX} from "@/lookings/size.ts";
 import ThinkingCreate from "@/clientings/thinking/ThinkingCreate.tsx";
 import {DICT_SPEECH_VECTOR} from "@/consts/Misc.ts";
-import {SpeechVector} from "@/models/SpeechVector.ts";
 import {GraphPath} from "@/models/GraphPath.ts";
 import MyStepper from "@/adapter/mui/MyStepper.tsx";
 import {COLOR} from "@/lookings/color.ts";
+import {SpeechVectorKey} from "@/pojo/map/SpeechVectorMap.ts";
+import {ThinkingResultNewsTitleMap} from "@/models/ThinkingResult.ts";
 
 
 interface NewsAuditProps {
@@ -57,16 +58,16 @@ function buildTerm(searchTermGraphQo: SearchTermGraphQo, graphNodeVoList: GraphN
   };
 }
 
-const NewsAudit: React.FC<NewsAuditProps> = ({
-                                               formData = buildEmptyNews()
-                                             }) => {
+const NewsAudit: FC<NewsAuditProps> = ({
+                                         formData = buildEmptyNews()
+                                       }) => {
   // context
   const routing = useContext(RoutingContext);
   const noticing = useContext(NoticingContext);
 
   // prepare data
   // graph vector map
-  const [speechVectorMap, setSpeechVectorMap] = useState<ObjMap<SpeechVector, string>>(new ObjMap());
+  const [speechVectorMap, setSpeechVectorMap] = useState<ObjMap<SpeechVectorKey, string>>(new ObjMap());
 
   useEffect(() => {
     const miscDictPromise = getMiscDict(
@@ -145,7 +146,12 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
   const [termGraph, setTermGraph] = useState<TermGraph | null>(null);
 
   const handleSearchTermGraph = async () => {
-    console.log('[news][audit] search term graph', searchTermGraphQo, thinking);
+    if (!searchTermGraphQo['name'] || !searchTermGraphQo['relation_type']) {
+      console.debug('[news][audit][term_graph][skip] No search term graph qo specified:', searchTermGraphQo);
+      return;
+    }
+    console.debug('[news][audit][term_graph] param', searchTermGraphQo, thinking);
+
     const termGraphVo = await searchTermGraph(
       routing,
       searchTermGraphQo['name'],
@@ -226,25 +232,23 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
   // build thinking
   const [thinking, setThinking] = useState<Thinking | null>(null);
 
-  // stepper
-  const stepperProps = {
-    sx: {backgroundColor: COLOR.light_yellow},
-  };
+  // thinking result
+  const [newsTitleMap, setNewsTitleMap] = useState<ThinkingResultNewsTitleMap | null>(null);
 
   return (
     <MyStepper
-      props={stepperProps}
+      sx={{backgroundColor: COLOR.light_yellow}}
     >
       <MySearchBar
-        label={'choose subject'}
+        title={'choose a tag as subject'}
         onSetFormData={setParseTagQo}
-        onSubmit={handleParseTag}
+        onClick={handleParseTag}
         isAutoSubmit={true}
         isNextEnabled={!!termMretOpts}
       >
         <MyDropdownList
           id={'subject_tag'}
-          label={'tag_subject_tag'}
+          label={'subject'}
           name={'tags'}
           value={parseTagQo['tags']}
           options={formData['tags']}
@@ -253,43 +257,47 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
       </MySearchBar>
 
       <MySearchBar
-        label={'choose term-mret and predicate'}
+        title={'choose term-mret and predicate'}
         onSetFormData={setSearchTermGraphQo}
-        onSubmit={handleSearchTermGraph}
+        onClick={handleSearchTermGraph}
+        isAutoSubmit={true}
         isNextEnabled={!!termGraph}
       >
         <MyDropdownList
           id={'term_mret'}
-          label={'term_mret'}
+          label={'term - mret'}
           name={'term_mret'}
           value={searchTermGraphQo['term_mret']}
           options={termMretOpts}
+          sx={{width: TEXTBOX_WIDTH_MIN_PX}}
         />
         <MyDropdownList
-          id={'relation_type'}
-          label={'relation_type'}
+          id={'predicate_relation'}
+          label={'predicate relation'}
           name={'relation_type'}
           value={searchTermGraphQo['relation_type']}
           options={formData['tags']}
+          sx={{width: TEXTBOX_WIDTH_MIN_PX}}
         />
       </MySearchBar>
 
       <TermRelation
-        label={'review graph'}
+        title={'select speech vectors on graph'}
         item={selectedTerm}
         graph={termGraph}
         onDetailNode={handleDetail}
         onTravelPath={handleSetTravelPath}
-        isNextEnabled={!!termGraph}
+        isNextEnabled={!!thinking?.attribute && !!thinking?.predicate}
         key={activeAuditAt}
       />
 
       <ThinkingCreate
-        label={'thinking'}
+        title={'thinking'}
         formData={thinking}
         onSetFormData={setThinking}
         speechVectorMap={speechVectorMap}
-        isNextEnabled={true}
+        onSetResultData={setNewsTitleMap}
+        isNextEnabled={!!newsTitleMap && !!formData && newsTitleMap.has(formData.id)}
       />
     </MyStepper>
   );

@@ -8,7 +8,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import MyReplaceButtons from '@/adapter/mui/MyReplaceButtons.tsx';
-import {handleNamedInputChange} from '@/adapter/base/MyNamedInput.ts';
+import {handleNamedValueInputChange} from '@/adapter/base/MyNamedValueInput.ts';
 import {VerbosibleProps} from '@/defines/abilities/VerbosibleProps.ts';
 import {DerivableProps} from '@/defines/abilities/DerivableProps.ts';
 import {EMPTY_STRING} from '@/consts/StrConst.ts';
@@ -54,7 +54,7 @@ const MyEditableForm: React.FC<EditableFormProps<any>> = <T, >({
 
   // form
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    handleNamedInputChange<T>(event, onSetFormData);
+    handleNamedValueInputChange<T>(event, onSetFormData);
   };
 
   // edit / save button
@@ -148,11 +148,11 @@ const MyEditableForm: React.FC<EditableFormProps<any>> = <T, >({
             showButtonA={showButtonA}
             callbackShowButtonA={setShowButtonA}
           />
-          <MyButton
-            label={buttonCProps.label}
-            onClick={buttonCProps.onClick}
-            props={buttonCProps.props}
-          />
+          {!showButtonA && <MyButton
+              label={buttonCProps.label}
+              onClick={buttonCProps.onClick}
+              {...buttonCProps.props}
+          />}
         </Stack>
       </Stack>
     </ThemeProvider>
