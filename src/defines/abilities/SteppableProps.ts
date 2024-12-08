@@ -1,3 +1,3 @@
 export interface SteppableProps {
-  isNextEnabled?: boolean;
+  isNextEnabled: boolean;
 }

@@ -4,3 +4,10 @@ export interface Tag {
   news: number[];
 }
 
+export function buildEmptyTag(): Tag {
+  return {
+    id: 0,
+    name: '',
+    news: [],
+  };
+}

@@ -31,4 +31,4 @@ export const GRID_WIDTH_FULL = {
 };
 
 
-export const TEXTBOX_WIDTH_MIN_PX = 100;
+export const TEXTBOX_WIDTH_MIN_PX = 240;

@@ -2,7 +2,9 @@
 
 import React from 'react';
 import {Button} from '@mui/material';
-import {MyClickableProps} from "@/adapter/defines/MyClickableProps.ts";
+
+import {ClickableProps} from "@/defines/combines/ClickableProps.ts";
+import {ButtonOwnProps} from "@mui/material/Button/Button";
 
 
 /**
@@ -11,7 +13,7 @@ import {MyClickableProps} from "@/adapter/defines/MyClickableProps.ts";
  * @param onClick
  * @param props
  */
-interface ButtonProps extends MyClickableProps {
+interface ButtonProps extends ClickableProps, ButtonOwnProps {
 }
 
 const MyButton: React.FC<ButtonProps> = ({
@@ -21,8 +23,8 @@ const MyButton: React.FC<ButtonProps> = ({
                                          }) => {
   return (
     <Button
-      onClick={onClick}
       {...rest}
+      onClick={onClick}
     >
       {label}
     </Button>

@@ -3,26 +3,25 @@
 import React, {useContext, useState} from "react";
 import {Grid2} from "@mui/material";
 import {GridFilterItem, GridRowId} from "@mui/x-data-grid";
-import {NEWS_COLUMNS, translateQueryField} from "@/schema/NewsSchema.ts";
+import {TAG_COLUMNS, translateQueryField} from "@/schema/TagSchema.ts";
 import MyDataList from "@/adapter/mui/MyDataList.tsx";
-import NewsDetail from "@/clientings/news/NewsDetail.tsx";
-import {deleteNews, getNews, searchNewsPage} from "@/io/NewsIO.ts";
-import NewsCreate from "@/clientings/news/NewsCreate.tsx";
-import NewsAudit from "@/clientings/news/NewsAudit.tsx";
+import TagDetail from "@/clientings/tag/TagDetail.tsx";
+import {searchTagPage, getTag, deleteTag} from "@/io/TagIO.ts";
 import {EMPTY_PAGE} from "@/consts/PaginateConst.ts";
-import {NewsVo} from "@/pojo/vo/NewsVo.ts";
+import {TagVo} from "@/pojo/vo/TagVo.ts";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
-import {GRID_WIDTH_1_OF_2} from "@/lookings/size.ts";
+import {GRID_WIDTH_1_OF_3, GRID_WIDTH_2_OF_3} from "@/lookings/size.ts";
+import {deleteTerm} from "@/io/TermIO.ts";
 
 function handleBuildCondition(originCondition: { [key: string]: any }, item: GridFilterItem): { [key: string]: any } {
-  if (item.operator !== 'contains all') {
+  if (item.operator !== 'equals') {
     throw new Error('Unsupported operator: ' + item.operator);
   }
   const field = translateQueryField(item.field);
   return {...originCondition, [field]: item.value};
 }
 
-const NewsList: React.FC = () => {
+const TagList: React.FC = () => {
   // context
   const routing = useContext(RoutingContext);
 
@@ -38,7 +37,7 @@ const NewsList: React.FC = () => {
   }
 
   // item selection
-  const [selectedItem, setSelectedItem] = useState<NewsVo | null>(null);
+  const [selectedItem, setSelectedItem] = useState<TagVo | null>(null);
 
   function clearItem() {
     setSelectedItem(null);
@@ -52,7 +51,7 @@ const NewsList: React.FC = () => {
   }
 
   // operation - select an item
-  const handleClickItem = (item: NewsVo) => {
+  const handleClickItem = (item: TagVo) => {
     setSelectedItem(item);
     refreshRelation();
   };
@@ -63,17 +62,17 @@ const NewsList: React.FC = () => {
     clearItem();
     // query
     try {
-      return await searchNewsPage(
+      return await searchTagPage(
         routing,
         offset,
         count,
         condition);
     } catch (e: unknown) {
       if (e instanceof Error) {
-        console.error('Failed to search news.\n', e.message);
+        console.error('Failed to search tags.\n', e.message);
         setError(e);
       } else {
-        console.error('Failed to search news.\n', e);
+        console.error('Failed to search tags.\n', e);
         setError(e);
       }
       return EMPTY_PAGE;
@@ -81,17 +80,17 @@ const NewsList: React.FC = () => {
   }
 
   // operation - detail an item
-  const handleDetail = async (newsId: number) => {
+  const handleDetail = async (tagId: number): Promise<TagVo | null> => {
     try {
-      return await getNews(
+      return await getTag(
         routing,
-        newsId);
+        tagId);
     } catch (e: unknown) {
       if (e instanceof Error) {
-        console.error('Failed to get news.\n', e.message);
+        console.error('Failed to get tag.\n', e.message);
         setError(e);
       } else {
-        console.error('Failed to get news.\n', e);
+        console.error('Failed to get tag.\n', e);
         setError(e);
       }
       return null;
@@ -99,54 +98,38 @@ const NewsList: React.FC = () => {
   }
 
   // operation - delete an item
-  const handleDelete = async (newsId: GridRowId) => {
-    if (typeof newsId === "string") {
-      console.warn("[news][delete] invalid rowId:", newsId);
+  const handleDelete = async (tagId: GridRowId) => {
+    if (typeof tagId === "string") {
+      console.warn("[tag][delete] invalid rowId:", tagId);
       return;
     }
 
     try {
-      await deleteNews(
+      await deleteTag(
         routing,
-        newsId);
+        tagId);
     } catch (e: unknown) {
       if (e instanceof Error) {
-        console.error('Failed to delete news.\n', e.message);
+        console.error('Failed to delete tag.\n', e.message);
         setError(e);
       } else {
-        console.error('Failed to delete news.\n', e);
+        console.error('Failed to delete tag.\n', e);
         setError(e);
       }
     }
     return;
   }
 
-  // const isPortrait = useMediaQuery('(orientation:portrait)');
-  // const isLandscape = useMediaQuery('(orientation:landscape)');
-  //
-  // useEffect(() => {
-  //   // Perform layout adjustments based on screen orientation
-  //   if (isPortrait) {
-  //     // Handle portrait orientation
-  //   } else if (isLandscape) {
-  //     // Handle landscape orientation
-  //   }
-  // }, [isPortrait, isLandscape]);
-
   return (
     <Grid2 container spacing={2}>
-      <Grid2 size={GRID_WIDTH_1_OF_2}>
-        <NewsCreate
-          callbackRefresh={refreshSearch}
-        />
-
+      <Grid2 size={GRID_WIDTH_1_OF_3}>
         <MyDataList
-          columns={NEWS_COLUMNS}
+          columns={TAG_COLUMNS}
           onSearch={handleSearch}
           onBuildCondition={handleBuildCondition}
           onRowDelete={handleDelete}
           onRowClick={(params) => {
-            handleClickItem(params.row as NewsVo);
+            handleClickItem(params.row as TagVo);
           }}
           componentConfig={{
             filterable: 'toolbar'
@@ -156,22 +139,18 @@ const NewsList: React.FC = () => {
         />
       </Grid2>
 
-      <Grid2 size={GRID_WIDTH_1_OF_2}>
+      <Grid2 size={GRID_WIDTH_2_OF_3}>
         {/* detail */}
         {selectedItem && (
-          <NewsDetail
+          <TagDetail
             item={selectedItem}
             callbackRefresh={refreshSearch}
-            key={activeItemAt}
           >
-            <NewsAudit
-              key={activeItemAt}
-            />
-          </NewsDetail>
+          </TagDetail>
         )}
       </Grid2>
     </Grid2>
   );
 };
 
-export default NewsList;
+export default TagList;

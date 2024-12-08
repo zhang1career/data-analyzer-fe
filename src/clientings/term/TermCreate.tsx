@@ -4,7 +4,7 @@ import React, {useContext, useState} from 'react';
 import MyModal from '@/adapter/mui/MyModal.tsx';
 import MyTextField from "@/adapter/mui/MyTextField.tsx";
 import MyEditableForm from "@/adapter/mui/MyEditableForm.tsx";
-import {createTerm} from "@/client_io/TermIO.ts";
+import {createTerm} from "@/io/TermIO.ts";
 import {Term} from "@/models/Term.ts";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
 import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";

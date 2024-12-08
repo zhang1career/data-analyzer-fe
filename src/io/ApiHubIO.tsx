@@ -40,9 +40,7 @@ async function requestApiHub({method, url, pathVariable, queryParam, body, conte
     for (const [key, value] of Object.entries(queryParam)) {
       destParamObj[key] = String(value);
     }
-    console.debug('[apihub][client] queryParam:', destParamObj);
     const urlSearchParams = new URLSearchParams(destParamObj);
-    console.debug('[apihub][client] urlSearchParams:', urlSearchParams);
     destBodyMap.set('_dest_url_', `${destUrl}?${urlSearchParams.toString()}`);
   }
 

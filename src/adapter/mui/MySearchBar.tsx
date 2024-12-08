@@ -3,11 +3,11 @@ import {Button, Stack, Toolbar} from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import {handleNamedValueInputChange} from "@/adapter/base/MyNamedValueInput.ts";
 import {MyAssembleProps} from "@/adapter/defines/MyAssembleProps.ts";
-import {MyClickableProps} from "@/adapter/defines/MyClickableProps.ts";
 import {ComponentProps} from "@/defines/combines/ComponentProps.ts";
+import {ClickableProps} from "@/defines/combines/ClickableProps.ts";
 
 
-interface SearchBarProps<T> extends MyAssembleProps, MyClickableProps, ComponentProps {
+interface SearchBarProps<T> extends MyAssembleProps, ClickableProps, ComponentProps {
   onSetFormData: Dispatch<SetStateAction<T>>;
   isAutoSubmit?: boolean;
 }

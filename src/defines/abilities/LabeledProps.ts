@@ -3,5 +3,5 @@
  * @param label
  */
 export interface LabeledProps {
-  label?: string;
+  label: string;
 }

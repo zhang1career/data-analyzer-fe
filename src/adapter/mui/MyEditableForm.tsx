@@ -7,7 +7,7 @@ import {Stack, SxProps} from '@mui/material';
 import CancelIcon from '@mui/icons-material/Cancel';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
-import MyReplaceButtons from '@/adapter/mui/MyReplaceButtons.tsx';
+import MyReplaceButtons from '@/adapter/mui/buttons/MyReplaceButtons.tsx';
 import {handleNamedValueInputChange} from '@/adapter/base/MyNamedValueInput.ts';
 import {VerbosibleProps} from '@/defines/abilities/VerbosibleProps.ts';
 import {DerivableProps} from '@/defines/abilities/DerivableProps.ts';
@@ -146,7 +146,7 @@ const MyEditableForm: React.FC<EditableFormProps<any>> = <T, >({
             buttonA={buttonAProps}
             buttonB={buttonBProps}
             showButtonA={showButtonA}
-            callbackShowButtonA={setShowButtonA}
+            onSetShowButtonA={setShowButtonA}
           />
           {!showButtonA && <MyButton
               label={buttonCProps.label}

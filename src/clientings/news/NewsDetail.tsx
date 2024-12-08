@@ -3,13 +3,13 @@
 import React, {useContext, useEffect, useState} from "react";
 import MyEditableForm from "@/adapter/mui/MyEditableForm.tsx";
 import MyTextField from "@/adapter/mui/MyTextField.tsx";
-import {updateNews} from "@/client_io/NewsIO.ts";
+import {updateNews} from "@/io/NewsIO.ts";
 import {buildEmptyNews, News} from "@/models/News.ts";
 import {NewsVo} from "@/pojo/vo/NewsVo.ts";
 import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
 import {modelToDto, voToModel} from "@/mappers/NewsMapper.ts";
-import {searchSimilarTagNameList} from "@/client_io/TagIO.ts";
+import {searchSimilarTagNameList} from "@/io/TagIO.ts";
 import {MyAutocompleteTextField} from "@/adapter/mui/MyAutocompleteTextField.tsx";
 import {DerivableProps} from "@/defines/abilities/DerivableProps.ts";
 

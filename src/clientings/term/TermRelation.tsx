@@ -2,25 +2,28 @@
 
 import React, {FC, useEffect, useState} from 'react';
 import CytoscapeComponent from "react-cytoscapejs";
-import cola from 'cytoscape-cola';
 import cytoscape, {ElementDefinition, LayoutOptions, SingularElementArgument} from "cytoscape";
+import cola from 'cytoscape-cola';
+import panzoom from 'cytoscape-panzoom';
+import makeStyles from '@mui/styles/makeStyles';
 import {diff} from "@/utils/MapUtil.ts";
 import {TermVo} from "@/pojo/vo/TermVo.ts";
 import {Term, TermGraph} from "@/models/Term.ts";
-import {WHEEL} from "@/lookings/color.ts";
 import {termGraphEdgeVoToModel} from "@/mappers/TermGraphMapper.ts";
 import {voToModel} from "@/mappers/TermMapper.ts";
 import {GraphPath} from "@/models/GraphPath.ts";
 import {EMPTY_STRING} from "@/consts/StrConst.ts";
 import {checkEmpty} from "@/utils/StrUtil.ts";
 import {useDelayEffect} from "@/utils/DelayUtil.ts";
-import makeStyles from '@mui/styles/makeStyles';
 import {MyAssembleProps} from "@/adapter/defines/MyAssembleProps.ts";
+import {WHEEL} from "@/lookings/color.ts";
 
 
 // cytoscape
 // plugin
 cytoscape.use(cola);
+cytoscape.use(panzoom);
+
 // data
 type Node = ElementDefinition & { group: 'nodes' };
 type Edge = ElementDefinition & { group: 'edges' };
@@ -74,6 +77,14 @@ const TermRelation: FC<TermRelationProps> = ({
   }
 
   const cyHandler = (cy: cytoscape.Core) => {
+    // Add the panzoom control
+    cy.panzoom({
+      fit: true, // Fit the graph to the container on initialization
+      zoomFactor: 0.1, // Zoom factor per zoom step
+      minZoom: 0.1, // Minimum zoom level
+      maxZoom: 10, // Maximum zoom level
+    });
+
     // Listen for tap events on nodes
     cy.on('tap', 'node', (event) => {
       const node = event.target;
@@ -184,7 +195,7 @@ const TermRelation: FC<TermRelationProps> = ({
         style={style}
         layout={layout}
         stylesheet={startTerm ? buildStyleSheet(startTerm.name) : buildStyleSheet(EMPTY_STRING)}
-        userZoomingEnabled={false}
+        maxZoom={1e50}
         cy={cyHandler}
       />
     </div>

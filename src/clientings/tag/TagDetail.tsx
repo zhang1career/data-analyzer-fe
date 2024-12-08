@@ -3,27 +3,27 @@
 import React, {useContext, useEffect, useState} from "react";
 import MyEditableForm from "@/adapter/mui/MyEditableForm.tsx";
 import MyTextField from "@/adapter/mui/MyTextField.tsx";
-import {updateTerm} from "@/io/TermIO.ts";
-import {buildEmptyTerm, Term} from "@/models/Term.ts";
-import {TermVo} from "@/pojo/vo/TermVo.ts";
+import {updateTag} from "@/io/TagIO.ts";
+import {buildEmptyTag, Tag} from "@/models/Tag.ts";
+import {TagVo} from "@/pojo/vo/TagVo.ts";
 import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
-import {voToModel} from "@/mappers/TermMapper.ts";
+import {voToModel} from "@/mappers/TagMapper.ts";
 
-interface TermDetailProps {
-  item: TermVo;
+interface TagDetailProps {
+  item: TagVo;
   callbackRefresh?: () => void;
   children?: React.ReactNode;
 }
 
 /**
- * Term detail component
+ * Tag detail component
  * @param item
  * @param callbackRefresh refresh callback
  * @param children
  * @constructor
  */
-const TermDetail: React.FC<TermDetailProps> = ({
+const TagDetail: React.FC<TagDetailProps> = ({
                                                  item,
                                                  callbackRefresh,
                                                  children = undefined
@@ -33,7 +33,7 @@ const TermDetail: React.FC<TermDetailProps> = ({
   const noticing = useContext(NoticingContext);
 
   // form
-  const [formData, setFormData] = useState<Term>(buildEmptyTerm());
+  const [formData, setFormData] = useState<Tag>(buildEmptyTag());
 
   // editable form refreshment
   const [activeEditableFormAt, setActiveEditableFormAt] = useState<number>(Date.now());
@@ -45,13 +45,13 @@ const TermDetail: React.FC<TermDetailProps> = ({
 
   // operation - save
   const handleSave = async () => {
-    console.debug('[term][update] param', formData);
-    await updateTerm(
+    console.debug('[tag][update] param', formData);
+    await updateTag(
       routing,
       item.id,
       formData);
     // notice
-    noticing('Term updated!', {
+    noticing('Tag updated!', {
       severity: 'success',
       autoHideDuration: 3000,
     });
@@ -93,5 +93,5 @@ const TermDetail: React.FC<TermDetailProps> = ({
   );
 }
 
-export default TermDetail;
+export default TagDetail;
 

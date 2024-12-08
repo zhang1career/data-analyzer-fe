@@ -1,6 +1,6 @@
 import {GridColDef} from "@mui/x-data-grid";
-import MyAutocompleteFilterOperatorFactory from "@/adapter/mui/filter/MyAutocompleteFilterOperatorFactory.tsx";
-import {searchSimilarTagNameList} from "@/client_io/TagIO.ts";
+import MyAutocompleteFilterOperatorFactory from "@/adapter/mui/filters/MyAutocompleteFilterOperatorFactory.tsx";
+import {searchSimilarTagNameList} from "@/io/TagIO.ts";
 
 export const NEWS_COLUMNS: GridColDef[] = [
   {field: 'id', headerName: 'ID', width: 70, filterable: false},

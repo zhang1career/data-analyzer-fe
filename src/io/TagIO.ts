@@ -1,10 +1,11 @@
 import {MyRouting} from "@/adapter/next/MyRouting.ts";
 import {Paginate} from "@/models/Paginate.ts";
-import requestApiHub from "@/client_io/ApiHubIO.tsx";
+import requestApiHub from "@/io/ApiHubIO.tsx";
 import {getValueSafely} from "@/utils/ObjUtil.ts";
 import {EMPTY_STRING} from "@/consts/StrConst.ts";
 import {TagParseResultVo, TagVo} from "@/pojo/vo/TagVo.ts";
 import {implode} from "@/utils/ArrayUtil.ts";
+import {Tag} from "@/models/Tag.ts";
 
 
 export async function searchTagPage(context: MyRouting,
@@ -42,6 +43,47 @@ async function searchSimilarTagList(tagLike: string): Promise<TagVo[]> {
 export async function searchSimilarTagNameList(tagLike: string): Promise<string[]> {
   const tagList = await searchSimilarTagList(tagLike);
   return tagList.map((tag) => tag.name);
+}
+
+export async function getTag(context: MyRouting,
+                             tagId: number): Promise<TagVo> {
+  return await requestApiHub(
+    {
+      method: 'GET',
+      url: '/da/knowledge/tags/:tagId',
+      pathVariable: {
+        tagId: tagId,
+      },
+      context: context
+    }) as TagVo;
+}
+
+export async function updateTag(context: MyRouting,
+                                tagId: number,
+                                tag: Tag): Promise<void> {
+  await requestApiHub(
+    {
+      method: 'PUT',
+      url: '/da/knowledge/tags/:tagId',
+      pathVariable: {
+        tagId: tagId,
+      },
+      body: tag,
+      context: context
+    });
+}
+
+export async function deleteTag(context: MyRouting,
+                                tagId: number): Promise<void> {
+  await requestApiHub(
+    {
+      method: 'DELETE',
+      url: '/da/knowledge/tags/:tagId',
+      pathVariable: {
+        tagId: tagId,
+      },
+      context: context
+    });
 }
 
 export async function parseTag(context: MyRouting,

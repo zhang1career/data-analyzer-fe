@@ -1,34 +1,33 @@
 'use client';
 
 import React, {FC, useContext, useEffect, useState} from "react";
-import MyDropdownList from "@/adapter/mui/MyDropdownList.tsx";
-import MySearchBar from "@/adapter/mui/MySearchBar.tsx";
+import MyStepper from "@/adapter/mui/MyStepper.tsx";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
 import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
 import {ObjMap} from "@/components/helpers/ObjMap.ts";
 import TermRelation from "@/clientings/term/TermRelation.tsx";
-import {getTerm, searchTermGraph} from "@/client_io/TermIO.ts";
-import {parseTag} from "@/client_io/TagIO.ts";
-import {getMiscDict} from "@/client_io/MiscIO.ts";
+import ThinkingCreate from "@/clientings/thinking/ThinkingCreate.tsx";
+import {getTerm, searchTermGraph} from "@/io/TermIO.ts";
+import {parseTag} from "@/io/TagIO.ts";
+import {getMiscDict} from "@/io/MiscIO.ts";
 import {voToModel} from "@/mappers/TermGraphMapper.ts";
 import {speechVectorVoToMapBatch} from "@/mappers/SpeechMapper.ts";
 import {parseResultVoToTermMretOptBatch} from "@/mappers/TagMapper.ts";
 import {buildEmptyNews, News} from "@/models/News.ts";
+import {GraphPath} from "@/models/GraphPath.ts";
 import {TermGraph} from "@/models/Term.ts";
 import {Thinking} from "@/models/Thinking.ts";
+import {ThinkingResultNewsTitleMap} from "@/models/ThinkingResult.ts";
 import {TermMretOpt} from "@/pojo/opt/TermMretOpt.ts";
 import {buildEmptySearchTermGraphQo, SearchTermGraphQo} from "@/pojo/qo/TermQo.ts";
 import {buildEmptyParseTagQo, ParseTagQo} from "@/pojo/qo/TagQo.ts";
 import {TermVo} from "@/pojo/vo/TermVo.ts";
-import {GraphNodeVo, SpeechVectorVo, SpeechVo} from "@/pojo/vo/SpeechVo.ts";
-import {TEXTBOX_WIDTH_MIN_PX} from "@/lookings/size.ts";
-import ThinkingCreate from "@/clientings/thinking/ThinkingCreate.tsx";
-import {DICT_SPEECH_VECTOR} from "@/consts/Misc.ts";
-import {GraphPath} from "@/models/GraphPath.ts";
-import MyStepper from "@/adapter/mui/MyStepper.tsx";
-import {COLOR} from "@/lookings/color.ts";
 import {SpeechVectorKey} from "@/pojo/map/SpeechVectorMap.ts";
-import {ThinkingResultNewsTitleMap} from "@/models/ThinkingResult.ts";
+import {GraphNodeVo, SpeechVectorVo, SpeechVo} from "@/pojo/vo/SpeechVo.ts";
+import {DICT_SPEECH_VECTOR} from "@/consts/Misc.ts";
+import {COLOR} from "@/lookings/color.ts";
+import SearchBarForParsingTag from "@/components/biz/SearchBarForParsingTag.tsx";
+import SearchBarForTermGraph from "@/components/biz/SearchBarForTermGraph.tsx";
 
 
 interface NewsAuditProps {
@@ -239,50 +238,30 @@ const NewsAudit: FC<NewsAuditProps> = ({
     <MyStepper
       sx={{backgroundColor: COLOR.light_yellow}}
     >
-      <MySearchBar
-        title={'choose a tag as subject'}
+      <SearchBarForParsingTag
+        title={'Choose a tag as subject'}
+        fieldName={'tags'}
+        options={formData['tags']}
+        formData={parseTagQo}
         onSetFormData={setParseTagQo}
         onClick={handleParseTag}
-        isAutoSubmit={true}
         isNextEnabled={!!termMretOpts}
-      >
-        <MyDropdownList
-          id={'subject_tag'}
-          label={'subject'}
-          name={'tags'}
-          value={parseTagQo['tags']}
-          options={formData['tags']}
-          sx={{width: TEXTBOX_WIDTH_MIN_PX}}
-        />
-      </MySearchBar>
+      />
 
-      <MySearchBar
-        title={'choose term-mret and predicate'}
+      <SearchBarForTermGraph
+        title={'Choose term-mret and predicate'}
+        termMretFieldName={'term_mret'}
+        termMretOptions={termMretOpts}
+        relationTypeFieldName={'relation_type'}
+        relationTypeOptions={formData["tags"]}
+        formData={searchTermGraphQo}
         onSetFormData={setSearchTermGraphQo}
         onClick={handleSearchTermGraph}
-        isAutoSubmit={true}
         isNextEnabled={!!termGraph}
-      >
-        <MyDropdownList
-          id={'term_mret'}
-          label={'term - mret'}
-          name={'term_mret'}
-          value={searchTermGraphQo['term_mret']}
-          options={termMretOpts}
-          sx={{width: TEXTBOX_WIDTH_MIN_PX}}
-        />
-        <MyDropdownList
-          id={'predicate_relation'}
-          label={'predicate relation'}
-          name={'relation_type'}
-          value={searchTermGraphQo['relation_type']}
-          options={formData['tags']}
-          sx={{width: TEXTBOX_WIDTH_MIN_PX}}
-        />
-      </MySearchBar>
+      />
 
       <TermRelation
-        title={'select speech vectors on graph'}
+        title={'Select speech vectors on graph'}
         item={selectedTerm}
         graph={termGraph}
         onDetailNode={handleDetail}
@@ -292,7 +271,7 @@ const NewsAudit: FC<NewsAuditProps> = ({
       />
 
       <ThinkingCreate
-        title={'thinking'}
+        title={'Thinking'}
         formData={thinking}
         onSetFormData={setThinking}
         speechVectorMap={speechVectorMap}

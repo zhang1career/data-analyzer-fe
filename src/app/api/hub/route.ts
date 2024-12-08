@@ -48,6 +48,8 @@ export async function POST(request: Request, response: Response) {
     if (response.code !== 0) {
       throw new Error(`return error, url=${url}, code=${response.code}, msg=${response.msg}`);
     }
+    console.debug('[apihub][server] success:', response.data);
+
     // return data
     return NextResponse.json(response.data, {status: HTTP_STATUS.OK});
   } catch (error: unknown) {

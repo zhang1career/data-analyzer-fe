@@ -1,31 +1,25 @@
 'use client';
 
-import * as React from 'react';
-import {useState} from 'react';
-import MyEditableForm from "@/adapter/mui/MyEditableForm.tsx";
+import React from "react";
+import MyConfirmButton from "@/adapter/mui/buttons/MyConfirmButton.tsx";
+import DeleteIcon from '@mui/icons-material/Delete';
 
 
-function MyComponnet() {
-
-  const [formData, setFormData] = useState<''>('');
-
-  const handleSave = () => {
-    console.log('saving...')
-  }
+const MyComponnet: React.FC = () => {
+  const handleDelete = () => {
+    console.log("Item deleted");
+  };
 
   return (
-    <MyEditableForm
-      initEditable={true}
-      onSetFormData={setFormData}
-      onSave={handleSave}
-      isVerbose={true}
-      sxButton={{ml: 'auto'}}
-    >
-      <p>{'qwer'}</p>
-      <p>{'asdf'}</p>
-      <p>{'zxcv'}</p>
-    </MyEditableForm>
+    <div>
+      <MyConfirmButton
+        title={'Delete'}
+        label={'delete'}
+        onClick={handleDelete}
+        startIcon={<DeleteIcon/>}
+      />
+    </div>
   );
-}
+};
 
 export default MyComponnet;

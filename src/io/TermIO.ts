@@ -1,5 +1,5 @@
 import {MyRouting} from "@/adapter/next/MyRouting.ts";
-import requestApiHub from "@/client_io/ApiHubIO.tsx";
+import requestApiHub from "@/io/ApiHubIO.tsx";
 import {Paginate} from "@/models/Paginate.ts";
 import {Term} from "@/models/Term.ts";
 import {TermVo} from "@/pojo/vo/TermVo.ts";

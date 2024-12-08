@@ -8,7 +8,7 @@ import MyDataList from "@/adapter/mui/MyDataList.tsx";
 import TermCreate from "@/clientings/term/TermCreate.tsx";
 import TermDetail from "@/clientings/term/TermDetail.tsx";
 import TermRelation from "@/clientings/term/TermRelation.tsx";
-import {deleteTerm, getTerm, searchTermPage} from "@/client_io/TermIO.ts";
+import {deleteTerm, getTerm, searchTermPage} from "@/io/TermIO.ts";
 import {EMPTY_PAGE} from "@/consts/PaginateConst.ts";
 import {TermVo} from "@/pojo/vo/TermVo.ts";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";

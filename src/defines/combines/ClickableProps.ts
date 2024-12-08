@@ -1,9 +1,9 @@
 import {LabeledProps} from "@/defines/abilities/LabeledProps.ts";
 
 /**
- * MyClickableProps defines a clickable property.
+ * ClickableProps defines a clickable property.
  * @param onClick
  */
-export interface MyClickableProps extends LabeledProps {
+export interface ClickableProps extends LabeledProps {
   onClick: () => void;
 }
