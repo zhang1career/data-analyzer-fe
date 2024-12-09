@@ -15,7 +15,7 @@ interface SearchBarForParsingTagProps extends SteppableProps {
   onClick: () => void;
 }
 
-const SearchBarForParsingTag: FC<SearchBarForParsingTagProps> = ({
+const ParsingTagSearchBar: FC<SearchBarForParsingTagProps> = ({
                                                                    title,
                                                                    fieldName,
                                                                    formData,
@@ -44,4 +44,4 @@ const SearchBarForParsingTag: FC<SearchBarForParsingTagProps> = ({
   );
 }
 
-export default SearchBarForParsingTag;
+export default ParsingTagSearchBar;

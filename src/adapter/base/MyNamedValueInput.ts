@@ -1,8 +1,15 @@
 import {ChangeEvent, Dispatch, SetStateAction} from "react";
 
-export function handleNamedValueInputChange<T>(event: ChangeEvent<HTMLInputElement>,
-                                               onSetFormData: Dispatch<SetStateAction<T>>) {
-  console.log('[adaptr][named_input] event.target.type=', event.target.type);
+
+export function handleInputChangeByEvent<T>(event: ChangeEvent<HTMLInputElement>,
+                                            onSetFormData: Dispatch<SetStateAction<T>>) {
+  // todo: how to check if event is not a SyntheticEvent?
+  if (typeof event !== 'object') {
+    console.debug('[adaptr][input_change][skip] event is not a SyntheticEvent:', event);
+    return;
+  }
+  console.debug('[adaptr][input_change] param:', event);
+
   if (event.target.type === 'checkbox') {
     onSetFormData((prevObject) => ({...prevObject, [event.target.name]: event.target.checked}));
     return;

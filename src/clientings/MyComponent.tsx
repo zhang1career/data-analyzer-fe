@@ -1,25 +1,44 @@
 'use client';
 
-import React from "react";
-import MyConfirmButton from "@/adapter/mui/buttons/MyConfirmButton.tsx";
-import DeleteIcon from '@mui/icons-material/Delete';
+import * as React from 'react';
+import {useState} from 'react';
+import DateInput from "@/components/biz/input/DateInput.tsx";
+import {buildEmptyNews, News} from "@/models/News.ts";
+import MyEditableForm from "@/adapter/mui/MyEditableForm.tsx";
+import MyTextField from "@/adapter/mui/MyTextField.tsx";
 
 
-const MyComponnet: React.FC = () => {
-  const handleDelete = () => {
-    console.log("Item deleted");
-  };
+function MyComponent() {
+  // form
+  const [formData, setFormData] = useState<News>(buildEmptyNews());
 
   return (
-    <div>
-      <MyConfirmButton
-        title={'Delete'}
-        label={'delete'}
-        onClick={handleDelete}
-        startIcon={<DeleteIcon/>}
-      />
-    </div>
+    <>
+      <MyEditableForm
+        initEditable={true}
+        initFormData={buildEmptyNews()}
+        onSetFormData={setFormData}
+        onSave={() => {
+          console.log('saved data:', formData);
+        }}>
+        <MyTextField
+          id={'content'}
+          label={'content'}
+          name={'content'}
+          value={formData['content']}
+        />
+        <DateInput
+          id={'published_at'}
+          label={'Published At'}
+          name={'published_at'}
+          value={formData['published_at']}
+          onChange={(value) => {
+            setFormData((prevObject) => ({...prevObject, ['published_at']: value}));
+          }}
+        />
+      </MyEditableForm>
+    </>
   );
-};
+}
 
-export default MyComponnet;
+export default MyComponent;

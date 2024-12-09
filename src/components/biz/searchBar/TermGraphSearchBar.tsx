@@ -18,7 +18,7 @@ interface SearchBarForTermGraphProps extends SteppableProps {
   onClick: () => void;
 }
 
-const SearchBarForTermGraph: FC<SearchBarForTermGraphProps> = ({
+const TermGraphSearchBar: FC<SearchBarForTermGraphProps> = ({
                                                                  title,
                                                                  termMretFieldName,
                                                                  relationTypeFieldName,
@@ -57,4 +57,4 @@ const SearchBarForTermGraph: FC<SearchBarForTermGraphProps> = ({
   );
 }
 
-export default SearchBarForTermGraph;
+export default TermGraphSearchBar;

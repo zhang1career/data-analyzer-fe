@@ -26,8 +26,8 @@ import {SpeechVectorKey} from "@/pojo/map/SpeechVectorMap.ts";
 import {GraphNodeVo, SpeechVectorVo, SpeechVo} from "@/pojo/vo/SpeechVo.ts";
 import {DICT_SPEECH_VECTOR} from "@/consts/Misc.ts";
 import {COLOR} from "@/lookings/color.ts";
-import SearchBarForParsingTag from "@/components/biz/SearchBarForParsingTag.tsx";
-import SearchBarForTermGraph from "@/components/biz/SearchBarForTermGraph.tsx";
+import ParsingTagSearchBar from "@/components/biz/searchBar/ParsingTagSearchBar.tsx";
+import TermGraphSearchBar from "@/components/biz/searchBar/TermGraphSearchBar.tsx";
 
 
 interface NewsAuditProps {
@@ -238,7 +238,7 @@ const NewsAudit: FC<NewsAuditProps> = ({
     <MyStepper
       sx={{backgroundColor: COLOR.light_yellow}}
     >
-      <SearchBarForParsingTag
+      <ParsingTagSearchBar
         title={'Choose a tag as subject'}
         fieldName={'tags'}
         options={formData['tags']}
@@ -248,7 +248,7 @@ const NewsAudit: FC<NewsAuditProps> = ({
         isNextEnabled={!!termMretOpts}
       />
 
-      <SearchBarForTermGraph
+      <TermGraphSearchBar
         title={'Choose term-mret and predicate'}
         termMretFieldName={'term_mret'}
         termMretOptions={termMretOpts}

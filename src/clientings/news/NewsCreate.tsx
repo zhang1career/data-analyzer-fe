@@ -11,6 +11,9 @@ import {NoticingContext} from '@/components/providers/NoticingProvider.tsx';
 import {modelToDto} from '@/mappers/NewsMapper.ts';
 import {MyAutocompleteTextField} from '@/adapter/mui/MyAutocompleteTextField.tsx';
 import {searchSimilarTagNameList} from "@/io/TagIO.ts";
+import {getCachedData, setCachedData} from "@/utils/CacheUtil.ts";
+import DateInput from "@/components/biz/input/DateInput.tsx";
+
 
 interface NewsCreateProps {
   callbackRefresh?: () => void;
@@ -24,11 +27,19 @@ const NewsCreate: React.FC<NewsCreateProps> = ({
   const noticing = useContext(NoticingContext);
 
   // form
-  const [formData, setFormData] = useState<News>(buildEmptyNews());
+  const [formData, setFormData] = useState<News>(getCachedData('data-news_form', buildEmptyNews, {ttl: 3600}));
 
   // operation - create
   const handleCreate = async () => {
     console.debug('[news][create] param', formData);
+    // cache
+    const newsForm = {
+      ...buildEmptyNews(),
+      url: formData.url,
+      published_at: formData.published_at,
+    } as News;
+    setCachedData('data-news_form', newsForm, {ttl: 3600});
+    // create
     await createNews(
       routing,
       modelToDto(formData));
@@ -68,12 +79,21 @@ const NewsCreate: React.FC<NewsCreateProps> = ({
           value={formData['url']}
           required={true}
         />
-        <MyTextField
+        {/*<MyTextField*/}
+        {/*  id={'published_at'}*/}
+        {/*  label={'published_at'}*/}
+        {/*  name={'published_at'}*/}
+        {/*  value={formData['published_at']}*/}
+        {/*  required={true}*/}
+        {/*/>*/}
+        <DateInput
           id={'published_at'}
-          label={'published_at'}
+          label={'Published At'}
           name={'published_at'}
           value={formData['published_at']}
-          required={true}
+          onChange={(value) => {
+            setFormData((prevObject) => ({...prevObject, ['published_at']: value}));
+          }}
         />
         <MyAutocompleteTextField
           id={'tags'}

@@ -1,7 +1,7 @@
 import React, {Children, Dispatch, FC, ReactElement, SetStateAction, useEffect, useState} from 'react';
 import {Button, Stack, Toolbar} from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import {handleNamedValueInputChange} from "@/adapter/base/MyNamedValueInput.ts";
+import {handleInputChangeByEvent} from "@/adapter/base/MyNamedValueInput.ts";
 import {MyAssembleProps} from "@/adapter/defines/MyAssembleProps.ts";
 import {ComponentProps} from "@/defines/combines/ComponentProps.ts";
 import {ClickableProps} from "@/defines/combines/ClickableProps.ts";
@@ -36,7 +36,7 @@ const MySearchBar: FC<SearchBarProps<any>> = <T, >({
 
   // wrap the input change event with named_input
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    handleNamedValueInputChange<T>(event, onSetFormData);
+    handleInputChangeByEvent<T>(event, onSetFormData);
     setOnChangeAt(Date.now());
   };
 
@@ -52,7 +52,10 @@ const MySearchBar: FC<SearchBarProps<any>> = <T, >({
     <Toolbar>
       <Stack direction="row" spacing={0.2}>
         {Children.map(children, (child) => {
-          return React.cloneElement(child as ReactElement, {onChange: handleChange});
+          return React.cloneElement(child as ReactElement, {
+            onChange: handleChange,
+            ...child.props
+          });
         })}
       </Stack>
       {!isAutoSubmit && (

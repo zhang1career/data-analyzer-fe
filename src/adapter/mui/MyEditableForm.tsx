@@ -8,7 +8,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import MyReplaceButtons from '@/adapter/mui/buttons/MyReplaceButtons.tsx';
-import {handleNamedValueInputChange} from '@/adapter/base/MyNamedValueInput.ts';
+import {handleInputChangeByEvent} from '@/adapter/base/MyNamedValueInput.ts';
 import {VerbosibleProps} from '@/defines/abilities/VerbosibleProps.ts';
 import {DerivableProps} from '@/defines/abilities/DerivableProps.ts';
 import {EMPTY_STRING} from '@/consts/StrConst.ts';
@@ -54,7 +54,7 @@ const MyEditableForm: React.FC<EditableFormProps<any>> = <T, >({
 
   // form
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    handleNamedValueInputChange<T>(event, onSetFormData);
+    handleInputChangeByEvent<T>(event, onSetFormData);
   };
 
   // edit / save button
@@ -132,7 +132,11 @@ const MyEditableForm: React.FC<EditableFormProps<any>> = <T, >({
           sx={{width: '80%'}}
         >
           {React.Children.map(children, (child) => {
-            return React.cloneElement(child as React.ReactElement, {onChange: handleChange, isEditable});
+            return React.cloneElement(child as React.ReactElement, {
+              onChange: handleChange,
+              isEditable,
+              ...child.props  // internal wired props will be overridden by specified ones
+            });
           })}
         </Stack>
 
