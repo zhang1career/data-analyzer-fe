@@ -46,9 +46,9 @@ export async function POST(request: Request, response: Response) {
       throw new Error(`method ${method} not supported`);
     }
     if (response.code !== 0) {
-      throw new Error(`return error, url=${url}, code=${response.code}, msg=${response.msg}`);
+      console.error('[apihub][server] failed:', response.code, response.msg);
+      return NextResponse.json(response.data, {status: HTTP_STATUS.OK});
     }
-    console.debug('[apihub][server] success:', response.data);
 
     // return data
     return NextResponse.json(response.data, {status: HTTP_STATUS.OK});
@@ -82,7 +82,7 @@ async function _doGet(url: string, token: String): Promise<ApiHubResponse> {
       Authorization: `Bearer ${token}`
     }
   });
-  console.log('[apihub][server] GET:', url, 'resp:', response.data);
+  console.debug('[apihub][server] GET:', url, 'resp:', response.data);
   return response.data as ApiHubResponse;
 }
 
@@ -92,7 +92,7 @@ async function _doPost(url: string, body: BodyType, token: String): Promise<ApiH
       Authorization: `Bearer ${token}`
     }
   });
-  console.log('[apihub][server] POST:', url, 'body:', body, 'resp:', response.data);
+  console.debug('[apihub][server] POST:', url, 'body:', body, 'resp:', response.data);
   return response.data as ApiHubResponse;
 }
 
@@ -102,7 +102,7 @@ async function _doPut(url: string, body: BodyType, token: String): Promise<ApiHu
       Authorization: `Bearer ${token}`
     }
   });
-  console.log('[apihub][server] PUT:', url, 'body:', body, 'resp:', response.data);
+  console.debug('[apihub][server] PUT:', url, 'body:', body, 'resp:', response.data);
   return response.data as ApiHubResponse;
 }
 
@@ -112,7 +112,7 @@ async function _doPatch(url: string, body: BodyType, token: String): Promise<Api
       Authorization: `Bearer ${token}`
     }
   });
-  console.log('[apihub][server] PATCH:', url, 'body:', body, 'resp:', response.data);
+  console.debug('[apihub][server] PATCH:', url, 'body:', body, 'resp:', response.data);
   return response.data as ApiHubResponse;
 }
 
@@ -122,6 +122,6 @@ async function _doDelete(url: string, token: String): Promise<ApiHubResponse> {
       Authorization: `Bearer ${token}`
     }
   });
-  console.log('[apihub][server] DELETE:', url, 'resp:', response.data);
+  console.debug('[apihub][server] DELETE:', url, 'resp:', response.data);
   return response.data as ApiHubResponse;
 }

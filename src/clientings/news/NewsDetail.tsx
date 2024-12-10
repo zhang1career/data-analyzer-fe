@@ -2,7 +2,7 @@
 
 import React, {useContext, useEffect, useState} from "react";
 import MyEditableForm from "@/adapter/mui/MyEditableForm.tsx";
-import MyTextField from "@/adapter/mui/MyTextField.tsx";
+import MyTextField from "@/adapter/mui/input/MyTextField.tsx";
 import {updateNews} from "@/io/NewsIO.ts";
 import {buildEmptyNews, News} from "@/models/News.ts";
 import {NewsVo} from "@/pojo/vo/NewsVo.ts";
@@ -12,6 +12,8 @@ import {modelToDto, voToModel} from "@/mappers/NewsMapper.ts";
 import {searchSimilarTagNameList} from "@/io/TagIO.ts";
 import {MyAutocompleteTextField} from "@/adapter/mui/MyAutocompleteTextField.tsx";
 import {DerivableProps} from "@/defines/abilities/DerivableProps.ts";
+import DateInput from "@/components/biz/input/DateField.tsx";
+import DateField from "@/components/biz/input/DateField.tsx";
 
 interface NewsDetailProps extends DerivableProps {
   item: NewsVo;
@@ -96,12 +98,14 @@ const NewsDetail: React.FC<NewsDetailProps> = ({
           value={formData['url']}
           isReadOnly={true}
         />
-        <MyTextField
-          id={'publised_at'}
-          label={'published_at'}
+        <DateField
+          id={'published_at'}
+          label={'Published At'}
           name={'published_at'}
           value={formData['published_at']}
-          isReadOnly={true}
+          onChange={(value) => {
+            setFormData((prevObject) => ({...prevObject, ['published_at']: value}));
+          }}
         />
         <MyAutocompleteTextField
           id={'tags'}

@@ -2,7 +2,7 @@
 
 import React, {useContext, useState} from 'react';
 import MyModal from '@/adapter/mui/MyModal.tsx';
-import MyTextField from "@/adapter/mui/MyTextField.tsx";
+import MyTextField from "@/adapter/mui/input/MyTextField.tsx";
 import MyEditableForm from "@/adapter/mui/MyEditableForm.tsx";
 import {createTerm} from "@/io/TermIO.ts";
 import {Term} from "@/models/Term.ts";

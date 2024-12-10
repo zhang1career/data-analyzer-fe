@@ -13,6 +13,7 @@ import {EMPTY_PAGE} from "@/consts/PaginateConst.ts";
 import {NewsVo} from "@/pojo/vo/NewsVo.ts";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
 import {GRID_WIDTH_1_OF_2} from "@/lookings/size.ts";
+import {voToModelBatch} from "@/mappers/NewsMapper.ts";
 
 function handleBuildCondition(originCondition: { [key: string]: any }, item: GridFilterItem): { [key: string]: any } {
   if (item.operator !== 'contains all') {
@@ -121,18 +122,6 @@ const NewsList: React.FC = () => {
     return;
   }
 
-  // const isPortrait = useMediaQuery('(orientation:portrait)');
-  // const isLandscape = useMediaQuery('(orientation:landscape)');
-  //
-  // useEffect(() => {
-  //   // Perform layout adjustments based on screen orientation
-  //   if (isPortrait) {
-  //     // Handle portrait orientation
-  //   } else if (isLandscape) {
-  //     // Handle landscape orientation
-  //   }
-  // }, [isPortrait, isLandscape]);
-
   return (
     <Grid2 container spacing={2}>
       <Grid2 size={GRID_WIDTH_1_OF_2}>
@@ -144,6 +133,7 @@ const NewsList: React.FC = () => {
           columns={NEWS_COLUMNS}
           onSearch={handleSearch}
           onBuildCondition={handleBuildCondition}
+          onMappingBatch={voToModelBatch}
           onRowDelete={handleDelete}
           onRowClick={(params) => {
             handleClickItem(params.row as NewsVo);

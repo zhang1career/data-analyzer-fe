@@ -132,6 +132,7 @@ const TermList: React.FC = () => {
           columns={TERM_COLUMNS}
           onSearch={handleSearch}
           onBuildCondition={handleBuildCondition}
+          onMappingBatch={(vs: TermVo[]) => vs}
           onRowDelete={handleDelete}
           onRowClick={(params) => {
             handleClickItem(params.row as TermVo);
@@ -154,6 +155,7 @@ const TermList: React.FC = () => {
             <TermRelation
               item={selectedItem}
               onDetailNode={handleDetail}
+              isNextEnabled={true}
               key={activeItemAt}
             />
           </TermDetail>

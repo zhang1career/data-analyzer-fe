@@ -20,10 +20,11 @@ interface ComponentConfig {
   filterable: 'toolbar' | undefined;
 }
 
-interface DataTableProps<T> {
+interface DataTableProps<V, M> {
   columns: GridColDef[];
-  onSearch: (offset: number, count: number, condition?: { [key: string]: string | number }) => Promise<Paginate<T>>;
+  onSearch: (offset: number, count: number, condition?: { [key: string]: string | number }) => Promise<Paginate<V>>;
   onBuildCondition: (originCondition: { [key: string]: any }, item: GridFilterItem) => { [key: string]: any };
+  onMappingBatch: (v: V[]) => M[];
   pageSizeOptions?: number[];
   onRowClick?: GridEventListener<'rowClick'>;
   onRowDelete?: (rowId: GridRowId) => void;
@@ -38,6 +39,7 @@ interface DataTableProps<T> {
  * @param columns
  * @param onSearch
  * @param onBuildCondition
+ * @param onMappingBatch
  * @param pageSizeOptions
  * @param onRowDelete
  * @param onRowClick
@@ -46,29 +48,30 @@ interface DataTableProps<T> {
  * @param callbackRefreshSearch callback refresh search
  * @constructor
  */
-const MyDataList: React.FC<DataTableProps<any>> = <T, >({
-                                                          columns,
-                                                          onSearch,
-                                                          onBuildCondition,
-                                                          pageSizeOptions = [10, 20, 50, 100],
-                                                          onRowClick = (params, event, detail) => {
-                                                            console.log('[adaptr][datagrid] row clicked, {params, event, detail}:', {
-                                                              params,
-                                                              event,
-                                                              detail
-                                                            });
-                                                          },
-                                                          onRowDelete = (rowId: GridRowId) => () => {
-                                                            console.warn('[adaptr][datagrid] onRowDelete not implemented');
-                                                          },
-                                                          componentConfig = {
-                                                            filterable: undefined
-                                                          },
-                                                          refreshSearch,
-                                                          callbackRefreshSearch = () => {
-                                                            console.warn('[adaptr][datagrid] callbackRefreshSearch not implemented');
-                                                          }
-                                                        }: DataTableProps<T>) => {
+const MyDataList: React.FC<DataTableProps<any, any>> = <V, M, >({
+                                                                  columns,
+                                                                  onSearch,
+                                                                  onBuildCondition,
+                                                                  onMappingBatch,
+                                                                  pageSizeOptions = [10, 20, 50, 100],
+                                                                  onRowClick = (params, event, detail) => {
+                                                                    console.log('[adaptr][datagrid] row clicked, {params, event, detail}:', {
+                                                                      params,
+                                                                      event,
+                                                                      detail
+                                                                    });
+                                                                  },
+                                                                  onRowDelete = (rowId: GridRowId) => () => {
+                                                                    console.warn('[adaptr][datagrid] onRowDelete not implemented');
+                                                                  },
+                                                                  componentConfig = {
+                                                                    filterable: undefined
+                                                                  },
+                                                                  refreshSearch,
+                                                                  callbackRefreshSearch = () => {
+                                                                    console.warn('[adaptr][datagrid] callbackRefreshSearch not implemented');
+                                                                  }
+                                                                }: DataTableProps<V, M>) => {
   // filters
   const [filter, setFilter] = useState<GridFilterModel>({items: []});
 
@@ -79,7 +82,7 @@ const MyDataList: React.FC<DataTableProps<any>> = <T, >({
   });
 
   // data
-  const [data, setData] = useState<DataStateType<T>>({
+  const [data, setData] = useState<DataStateType<M>>({
     isLoading: false,
     rows: [],
     totalRows: 0,
@@ -131,10 +134,10 @@ const MyDataList: React.FC<DataTableProps<any>> = <T, >({
       console.log('[adaptr][datagrid] paginate searched', response.total_num);
       setData((prev) => ({
         ...prev,
-        'rows': response.data,
-        'totalRows': response.total_num,
-        'hasNextPage': (pagination.page + 1) * pagination.pageSize < response.total_num,
-        'isLoading': false
+        rows: onMappingBatch(response.data),
+        totalRows: response.total_num,
+        hasNextPage: (pagination.page + 1) * pagination.pageSize < response.total_num,
+        isLoading: false
       }));
     });
   }, [refreshSearch], 500);

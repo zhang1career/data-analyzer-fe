@@ -2,7 +2,7 @@
 
 import React, {useContext, useState} from 'react';
 import MyModal from '@/adapter/mui/MyModal.tsx';
-import MyTextField from '@/adapter/mui/MyTextField.tsx';
+import MyTextField from '@/adapter/mui/input/MyTextField.tsx';
 import MyEditableForm from '@/adapter/mui/MyEditableForm.tsx';
 import {createNews} from '@/io/NewsIO.ts';
 import {buildEmptyNews, News} from '@/models/News.ts';
@@ -12,7 +12,7 @@ import {modelToDto} from '@/mappers/NewsMapper.ts';
 import {MyAutocompleteTextField} from '@/adapter/mui/MyAutocompleteTextField.tsx';
 import {searchSimilarTagNameList} from "@/io/TagIO.ts";
 import {getCachedData, setCachedData} from "@/utils/CacheUtil.ts";
-import DateInput from "@/components/biz/input/DateInput.tsx";
+import DateField from "@/components/biz/input/DateField.tsx";
 
 
 interface NewsCreateProps {
@@ -79,14 +79,7 @@ const NewsCreate: React.FC<NewsCreateProps> = ({
           value={formData['url']}
           required={true}
         />
-        {/*<MyTextField*/}
-        {/*  id={'published_at'}*/}
-        {/*  label={'published_at'}*/}
-        {/*  name={'published_at'}*/}
-        {/*  value={formData['published_at']}*/}
-        {/*  required={true}*/}
-        {/*/>*/}
-        <DateInput
+        <DateField
           id={'published_at'}
           label={'Published At'}
           name={'published_at'}

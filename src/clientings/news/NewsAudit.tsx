@@ -155,6 +155,13 @@ const NewsAudit: FC<NewsAuditProps> = ({
       routing,
       searchTermGraphQo['name'],
       searchTermGraphQo['relation_type']) as SpeechVo;
+    if (!termGraphVo) {
+      noticing('No TermGraph Found.', {
+        severity: 'warning',
+        autoHideDuration: 3000,
+      });
+      return;
+    }
     setSelectedTerm(buildTerm(searchTermGraphQo, termGraphVo.nodes));
     setTermGraph(voToModel(termGraphVo));
     refreshRelation();

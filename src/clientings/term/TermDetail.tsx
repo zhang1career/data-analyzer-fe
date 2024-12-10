@@ -2,7 +2,7 @@
 
 import React, {useContext, useEffect, useState} from "react";
 import MyEditableForm from "@/adapter/mui/MyEditableForm.tsx";
-import MyTextField from "@/adapter/mui/MyTextField.tsx";
+import MyTextField from "@/adapter/mui/input/MyTextField.tsx";
 import {updateTerm} from "@/io/TermIO.ts";
 import {buildEmptyTerm, Term} from "@/models/Term.ts";
 import {TermVo} from "@/pojo/vo/TermVo.ts";

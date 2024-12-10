@@ -4,7 +4,7 @@ import React, {FC, useEffect, useState} from 'react';
 import CytoscapeComponent from "react-cytoscapejs";
 import cytoscape, {ElementDefinition, LayoutOptions, SingularElementArgument} from "cytoscape";
 import cola from 'cytoscape-cola';
-import panzoom from 'cytoscape-panzoom';
+// import panzoom from 'cytoscape-panzoom';
 import makeStyles from '@mui/styles/makeStyles';
 import {diff} from "@/utils/MapUtil.ts";
 import {TermVo} from "@/pojo/vo/TermVo.ts";
@@ -15,14 +15,16 @@ import {GraphPath} from "@/models/GraphPath.ts";
 import {EMPTY_STRING} from "@/consts/StrConst.ts";
 import {checkEmpty} from "@/utils/StrUtil.ts";
 import {useDelayEffect} from "@/utils/DelayUtil.ts";
-import {MyAssembleProps} from "@/adapter/defines/MyAssembleProps.ts";
 import {WHEEL} from "@/lookings/color.ts";
+import {TitledProps} from "@/defines/abilities/TitledProps.ts";
+import {DescribableProps} from "@/defines/abilities/DescribableProps.ts";
+import {SteppableProps} from "@/defines/abilities/SteppableProps.ts";
 
 
 // cytoscape
 // plugin
 cytoscape.use(cola);
-cytoscape.use(panzoom);
+// cytoscape.use(panzoom);
 
 // data
 type Node = ElementDefinition & { group: 'nodes' };
@@ -39,7 +41,7 @@ const warningLightStyles = makeStyles({
   },
 });
 
-interface TermRelationProps extends MyAssembleProps {
+interface TermRelationProps extends TitledProps, DescribableProps, SteppableProps {
   item: TermVo | null;
   graph?: TermGraph | null;
   onDetailNode: (termId: number) => Promise<TermVo | null>;
@@ -78,12 +80,12 @@ const TermRelation: FC<TermRelationProps> = ({
 
   const cyHandler = (cy: cytoscape.Core) => {
     // Add the panzoom control
-    cy.panzoom({
-      fit: true, // Fit the graph to the container on initialization
-      zoomFactor: 0.1, // Zoom factor per zoom step
-      minZoom: 0.1, // Minimum zoom level
-      maxZoom: 10, // Maximum zoom level
-    });
+    // cy.panzoom({
+    //   fit: true, // Fit the graph to the container on initialization
+    //   zoomFactor: 0.1, // Zoom factor per zoom step
+    //   minZoom: 0.1, // Minimum zoom level
+    //   maxZoom: 10, // Maximum zoom level
+    // });
 
     // Listen for tap events on nodes
     cy.on('tap', 'node', (event) => {

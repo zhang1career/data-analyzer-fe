@@ -10,22 +10,24 @@ import {EMPTY_STRING} from "@/consts/StrConst.ts";
 import {ChangeableProps} from "@/defines/abilities/ChangeableProps.ts";
 import {ValuableProps} from "@/defines/abilities/ValuableProps.ts";
 
+
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.tz.setDefault('UTC');
 
-const DATE_FORMAT = 'YYYY-MM-DDTHH:mm:ssZ';
 
-interface DateInputProps extends LabeledProps, ValuableProps<string>, ChangeableProps<string> {
+interface MyDateFieldProps extends LabeledProps, ValuableProps<string>, ChangeableProps<string> {
+  dateFormat: string;
 }
 
-const DateInput: FC<DataInputProps> = ({
-                                         label,
-                                         value,
-                                         onChange,
-                                       }: DateInputProps) => {
+const MyDateField: FC<MyDateFieldProps> = ({
+                                             label,
+                                             value,
+                                             dateFormat,
+                                             onChange,
+                                           }: MyDateFieldProps) => {
   // date value
-  const [date, setDate] = React.useState<Dayjs | null>(value ? dayjs(value, DATE_FORMAT) : null);
+  const [date, setDate] = React.useState<Dayjs | null>(value ? dayjs(value, dateFormat) : null);
 
   // return
   return (
@@ -39,11 +41,11 @@ const DateInput: FC<DataInputProps> = ({
         onChange={(newValue) => {
           setDate(newValue);
           console.log('newValue:', newValue);
-          onChange(newValue ? newValue.format(DATE_FORMAT) : EMPTY_STRING);
+          onChange(newValue ? newValue.format(dateFormat) : EMPTY_STRING);
         }}
       />
     </LocalizationProvider>
   );
 }
 
-export default DateInput;
+export default MyDateField;

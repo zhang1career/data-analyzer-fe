@@ -127,6 +127,7 @@ const TagList: React.FC = () => {
           columns={TAG_COLUMNS}
           onSearch={handleSearch}
           onBuildCondition={handleBuildCondition}
+          onMappingBatch={(vs: TagVo[]) => vs}
           onRowDelete={handleDelete}
           onRowClick={(params) => {
             handleClickItem(params.row as TagVo);

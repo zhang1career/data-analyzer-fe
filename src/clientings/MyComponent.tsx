@@ -2,10 +2,10 @@
 
 import * as React from 'react';
 import {useState} from 'react';
-import DateInput from "@/components/biz/input/DateInput.tsx";
+import DateInput from "@/components/biz/input/DateField.tsx";
 import {buildEmptyNews, News} from "@/models/News.ts";
 import MyEditableForm from "@/adapter/mui/MyEditableForm.tsx";
-import MyTextField from "@/adapter/mui/MyTextField.tsx";
+import MyTextField from "@/adapter/mui/input/MyTextField.tsx";
 
 
 function MyComponent() {

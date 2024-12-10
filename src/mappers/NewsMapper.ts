@@ -15,10 +15,18 @@ export function voToModel(vo: NewsVo): News {
   return {
     id: vo.id,
     content: vo.content,
-    url: String(vo.url_id),
+    url: vo.url,
     published_at: vo.published_at,
     tags: newsTagRelationVoToModel(vo.tags),
   };
+}
+
+export function voToModelBatch(voList: NewsVo[]): News[] {
+  const newsList = [];
+  for (const vo of voList) {
+    newsList.push(voToModel(vo));
+  }
+  return newsList;
 }
 
 function newsTagRelationVoToModel(vo: NewsTagRelationType): string[] {
