@@ -1,21 +1,21 @@
-import {TermGraph, TermGraphEdge, TermGraphNode} from "@/models/Term.ts";
-import {GraphEdgeVo, GraphNodeVo, SpeechVo} from "@/pojo/vo/SpeechVo.ts";
+import {TermGraphModel, TermGraphEdgeModel, TermGraphNodeModel} from "@/models/TermModel.ts";
+import {GraphEdgeVo, GraphNodeVo, GraphVo} from "@/pojo/vo/GraphVo.ts";
 
-export function voToModel(vo: SpeechVo): TermGraph {
+export function voToModel(vo: GraphVo): TermGraphModel {
   return {
     nodes: vo.nodes.map(termGraphNodeVoToModel),
     edges: vo.edges.map(termGraphEdgeVoToModel)
   };
 }
 
-function termGraphNodeVoToModel(vo: GraphNodeVo): TermGraphNode {
+function termGraphNodeVoToModel(vo: GraphNodeVo): TermGraphNodeModel {
   return {
     id: vo.id,
     label: vo.l
   };
 }
 
-export function termGraphEdgeVoToModel(vo: GraphEdgeVo): TermGraphEdge {
+export function termGraphEdgeVoToModel(vo: GraphEdgeVo): TermGraphEdgeModel {
   return {
     id: vo.id,
     src_id: vo.sid,

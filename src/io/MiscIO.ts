@@ -1,4 +1,4 @@
-import {MyRouting} from "@/adapter/next/MyRouting.ts";
+import {MyRouting} from "@/hocs/next/MyRouting.ts";
 import requestApiHub from "@/io/ApiHubIO.tsx";
 import {implode} from "@/utils/ArrayUtil.ts";
 

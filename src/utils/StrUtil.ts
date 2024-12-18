@@ -1,3 +1,7 @@
+export function checkString(data: any): boolean {
+  return typeof data === "string";
+}
+
 /**
  * Check if the string is empty
  * @param str

@@ -1,11 +1,11 @@
-import {MyRouting} from "@/adapter/next/MyRouting.ts";
+import {MyRouting} from "@/hocs/next/MyRouting.ts";
 import requestApiHub from "@/io/ApiHubIO.tsx";
 import {Paginate} from "@/models/Paginate.ts";
-import {Term} from "@/models/Term.ts";
+import {TermModel} from "@/models/TermModel.ts";
 import {TermVo} from "@/pojo/vo/TermVo.ts";
 import {getValueSafely} from "@/utils/ObjUtil.ts";
 import {EMPTY_STRING} from "@/consts/StrConst.ts";
-import {SpeechVo} from "@/pojo/vo/SpeechVo.ts";
+import {AccessVectorVo, GraphVo} from "@/pojo/vo/GraphVo.ts";
 
 
 export async function searchTermPage(context: MyRouting,
@@ -39,7 +39,7 @@ export async function getTerm(context: MyRouting,
 }
 
 export async function createTerm(context: MyRouting,
-                                 term: Term): Promise<void> {
+                                 term: TermModel): Promise<void> {
   await requestApiHub(
     {
       method: 'POST',
@@ -51,7 +51,7 @@ export async function createTerm(context: MyRouting,
 
 export async function updateTerm(context: MyRouting,
                                  termId: number,
-                                 term: Term): Promise<void> {
+                                 termDto: TermDto): Promise<void> {
   await requestApiHub(
     {
       method: 'PUT',
@@ -59,7 +59,7 @@ export async function updateTerm(context: MyRouting,
       pathVariable: {
         termId: termId,
       },
-      body: term,
+      body: termDto,
       context: context
     });
 }
@@ -77,17 +77,32 @@ export async function deleteTerm(context: MyRouting,
     });
 }
 
-export async function searchTermGraph(context: MyRouting,
-                                      termName: string,
-                                      relation_type: string): Promise<SpeechVo> {
+export async function searchGraphVector(context: MyRouting,
+                                        termName: string,
+                                        relation_type: string): Promise<GraphVo> {
   return await requestApiHub(
     {
       method: 'GET',
-      url: '/da/knowledge/term-travels',
+      url: '/da/knowledge/term-graph/vectors',
       queryParam: {
         term: termName,
         relation_type: relation_type
       },
       context: context
-    }) as Promise<SpeechVo>;
+    }) as Promise<GraphVo>;
+}
+
+export async function accessGraphVector(context: MyRouting,
+                                        relation_type: string,
+                                        is_reverse: boolean): Promise<AccessVectorVo> {
+  return await requestApiHub(
+    {
+      method: 'GET',
+      url: '/da/knowledge/term-graph/vector-access',
+      queryParam: {
+        relation_type: relation_type,
+        is_reverse: is_reverse ? 'true' : 'false',
+      },
+      context: context
+    }) as Promise<AccessVectorVo>;
 }

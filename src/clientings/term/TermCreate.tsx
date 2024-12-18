@@ -1,11 +1,11 @@
 'use client';
 
 import React, {useContext, useState} from 'react';
-import MyModal from '@/adapter/mui/MyModal.tsx';
-import MyTextField from "@/adapter/mui/input/MyTextField.tsx";
-import MyEditableForm from "@/adapter/mui/MyEditableForm.tsx";
+import MyModal from '@/hocs/mui/MyModal.tsx';
+import MyTextField from "@/hocs/mui/input/MyTextField.tsx";
+import MyEditableForm from "@/hocs/mui/MyEditableForm.tsx";
 import {createTerm} from "@/io/TermIO.ts";
-import {Term} from "@/models/Term.ts";
+import {TermModel} from "@/models/TermModel.ts";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
 import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
 
@@ -21,7 +21,7 @@ const TermCreate: React.FC<TermCreateProps> = ({
   const noticing = useContext(NoticingContext);
 
   // form
-  const [formData, setFormData] = useState<Term>(buildEmptyFormData());
+  const [formData, setFormData] = useState<TermModel>(buildEmptyFormData());
 
   // operation - create
   const handleCreate = async () => {

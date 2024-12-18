@@ -1,18 +1,18 @@
 'use client';
 
 import React, {useContext, useState} from 'react';
-import MyModal from '@/adapter/mui/MyModal.tsx';
-import MyTextField from '@/adapter/mui/input/MyTextField.tsx';
-import MyEditableForm from '@/adapter/mui/MyEditableForm.tsx';
+import MyModal from '@/hocs/mui/MyModal.tsx';
+import MyTextField from '@/hocs/mui/input/MyTextField.tsx';
+import MyEditableForm from '@/hocs/mui/MyEditableForm.tsx';
 import {createNews} from '@/io/NewsIO.ts';
 import {buildEmptyNews, News} from '@/models/News.ts';
 import {RoutingContext} from '@/components/providers/RoutingProvider.tsx';
 import {NoticingContext} from '@/components/providers/NoticingProvider.tsx';
 import {modelToDto} from '@/mappers/NewsMapper.ts';
-import {MyAutocompleteTextField} from '@/adapter/mui/MyAutocompleteTextField.tsx';
+import {MyAutocompleteTextField} from '@/hocs/mui/MyAutocompleteTextField.tsx';
 import {searchSimilarTagNameList} from "@/io/TagIO.ts";
 import {getCachedData, setCachedData} from "@/utils/CacheUtil.ts";
-import DateField from "@/components/biz/input/DateField.tsx";
+import DateField from "@/components/gears/input/DateField.tsx";
 
 
 interface NewsCreateProps {
@@ -27,7 +27,7 @@ const NewsCreate: React.FC<NewsCreateProps> = ({
   const noticing = useContext(NoticingContext);
 
   // form
-  const [formData, setFormData] = useState<News>(getCachedData('data-news_form', buildEmptyNews, {ttl: 3600}));
+  const [formData, setFormData] = useState<News>(getCachedData('input-news_form', buildEmptyNews, {ttl: 3600}));
 
   // operation - create
   const handleCreate = async () => {
@@ -38,7 +38,7 @@ const NewsCreate: React.FC<NewsCreateProps> = ({
       url: formData.url,
       published_at: formData.published_at,
     } as News;
-    setCachedData('data-news_form', newsForm, {ttl: 3600});
+    setCachedData('input-news_form', newsForm, {ttl: 3600});
     // create
     await createNews(
       routing,

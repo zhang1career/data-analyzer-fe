@@ -4,7 +4,7 @@ import React, {useContext, useState} from "react";
 import {Grid2} from "@mui/material";
 import {GridFilterItem, GridRowId} from "@mui/x-data-grid";
 import {NEWS_COLUMNS, translateQueryField} from "@/schema/NewsSchema.ts";
-import MyDataList from "@/adapter/mui/MyDataList.tsx";
+import MyDataList from "@/hocs/mui/MyDataList.tsx";
 import NewsDetail from "@/clientings/news/NewsDetail.tsx";
 import {deleteNews, getNews, searchNewsPage} from "@/io/NewsIO.ts";
 import NewsCreate from "@/clientings/news/NewsCreate.tsx";

@@ -1,13 +1,13 @@
 'use client';
 
 import React, {FC, useContext, useEffect, useState} from "react";
-import MyStepper from "@/adapter/mui/MyStepper.tsx";
+import MyStepper from "@/hocs/mui/MyStepper.tsx";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
 import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
 import {ObjMap} from "@/components/helpers/ObjMap.ts";
-import TermRelation from "@/clientings/term/TermRelation.tsx";
+import TermGraph from "@/clientings/term/TermGraph.tsx";
 import ThinkingCreate from "@/clientings/thinking/ThinkingCreate.tsx";
-import {getTerm, searchTermGraph} from "@/io/TermIO.ts";
+import {getTerm, searchGraphVector} from "@/io/TermIO.ts";
 import {parseTag} from "@/io/TagIO.ts";
 import {getMiscDict} from "@/io/MiscIO.ts";
 import {voToModel} from "@/mappers/TermGraphMapper.ts";
@@ -15,7 +15,7 @@ import {speechVectorVoToMapBatch} from "@/mappers/SpeechMapper.ts";
 import {parseResultVoToTermMretOptBatch} from "@/mappers/TagMapper.ts";
 import {buildEmptyNews, News} from "@/models/News.ts";
 import {GraphPath} from "@/models/GraphPath.ts";
-import {TermGraph} from "@/models/Term.ts";
+import {TermGraphModel} from "@/models/TermModel.ts";
 import {Thinking} from "@/models/Thinking.ts";
 import {ThinkingResultNewsTitleMap} from "@/models/ThinkingResult.ts";
 import {TermMretOpt} from "@/pojo/opt/TermMretOpt.ts";
@@ -23,11 +23,11 @@ import {buildEmptySearchTermGraphQo, SearchTermGraphQo} from "@/pojo/qo/TermQo.t
 import {buildEmptyParseTagQo, ParseTagQo} from "@/pojo/qo/TagQo.ts";
 import {TermVo} from "@/pojo/vo/TermVo.ts";
 import {SpeechVectorKey} from "@/pojo/map/SpeechVectorMap.ts";
-import {GraphNodeVo, SpeechVectorVo, SpeechVo} from "@/pojo/vo/SpeechVo.ts";
+import {GraphNodeVo, GraphVectorVo, GraphVo} from "@/pojo/vo/GraphVo.ts";
 import {DICT_SPEECH_VECTOR} from "@/consts/Misc.ts";
 import {COLOR} from "@/lookings/color.ts";
-import ParsingTagSearchBar from "@/components/biz/searchBar/ParsingTagSearchBar.tsx";
-import TermGraphSearchBar from "@/components/biz/searchBar/TermGraphSearchBar.tsx";
+import ParsingTagSearchBar from "@/components/repos/tag/ParsingTagSearchBar.tsx";
+import TermGraphSearchBar from "@/components/repos/term/TermGraphSearchBar.tsx";
 
 
 interface NewsAuditProps {
@@ -35,7 +35,7 @@ interface NewsAuditProps {
 }
 
 function buildTerm(searchTermGraphQo: SearchTermGraphQo, graphNodeVoList: GraphNodeVo[]): TermVo {
-  // prepare data
+  // prepare input
   // name
   const name = searchTermGraphQo['name'];
   // id
@@ -64,7 +64,7 @@ const NewsAudit: FC<NewsAuditProps> = ({
   const routing = useContext(RoutingContext);
   const noticing = useContext(NoticingContext);
 
-  // prepare data
+  // prepare input
   // graph vector map
   const [speechVectorMap, setSpeechVectorMap] = useState<ObjMap<SpeechVectorKey, string>>(new ObjMap());
 
@@ -74,7 +74,7 @@ const NewsAudit: FC<NewsAuditProps> = ({
       [DICT_SPEECH_VECTOR],
       {});
     miscDictPromise.then((miscDict) => {
-      const speechVectorVoList = miscDict[DICT_SPEECH_VECTOR] as SpeechVectorVo[];
+      const speechVectorVoList = miscDict[DICT_SPEECH_VECTOR] as GraphVectorVo[];
       setSpeechVectorMap(speechVectorVoToMapBatch(speechVectorVoList));
     });
   }, []);
@@ -84,7 +84,7 @@ const NewsAudit: FC<NewsAuditProps> = ({
   const [termMretOpts, setTermMretOpts] = useState<TermMretOpt[] | null>(null);
   const [searchTermGraphQo, setSearchTermGraphQo] = useState<SearchTermGraphQo>(buildEmptySearchTermGraphQo());
 
-  // data mapping
+  // input mapping
   useEffect(() => {
     if (!termMretOpts) {
       return;
@@ -142,7 +142,7 @@ const NewsAudit: FC<NewsAuditProps> = ({
 
   // query term graph
   const [selectedTerm, setSelectedTerm] = useState<TermVo | null>(null);
-  const [termGraph, setTermGraph] = useState<TermGraph | null>(null);
+  const [termGraph, setTermGraph] = useState<TermGraphModel | null>(null);
 
   const handleSearchTermGraph = async () => {
     if (!searchTermGraphQo['name'] || !searchTermGraphQo['relation_type']) {
@@ -151,19 +151,19 @@ const NewsAudit: FC<NewsAuditProps> = ({
     }
     console.debug('[news][audit][term_graph] param', searchTermGraphQo, thinking);
 
-    const termGraphVo = await searchTermGraph(
+    const graphVectorVo = await searchGraphVector(
       routing,
       searchTermGraphQo['name'],
-      searchTermGraphQo['relation_type']) as SpeechVo;
-    if (!termGraphVo) {
+      searchTermGraphQo['relation_type']) as GraphVo;
+    if (!graphVectorVo) {
       noticing('No TermGraph Found.', {
         severity: 'warning',
         autoHideDuration: 3000,
       });
       return;
     }
-    setSelectedTerm(buildTerm(searchTermGraphQo, termGraphVo.nodes));
-    setTermGraph(voToModel(termGraphVo));
+    setSelectedTerm(buildTerm(searchTermGraphQo, graphVectorVo.nodes));
+    setTermGraph(voToModel(graphVectorVo));
     refreshRelation();
   }
 
@@ -267,7 +267,7 @@ const NewsAudit: FC<NewsAuditProps> = ({
         isNextEnabled={!!termGraph}
       />
 
-      <TermRelation
+      <TermGraph
         title={'Select speech vectors on graph'}
         item={selectedTerm}
         graph={termGraph}

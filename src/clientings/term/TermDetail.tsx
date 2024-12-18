@@ -1,14 +1,17 @@
 'use client';
 
 import React, {useContext, useEffect, useState} from "react";
-import MyEditableForm from "@/adapter/mui/MyEditableForm.tsx";
-import MyTextField from "@/adapter/mui/input/MyTextField.tsx";
+import MyEditableForm from "@/hocs/mui/MyEditableForm.tsx";
+import MyTextField from "@/hocs/mui/input/MyTextField.tsx";
+import {withListEditor} from "@/hocs/mui/list/MyListEditor.tsx";
 import {updateTerm} from "@/io/TermIO.ts";
-import {buildEmptyTerm, Term} from "@/models/Term.ts";
+import {buildEmptyTermModel, TermModel, TermRelationModel} from "@/models/TermModel.ts";
 import {TermVo} from "@/pojo/vo/TermVo.ts";
 import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
-import {voToModel} from "@/mappers/TermMapper.ts";
+import {voToModel, modelToDto} from "@/mappers/TermMapper.ts";
+import TermRelation from "@/components/repos/term/TermRelation.tsx";
+
 
 interface TermDetailProps {
   item: TermVo;
@@ -33,7 +36,14 @@ const TermDetail: React.FC<TermDetailProps> = ({
   const noticing = useContext(NoticingContext);
 
   // form
-  const [formData, setFormData] = useState<Term>(buildEmptyTerm());
+  const [formData, setFormData] = useState<TermModel>(buildEmptyTermModel());
+  // form.relation
+  function setFormDataRelation(relation: TermRelationModel[]) {
+    setFormData(prevState => ({
+      ...prevState,
+      relation: relation
+    }));
+  }
 
   // editable form refreshment
   const [activeEditableFormAt, setActiveEditableFormAt] = useState<number>(Date.now());
@@ -49,7 +59,7 @@ const TermDetail: React.FC<TermDetailProps> = ({
     await updateTerm(
       routing,
       item.id,
-      formData);
+      modelToDto(formData));
     // notice
     noticing('Term updated!', {
       severity: 'success',
@@ -66,26 +76,33 @@ const TermDetail: React.FC<TermDetailProps> = ({
       <MyEditableForm
         onSetFormData={setFormData}
         onSave={handleSave}
-        sxButton={{ml: "auto"}}
-        key={activeEditableFormAt}>
+        sxButton={{ml: 'auto'}}
+        key={activeEditableFormAt}
+      >
         <MyTextField
-          id="outlined-controlled"
-          label="id"
-          name="id"
+          id='outlined-controlled'
+          label='id'
+          name='id'
           value={formData['id'] ?? 0}
           isReadOnly={true}
         />
         <MyTextField
-          id="outlined-controlled"
-          label="name"
-          name="name"
+          id='outlined-controlled'
+          label='name'
+          name='name'
           value={formData['name']}
         />
         <MyTextField
-          id="outlined-controlled"
-          label="content"
-          name="content"
+          id='outlined-controlled'
+          label='content'
+          name='content'
           value={formData['content']}
+        />
+        <TermRelationList
+          formData={formData.relation}
+          setFormData={setFormDataRelation}
+          checkBlank={checkRelationBlank}
+          getTrimmedValue={getTrimmedRelationValue}
         />
       </MyEditableForm>
       {children}
@@ -93,5 +110,31 @@ const TermDetail: React.FC<TermDetailProps> = ({
   );
 }
 
-export default TermDetail;
+function checkRelationBlank(relation: TermRelationModel | null) {
+  return !relation
+    || (!relation['name'] || relation['name'].trim().length === 0)
+    || (!relation['relation_type'] || relation['relation_type'].trim().length === 0);
+}
 
+function getTrimmedRelationValue(relation: TermRelationModel) {
+  return {
+    id: relation.id,
+    name: relation.name,
+    relation_type: relation.relation_type,
+    is_reverse: relation.is_reverse,
+  };
+}
+
+/**
+ * Term Relation
+ */
+// term relation extending props
+interface TermRelationExtProps {
+  isEditable?: boolean
+}
+
+// term relation component
+const TermRelationList = withListEditor<TermRelationModel, TermRelationExtProps>(TermRelation);
+
+
+export default TermDetail;

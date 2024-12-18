@@ -1,0 +1,1 @@
+export const EMPTY_PAGINATE = {data: [], total_num: 0};

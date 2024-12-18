@@ -50,7 +50,7 @@ export async function POST(request: Request, response: Response) {
       return NextResponse.json(response.data, {status: HTTP_STATUS.OK});
     }
 
-    // return data
+    // return input
     return NextResponse.json(response.data, {status: HTTP_STATUS.OK});
   } catch (error: unknown) {
     if (error instanceof AxiosError) {

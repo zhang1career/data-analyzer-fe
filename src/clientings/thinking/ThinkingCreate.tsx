@@ -4,7 +4,7 @@ import React, {FC, useContext, useEffect, useState} from 'react';
 import {Checkbox, List, ListItem} from "@mui/material";
 import {RoutingContext} from '@/components/providers/RoutingProvider.tsx';
 import {NoticingContext} from '@/components/providers/NoticingProvider.tsx';
-import MySearchBar from "@/adapter/mui/MySearchBar.tsx";
+import MySearchBar from "@/hocs/mui/MySearchBar.tsx";
 import {createThinking} from "@/io/ThinkingIO.ts";
 import {Thinking} from "@/models/Thinking.ts";
 import {modelToDto} from "@/mappers/ThinkingMapper.ts";
@@ -12,9 +12,9 @@ import {ObjMap} from "@/components/helpers/ObjMap.ts";
 import {getMiscDict} from "@/io/MiscIO.ts";
 import {DictVo} from "@/pojo/vo/misc/DictVo.ts";
 import {dictVoToOptBatch} from "@/mappers/misc/DictMapper.ts";
-import MyDropdownList from "@/adapter/mui/MyDropdownList.tsx";
+import MyDropdownList from "@/hocs/mui/MyDropdownList.tsx";
 import {DICT_SPEECH_ATTR, DICT_SPEECH_PRED} from "@/consts/Misc.ts";
-import {MyAssembleProps} from "@/adapter/defines/MyAssembleProps.ts";
+import {MyAssembleProps} from "@/hocs/defines/MyAssembleProps.ts";
 import {EMPTY_STRING} from "@/consts/StrConst.ts";
 import {LabeledValueProps} from "@/defines/combines/LabeledValueProps.ts";
 import {TEXTBOX_WIDTH_MIN_PX} from "@/lookings/size.ts";
@@ -37,14 +37,14 @@ const ThinkingCreate: FC<ThinkingCreateProps> = ({
                                                    onSetFormData,
                                                    speechVectorMap = new ObjMap(),
                                                    onSetResultData = (result) => {
-                                                     console.warn('[thinking][create] No result data setter specified.');
+                                                     console.warn('[thinking][create] No result input setter specified.');
                                                    },
                                                  }) => {
   // context
   const routing = useContext(RoutingContext);
   const noticing = useContext(NoticingContext);
 
-  // prepare data
+  // prepare input
   // graph vector map
   const [attrOpts, setAttrOpts] = useState<LabeledValueProps<string>[] | null>(null);
   const [predOpts, setPredOpts] = useState<LabeledValueProps<string>[] | null>(null);

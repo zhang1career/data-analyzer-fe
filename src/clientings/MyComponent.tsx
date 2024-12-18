@@ -1,43 +1,43 @@
 'use client';
 
-import * as React from 'react';
-import {useState} from 'react';
-import DateInput from "@/components/biz/input/DateField.tsx";
-import {buildEmptyNews, News} from "@/models/News.ts";
-import MyEditableForm from "@/adapter/mui/MyEditableForm.tsx";
-import MyTextField from "@/adapter/mui/input/MyTextField.tsx";
+import React, {useState} from 'react';
+import {withListEditor} from "@/hocs/mui/list/MyListEditor.tsx";
+import TermRelation from "@/components/repos/term/TermRelation.tsx";
+import {TermRelationModel} from "@/models/TermModel.ts";
 
+
+interface ExtProps {
+  isEditable?: boolean
+  sx?: any
+}
+
+const DemoContentList = withListEditor<TermRelationModel, ExtProps>(TermRelation);
 
 function MyComponent() {
-  // form
-  const [formData, setFormData] = useState<News>(buildEmptyNews());
+
+  // list items
+  const [itemList, setItemList] = useState<TermRelationModel[] | null>([]);
 
   return (
-    <>
-      <MyEditableForm
-        initEditable={true}
-        initFormData={buildEmptyNews()}
-        onSetFormData={setFormData}
-        onSave={() => {
-          console.log('saved data:', formData);
-        }}>
-        <MyTextField
-          id={'content'}
-          label={'content'}
-          name={'content'}
-          value={formData['content']}
-        />
-        <DateInput
-          id={'published_at'}
-          label={'Published At'}
-          name={'published_at'}
-          value={formData['published_at']}
-          onChange={(value) => {
-            setFormData((prevObject) => ({...prevObject, ['published_at']: value}));
-          }}
-        />
-      </MyEditableForm>
-    </>
+    <div>
+      <h1>List Editor Example</h1>
+      <DemoContentList
+        isEditable={true}
+        formData={itemList}
+        setFormData={setItemList}
+        checkBlank={(data) => !data
+          || (!data['name'] || data['name'].trim().length === 0)
+          || (!data['relation_type'] || data['relation_type'].trim().length === 0)}
+        getTrimmedValue={(data) => {
+          return {
+            id: data.id,
+            name: data.name,
+            relation_type: data.relation_type,
+            is_reverse: data.is_reverse,
+          };
+        }}
+      />
+    </div>
   );
 }
 

@@ -20,8 +20,6 @@ const NoticingProvider: FC<NoticeProviderProps> = ({
 
   const notifications = useNotifications();
 
-  console.log('[provid][notice] notifications=', notifications);
-
   return (
     <NoticingContext.Provider value={notifications.show}>
       {children}

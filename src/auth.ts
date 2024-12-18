@@ -1,7 +1,7 @@
 import NextAuth, {User} from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import type {Provider} from 'next-auth/providers';
-import {LoginFuncType, LoginQo, UserPlus} from '@/pojo/models/UserPlus.ts';
+import {LoginFuncType, LoginQo, UserPlus} from '@/models/UserPlus.ts';
 import {Login} from '@/sdks/fusio/Consumer';
 import {saveAccess} from "@/app/server_models/Access.ts";
 import {PATH_SIGNIN} from "@/consts/UrlConst.ts";

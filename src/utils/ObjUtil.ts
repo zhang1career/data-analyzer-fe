@@ -3,7 +3,7 @@
  * @param obj
  * @returns boolean
  */
-export function checkEmpty(obj: { [key: string]: any } | undefined | null): boolean {
+export function checkEmpty(obj: { [key: string]: any } | undefined | null): obj is null | undefined | {} {
   return obj == null || !obj || Object.keys(obj).length <= 0;
 }
 
@@ -33,4 +33,8 @@ export function newObj<T>(): T {
  */
 export function newDict(): { [key: string]: any } {
   return newObj();
+}
+
+export function deepCopy<T>(obj: T): T {
+  return JSON.parse(JSON.stringify(obj));
 }

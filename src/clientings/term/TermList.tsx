@@ -4,10 +4,10 @@ import React, {useContext, useState} from "react";
 import {Grid2} from "@mui/material";
 import {GridFilterItem, GridRowId} from "@mui/x-data-grid";
 import {TERM_COLUMNS, translateQueryField} from "@/schema/TermSchema.ts";
-import MyDataList from "@/adapter/mui/MyDataList.tsx";
+import MyDataList from "@/hocs/mui/MyDataList.tsx";
 import TermCreate from "@/clientings/term/TermCreate.tsx";
 import TermDetail from "@/clientings/term/TermDetail.tsx";
-import TermRelation from "@/clientings/term/TermRelation.tsx";
+import TermGraph from "@/clientings/term/TermGraph.tsx";
 import {deleteTerm, getTerm, searchTermPage} from "@/io/TermIO.ts";
 import {EMPTY_PAGE} from "@/consts/PaginateConst.ts";
 import {TermVo} from "@/pojo/vo/TermVo.ts";
@@ -152,7 +152,7 @@ const TermList: React.FC = () => {
             item={selectedItem}
             callbackRefresh={refreshSearch}
           >
-            <TermRelation
+            <TermGraph
               item={selectedItem}
               onDetailNode={handleDetail}
               isNextEnabled={true}

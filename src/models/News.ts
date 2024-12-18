@@ -1,3 +1,5 @@
+// todo: rename all models with 'Model' suffix
+
 export interface News {
   id: number;
   content: string;
