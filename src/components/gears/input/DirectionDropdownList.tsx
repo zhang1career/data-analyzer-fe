@@ -1,4 +1,3 @@
-import {FC} from "react";
 import MyDropdownList, {MyDropdownListProps} from "@/hocs/mui/MyDropdownList.tsx";
 import {EditableProps} from "@/defines/abilities/EditableProps.ts";
 
@@ -18,20 +17,20 @@ interface DirectionDropdownListProps extends MyDropdownListProps<boolean>, Edita
   isReadOnly?: boolean,
 }
 
-const DirectionDropdownList: FC<DirectionDropdownListProps> = ({
-                                                                 isReadOnly = false,
-                                                                 isEditable,
-                                                                 value,
-                                                                 onChange,
-                                                                 ...rest
-                                                               }) => {
+const DirectionDropdownList: React.FC<DirectionDropdownListProps> = ({
+                                                                       isReadOnly = false,
+                                                                       isEditable,
+                                                                       value,
+                                                                       onChange,
+                                                                       ...rest
+                                                                     }) => {
 
   return (
     <MyDropdownList
       value={value}
       options={directionOpt}
       onChange={onChange}
-      readOnly={isReadOnly || !isEditable}
+      isEditable={!isReadOnly && isEditable}
       {...rest}
     />
   )

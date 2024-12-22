@@ -2,7 +2,7 @@
 
 import React, {useState} from 'react';
 import {withListEditor} from "@/hocs/mui/list/MyListEditor.tsx";
-import TermRelation from "@/components/repos/term/TermRelation.tsx";
+import {TermRelation} from "@/components/repos/term/TermRelation.tsx";
 import {TermRelationModel} from "@/models/TermModel.ts";
 
 

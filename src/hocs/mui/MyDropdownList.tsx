@@ -5,25 +5,29 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import {checkLabeledValue} from "@/defines/combines/LabeledValueProps.ts";
 import {MyOptionableProps} from "@/hocs/defines/MyOptionalbeProps.ts";
+import {EditableProps} from "@/defines/abilities/EditableProps.ts";
 
 
-export interface MyDropdownListProps<Value> extends MyOptionableProps<Value> {
+export interface MyDropdownListProps<Value> extends EditableProps, MyOptionableProps<Value> {
 }
 
 const MyDropdownList: React.FC<MyDropdownListProps<any>> = <T = string, >({
-                                                                          id,
-                                                                          label,
-                                                                          value = '',
-                                                                          options = [],
-                                                                          onChange = () => {
-                                                                            console.warn('[adaptr][dropdown] onChange is not implemented');
-                                                                          },
-                                                                          sx,
-                                                                          ...rest
-                                                                        }: MyDropdownListProps<T>) => {
+                                                                            isEditable,
+                                                                            label,
+                                                                            value = '',
+                                                                            options = [],
+                                                                            onChange = () => {
+                                                                              console.warn('[adaptr][dropdown] onChange is not implemented');
+                                                                            },
+                                                                            sx,
+                                                                            ...rest
+                                                                          }: MyDropdownListProps<T>) => {
   return (
     <Box sx={sx}>
-      <FormControl fullWidth>
+      <FormControl
+        disabled={!isEditable}
+        fullWidth
+      >
         <InputLabel>{label}</InputLabel>
         <Select
           {...rest}

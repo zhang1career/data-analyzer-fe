@@ -185,8 +185,6 @@ const TermGraph: React.FC<TermGraphProps> = ({
   // element
   const elementRef = React.useRef<HTMLDivElement>(null);
 
-  console.log('[debug]', Array.from(initElementMap.values()))
-
   return (
     <div
       className={error ? classes.flashBorder : classes.regularBorder}
@@ -419,7 +417,7 @@ const DEFAULT_NODE_STYLE = {
   'border-color': 'black',
   'border-width': 1,
   'border-opacity': 0.1,
-  'label': 'input(label)',
+  'label': 'data(label)',
   'font-size': 6,
 };
 
@@ -429,7 +427,7 @@ const DEFAULT_EDGE_STYLE = {
   'target-arrow-shape': 'triangle',
   'target-arrow-color': 'gray',
   'curve-style': 'bezier',
-  'label': 'input(label)',
+  'label': 'data(label)',
   'font-size': 5,
 };
 

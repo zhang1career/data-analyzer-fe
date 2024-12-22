@@ -12,7 +12,6 @@ import {modelToDto, voToModel} from "@/mappers/NewsMapper.ts";
 import {searchSimilarTagNameList} from "@/io/TagIO.ts";
 import {MyAutocompleteTextField} from "@/hocs/mui/MyAutocompleteTextField.tsx";
 import {DerivableProps} from "@/defines/abilities/DerivableProps.ts";
-import DateInput from "@/components/gears/input/DateField.tsx";
 import DateField from "@/components/gears/input/DateField.tsx";
 
 interface NewsDetailProps extends DerivableProps {

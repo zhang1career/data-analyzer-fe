@@ -1,6 +1,6 @@
 'use client';
 
-import React, {FC, useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import MyStepper from "@/hocs/mui/MyStepper.tsx";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
 import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
@@ -57,9 +57,9 @@ function buildTerm(searchTermGraphQo: SearchTermGraphQo, graphNodeVoList: GraphN
   };
 }
 
-const NewsAudit: FC<NewsAuditProps> = ({
-                                         formData = buildEmptyNews()
-                                       }) => {
+const NewsAudit: React.FC<NewsAuditProps> = ({
+                                               formData = buildEmptyNews()
+                                             }) => {
   // context
   const routing = useContext(RoutingContext);
   const noticing = useContext(NoticingContext);
@@ -146,10 +146,10 @@ const NewsAudit: FC<NewsAuditProps> = ({
 
   const handleSearchTermGraph = async () => {
     if (!searchTermGraphQo['name'] || !searchTermGraphQo['relation_type']) {
-      console.debug('[news][audit][term_graph][skip] No search term graph qo specified:', searchTermGraphQo);
+      console.info('[news][audit][term_graph][skip] No search term graph qo specified:', searchTermGraphQo);
       return;
     }
-    console.debug('[news][audit][term_graph] param', searchTermGraphQo, thinking);
+    console.info('[news][audit][term_graph] param', searchTermGraphQo, thinking);
 
     const graphVectorVo = await searchGraphVector(
       routing,
@@ -247,11 +247,12 @@ const NewsAudit: FC<NewsAuditProps> = ({
     >
       <ParsingTagSearchBar
         title={'Choose a tag as subject'}
-        fieldName={'tags'}
-        options={formData['tags']}
+        name={'tags'}
         formData={parseTagQo}
-        onSetFormData={setParseTagQo}
+        setFormData={setParseTagQo}
+        label={'Parse Tag'}
         onClick={handleParseTag}
+        options={formData['tags']}
         isNextEnabled={!!termMretOpts}
       />
 
@@ -262,7 +263,8 @@ const NewsAudit: FC<NewsAuditProps> = ({
         relationTypeFieldName={'relation_type'}
         relationTypeOptions={formData["tags"]}
         formData={searchTermGraphQo}
-        onSetFormData={setSearchTermGraphQo}
+        setFormData={setSearchTermGraphQo}
+        label={'Search Graph'}
         onClick={handleSearchTermGraph}
         isNextEnabled={!!termGraph}
       />
@@ -280,7 +282,7 @@ const NewsAudit: FC<NewsAuditProps> = ({
       <ThinkingCreate
         title={'Thinking'}
         formData={thinking}
-        onSetFormData={setThinking}
+        setFormData={setThinking}
         speechVectorMap={speechVectorMap}
         onSetResultData={setNewsTitleMap}
         isNextEnabled={!!newsTitleMap && !!formData && newsTitleMap.has(formData.id)}

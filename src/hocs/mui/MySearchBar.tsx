@@ -1,20 +1,22 @@
-import React, {Children, Dispatch, FC, ReactElement, SetStateAction, useEffect, useState} from 'react';
+import React, {Dispatch, FC, SetStateAction, useEffect, useState} from 'react';
 import {Button, Stack, Toolbar} from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import {MyAssembleProps} from "@/hocs/defines/MyAssembleProps.ts";
-import {ComponentProps} from "@/defines/combines/ComponentProps.ts";
 import {ClickableProps} from "@/defines/combines/ClickableProps.ts";
 import {handleInputChangeByEvent} from "@/defines/combines/NamedValueProps.ts";
+import {NestableProps, setupChildren} from "@/defines/combines/NestableProps.ts";
+import {StylableProps} from "@/defines/abilities/StylableProps.ts";
 
 
-interface SearchBarProps<T> extends MyAssembleProps, ClickableProps, ComponentProps {
-  onSetFormData: Dispatch<SetStateAction<T>>;
+interface SearchBarProps<T> extends MyAssembleProps, ClickableProps, NestableProps, StylableProps {
+  setFormData: Dispatch<SetStateAction<T>>;
   isAutoSubmit?: boolean;
 }
 
 /**
  * SearchBarProps
  * When isAutoSubmit is true, the search button will be hidden, and the search will be triggered automatically when any of the input fields changes.
+ * @param isEditable
  * @param label
  * @param onSetFormData
  * @param onClick
@@ -23,8 +25,9 @@ interface SearchBarProps<T> extends MyAssembleProps, ClickableProps, ComponentPr
  * @constructor
  */
 const MySearchBar: FC<SearchBarProps<any>> = <T, >({
+                                                     isEditable,
+                                                     setFormData,
                                                      label = 'Search',
-                                                     onSetFormData,
                                                      onClick = () => {
                                                        console.warn('SearchBarProps.onSubmit is not set');
                                                      },
@@ -36,7 +39,7 @@ const MySearchBar: FC<SearchBarProps<any>> = <T, >({
 
   // wrap the input change event with named_input
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    handleInputChangeByEvent<T>(event, onSetFormData);
+    handleInputChangeByEvent<T>(event, setFormData);
     setOnChangeAt(Date.now());
   };
 
@@ -51,11 +54,9 @@ const MySearchBar: FC<SearchBarProps<any>> = <T, >({
   return (
     <Toolbar>
       <Stack direction="row" spacing={0.2}>
-        {Children.map(children, (child) => {
-          return React.cloneElement(child as ReactElement, {
-            onChange: handleChange,
-            ...child.props
-          });
+        {setupChildren(children, {
+          isEditable: isEditable,
+          onChange: handleChange,
         })}
       </Stack>
       {!isAutoSubmit && (

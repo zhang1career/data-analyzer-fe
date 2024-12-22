@@ -1,42 +1,44 @@
-import React, {Dispatch, FC, SetStateAction} from "react";
+import React from "react";
 import MyDropdownList from "@/hocs/mui/MyDropdownList.tsx";
 import MySearchBar from "@/hocs/mui/MySearchBar.tsx";
 import {ParseTagQo} from "@/pojo/qo/TagQo.ts";
 import {TEXTBOX_WIDTH_MIN_PX} from "@/lookings/size.ts";
 import {SteppableProps} from "@/defines/abilities/SteppableProps.ts";
+import {FormableProps} from "@/defines/abilities/FormableProps.ts";
+import {TitledProps} from "@/defines/abilities/TitledProps.ts";
+import {ClickableProps} from "@/defines/combines/ClickableProps.ts";
+import {NamedProps} from "@/defines/abilities/NamedProps.ts";
 
 
-interface SearchBarForParsingTagProps extends SteppableProps {
-  title: string;
-  fieldName: "tags";
-  formData: ParseTagQo;
-  onSetFormData: Dispatch<SetStateAction<ParseTagQo>>;
+interface SearchBarForParsingTagProps extends SteppableProps, TitledProps, NamedProps, FormableProps<ParseTagQo>, ClickableProps {
   options: string[];
-  onClick: () => void;
 }
 
-const ParsingTagSearchBar: FC<SearchBarForParsingTagProps> = ({
-                                                                   title,
-                                                                   fieldName,
-                                                                   formData,
-                                                                   onSetFormData,
-                                                                   options,
-                                                                   onClick,
-                                                                   isNextEnabled,
-                                                                 }) => {
+const ParsingTagSearchBar: React.FC<SearchBarForParsingTagProps> = ({
+                                                                      title,
+                                                                      name = 'tags',
+                                                                      formData,
+                                                                      setFormData,
+                                                                      label,
+                                                                      onClick,
+                                                                      options,
+                                                                      isNextEnabled,
+                                                                    }) => {
   return (
     <MySearchBar
+      isEditable={!isNextEnabled}
       title={title}
-      onSetFormData={onSetFormData}
+      setFormData={setFormData}
+      label={label}
       onClick={onClick}
       isAutoSubmit={true}
       isNextEnabled={isNextEnabled}
     >
       <MyDropdownList
-        id={"subject_tag"}
-        label={"subject"}
-        name={fieldName}
-        value={formData[fieldName]}
+        id={'subject_tag'}
+        label={'subject'}
+        name={name}
+        value={formData?.[name as keyof ParseTagQo]}
         options={options}
         sx={{width: TEXTBOX_WIDTH_MIN_PX}}
       />

@@ -9,8 +9,13 @@ import {buildEmptyTermModel, TermModel, TermRelationModel} from "@/models/TermMo
 import {TermVo} from "@/pojo/vo/TermVo.ts";
 import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
-import {voToModel, modelToDto} from "@/mappers/TermMapper.ts";
-import TermRelation from "@/components/repos/term/TermRelation.tsx";
+import {modelToDto, voToModel} from "@/mappers/TermMapper.ts";
+import {
+  checkRelationBlank,
+  getTrimmedRelationValue,
+  TermRelation,
+  TermRelationExtProps
+} from "@/components/repos/term/TermRelation.tsx";
 
 
 interface TermDetailProps {
@@ -37,6 +42,7 @@ const TermDetail: React.FC<TermDetailProps> = ({
 
   // form
   const [formData, setFormData] = useState<TermModel>(buildEmptyTermModel());
+
   // form.relation
   function setFormDataRelation(relation: TermRelationModel[]) {
     setFormData(prevState => ({
@@ -108,29 +114,6 @@ const TermDetail: React.FC<TermDetailProps> = ({
       {children}
     </div>
   );
-}
-
-function checkRelationBlank(relation: TermRelationModel | null) {
-  return !relation
-    || (!relation['name'] || relation['name'].trim().length === 0)
-    || (!relation['relation_type'] || relation['relation_type'].trim().length === 0);
-}
-
-function getTrimmedRelationValue(relation: TermRelationModel) {
-  return {
-    id: relation.id,
-    name: relation.name,
-    relation_type: relation.relation_type,
-    is_reverse: relation.is_reverse,
-  };
-}
-
-/**
- * Term Relation
- */
-// term relation extending props
-interface TermRelationExtProps {
-  isEditable?: boolean
 }
 
 // term relation component

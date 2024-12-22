@@ -23,18 +23,18 @@ import {voToNewsTitleMap} from "@/mappers/ThinkingResultMapper.ts";
 import {ThinkingResultNewsTitleMap} from "@/models/ThinkingResult.ts";
 import {ThinkingResultVo} from "@/pojo/vo/ThinkingResultVo.ts";
 import Typography from "@mui/material/Typography";
+import {FormableProps} from "@/defines/abilities/FormableProps.ts";
+import DirectionDropdownList from "@/components/gears/input/DirectionDropdownList.tsx";
 
 
-interface ThinkingCreateProps extends MyAssembleProps {
-  formData: Thinking | null
-  onSetFormData: (thinking: Thinking) => void
+interface ThinkingCreateProps extends MyAssembleProps, FormableProps<Thinking> {
   speechVectorMap?: ObjMap<SpeechVectorKey, string>
   onSetResultData?: (result: ThinkingResultNewsTitleMap) => void
 }
 
 const ThinkingCreate: FC<ThinkingCreateProps> = ({
                                                    formData,
-                                                   onSetFormData,
+                                                   setFormData,
                                                    speechVectorMap = new ObjMap(),
                                                    onSetResultData = (result) => {
                                                      console.warn('[thinking][create] No result input setter specified.');
@@ -74,12 +74,11 @@ const ThinkingCreate: FC<ThinkingCreateProps> = ({
       return;
     }
     const thinkingDto = modelToDto(formData, speechVectorMap);
-    console.info('[thinking][create] param', thinkingDto);
     const thinkingResultObj = await createThinking(
       routing,
       thinkingDto);
     if (!thinkingResultObj) {
-      throw new Error('[news][audit] No thinking result returned.');
+      throw new Error(`[news][audit] No thinking result returned. thinkingDto: ${thinkingDto}`);
     }
     setThinkingResultObj(thinkingResultObj);
     const newsTitleMap = voToNewsTitleMap(thinkingResultObj);
@@ -94,8 +93,11 @@ const ThinkingCreate: FC<ThinkingCreateProps> = ({
   return (
     <>
       <MySearchBar
-        onSetFormData={onSetFormData}
+        isEditable={true}
+        setFormData={setFormData}
+        label={'Create'}
         onClick={handleCreateThinking}
+        isNextEnabled={true}
       >
         <MyDropdownList
           id={'attribute'}
@@ -105,10 +107,11 @@ const ThinkingCreate: FC<ThinkingCreateProps> = ({
           options={attrOpts}
           sx={{width: TEXTBOX_WIDTH_MIN_PX}}
         />
-        <Checkbox
+        <DirectionDropdownList
           id={'isAttrReverse'}
           name={'isAttrReverse'}
-          checked={formData ? formData['isAttrReverse'] : false}
+          value={formData?.['isAttrReverse'] ?? false}
+          label={'Is Attr Reverse?'}
         />
         <MyDropdownList
           id={'predicate'}
@@ -118,10 +121,11 @@ const ThinkingCreate: FC<ThinkingCreateProps> = ({
           options={predOpts}
           sx={{width: TEXTBOX_WIDTH_MIN_PX}}
         />
-        <Checkbox
+        <DirectionDropdownList
           id={'isPredReverse'}
           name={'isPredReverse'}
-          checked={formData ? formData['isPredReverse'] : false}
+          value={formData?.['isPredReverse'] ?? false}
+          label={'Is Pred Reverse?'}
         />
       </MySearchBar>
 

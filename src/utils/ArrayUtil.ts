@@ -1,3 +1,7 @@
+export function checkEmpty(arr: any[] | null): arr is [] | null{
+    return !arr || arr.length === 0;
+}
+
 export function implode(arr: string[], symbol: string = ','): string {
     if (!arr) {
         return '';

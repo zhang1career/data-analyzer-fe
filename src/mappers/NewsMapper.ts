@@ -35,6 +35,5 @@ function newsTagRelationVoToModel(vo: NewsTagRelationType): string[] {
   Object.values(vo).forEach((value) => {
     tagList.push(value);
   });
-
   return tagList;
 }

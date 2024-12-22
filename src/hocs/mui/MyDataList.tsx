@@ -159,7 +159,7 @@ const MyDataList: React.FC<DataTableProps<any, any>> = <V, M, >({
   }
 
   return (
-    <Paper sx={{height: 400, width: '100%'}}>
+    <Paper sx={{width: '100%'}}>
       <DataGrid
         sx={{border: 0}}
 

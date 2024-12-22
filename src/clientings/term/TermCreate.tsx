@@ -5,9 +5,16 @@ import MyModal from '@/hocs/mui/MyModal.tsx';
 import MyTextField from "@/hocs/mui/input/MyTextField.tsx";
 import MyEditableForm from "@/hocs/mui/MyEditableForm.tsx";
 import {createTerm} from "@/io/TermIO.ts";
-import {TermModel} from "@/models/TermModel.ts";
+import {buildEmptyTermModel, TermModel, TermRelationModel} from "@/models/TermModel.ts";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
 import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
+import {
+  checkRelationBlank,
+  getTrimmedRelationValue,
+  TermRelation,
+  TermRelationExtProps
+} from "@/components/repos/term/TermRelation.tsx";
+import {withListEditor} from "@/hocs/mui/list/MyListEditor.tsx";
 
 interface TermCreateProps {
   callbackRefresh?: () => void;
@@ -21,7 +28,15 @@ const TermCreate: React.FC<TermCreateProps> = ({
   const noticing = useContext(NoticingContext);
 
   // form
-  const [formData, setFormData] = useState<TermModel>(buildEmptyFormData());
+  const [formData, setFormData] = useState<TermModel>(buildEmptyTermModel());
+
+  // form.relation
+  function setFormDataRelation(relation: TermRelationModel[]) {
+    setFormData(prevState => ({
+      ...prevState,
+      relation: relation
+    }));
+  }
 
   // operation - create
   const handleCreate = async () => {
@@ -44,7 +59,7 @@ const TermCreate: React.FC<TermCreateProps> = ({
     <MyModal title={'Add'}>
       <MyEditableForm
         initEditable={true}
-        initFormData={buildEmptyFormData()}
+        initFormData={buildEmptyTermModel()}
         onSetFormData={setFormData}
         onSave={handleCreate}>
         <MyTextField
@@ -59,18 +74,19 @@ const TermCreate: React.FC<TermCreateProps> = ({
           name="content"
           value={formData['content']}
         />
+        <TermRelationList
+          formData={formData.relation}
+          setFormData={setFormDataRelation}
+          checkBlank={checkRelationBlank}
+          getTrimmedValue={getTrimmedRelationValue}
+        />
       </MyEditableForm>
     </MyModal>
   );
 }
 
-function buildEmptyFormData() {
-  return {
-    id: 0,
-    name: '',
-    content: '',
-    relation: [],
-  }
-}
+// term relation component
+const TermRelationList = withListEditor<TermRelationModel, TermRelationExtProps>(TermRelation);
+
 
 export default TermCreate;
