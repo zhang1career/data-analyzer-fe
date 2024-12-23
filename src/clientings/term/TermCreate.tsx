@@ -15,6 +15,7 @@ import {
   TermRelationExtProps
 } from "@/components/repos/term/TermRelation.tsx";
 import {withListEditor} from "@/hocs/mui/list/MyListEditor.tsx";
+import {setFormField} from "@/defines/abilities/FormableProps.ts";
 
 interface TermCreateProps {
   callbackRefresh?: () => void;
@@ -28,18 +29,14 @@ const TermCreate: React.FC<TermCreateProps> = ({
   const noticing = useContext(NoticingContext);
 
   // form
-  const [formData, setFormData] = useState<TermModel>(buildEmptyTermModel());
-
-  // form.relation
-  function setFormDataRelation(relation: TermRelationModel[]) {
-    setFormData(prevState => ({
-      ...prevState,
-      relation: relation
-    }));
-  }
+  const [formData, setFormData] = useState<TermModel | null>(null);
 
   // operation - create
   const handleCreate = async () => {
+    if (!formData) {
+      console.warn('[term][create][skip] formData is null');
+      return;
+    }
     console.debug('[term][create] param', formData);
     await createTerm(
       routing,
@@ -56,7 +53,11 @@ const TermCreate: React.FC<TermCreateProps> = ({
   };
 
   return (
-    <MyModal title={'Add'}>
+    <MyModal
+      label={'Add'}
+      onClick={() => {}}
+      onClose={() => {}}
+    >
       <MyEditableForm
         initEditable={true}
         initFormData={buildEmptyTermModel()}
@@ -66,17 +67,17 @@ const TermCreate: React.FC<TermCreateProps> = ({
           id="outlined-controlled"
           label="name"
           name="name"
-          value={formData['name']}
+          value={formData?.['name']}
         />
         <MyTextField
           id="outlined-controlled"
           label="content"
           name="content"
-          value={formData['content']}
+          value={formData?.['content']}
         />
         <TermRelationList
-          formData={formData.relation}
-          setFormData={setFormDataRelation}
+          formData={formData ? formData.relation : []}
+          setFormData={(relation) => setFormField(setFormData, 'relation', relation)}
           checkBlank={checkRelationBlank}
           getTrimmedValue={getTrimmedRelationValue}
         />

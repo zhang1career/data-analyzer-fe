@@ -13,6 +13,7 @@ import {MyAutocompleteTextField} from '@/hocs/mui/MyAutocompleteTextField.tsx';
 import {searchSimilarTagNameList} from "@/io/TagIO.ts";
 import {getCachedData, setCachedData} from "@/utils/CacheUtil.ts";
 import DateField from "@/components/gears/input/DateField.tsx";
+import {setFormField} from "@/defines/abilities/FormableProps.ts";
 
 
 interface NewsCreateProps {
@@ -27,10 +28,19 @@ const NewsCreate: React.FC<NewsCreateProps> = ({
   const noticing = useContext(NoticingContext);
 
   // form
-  const [formData, setFormData] = useState<News>(getCachedData('input-news_form', buildEmptyNews, {ttl: 3600}));
+  const [formData, setFormData] = useState<News | null>(null);
+
+  // init
+  const initFormData = () => {
+    setFormData(getCachedData('input-news_form', buildEmptyNews, {ttl: 3600}));
+  }
 
   // operation - create
   const handleCreate = async () => {
+    if (!formData) {
+      console.warn('[news][create][skip] formData is null');
+      return;
+    }
     console.debug('[news][create] param', formData);
     // cache
     const newsForm = {
@@ -55,17 +65,22 @@ const NewsCreate: React.FC<NewsCreateProps> = ({
   };
 
   return (
-    <MyModal title={'Add'}>
+    <MyModal
+      label={'Add'}
+      onClick={initFormData}
+      onClose={() => {}}
+    >
       <MyEditableForm
         initEditable={true}
         initFormData={buildEmptyNews()}
         onSetFormData={setFormData}
-        onSave={handleCreate}>
+        onSave={handleCreate}
+      >
         <MyTextField
           id={'content'}
           label={'content'}
           name={'content'}
-          value={formData['content']}
+          value={formData?.['content']}
           required={true}
           multiline
           rows={4}
@@ -76,26 +91,25 @@ const NewsCreate: React.FC<NewsCreateProps> = ({
           id={'url'}
           label={'url'}
           name={'url'}
-          value={formData['url']}
+          value={formData?.['url']}
           required={true}
         />
         <DateField
-          id={'published_at'}
           label={'Published At'}
           name={'published_at'}
-          value={formData['published_at']}
+          value={formData?.['published_at']}
           onChange={(value) => {
-            setFormData((prevObject) => ({...prevObject, ['published_at']: value}));
+            setFormField(setFormData, 'published_at', value);
           }}
         />
         <MyAutocompleteTextField
           id={'tags'}
           label={'tags'}
           placeholder={'tags'}
-          initOptions={formData['tags']}
-          value={formData['tags']}
+          initOptions={formData ? formData['tags'] : []}
+          value={formData ? formData['tags'] : []}
           onSetValues={(value) => {
-            setFormData((prevObject) => ({...prevObject, ['tags']: value}));
+            setFormField(setFormData, 'tags', value);
           }}
           onSearch={searchSimilarTagNameList}
           sx={{width: '100%'}}

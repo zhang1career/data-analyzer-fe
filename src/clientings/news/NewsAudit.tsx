@@ -83,6 +83,8 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
   const [parseTagQo, setParseTagQo] = useState<ParseTagQo>(buildEmptyParseTagQo());
   const [termMretOpts, setTermMretOpts] = useState<TermMretOpt[] | null>(null);
   const [searchTermGraphQo, setSearchTermGraphQo] = useState<SearchTermGraphQo>(buildEmptySearchTermGraphQo());
+  // actives
+  const [activeTermGraphSearchAt, setActiveTermGraphSearchAt] = useState<number | null>(null);
 
   // input mapping
   useEffect(() => {
@@ -98,12 +100,12 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
         mret = _termMretOpt.mret;
       }
     }
-
+    //
     setSearchTermGraphQo({
       ...searchTermGraphQo,
       name: term,
     });
-
+    //
     if (!thinking) {
       setThinking({
         isAttrReverse: false,
@@ -118,6 +120,8 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
         mret: mret,
       });
     }
+    // active term graph search
+    setActiveTermGraphSearchAt(Date.now());
   }, [searchTermGraphQo.term_mret]);
 
   // item refreshment
@@ -145,11 +149,12 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
   const [termGraph, setTermGraph] = useState<TermGraphModel | null>(null);
 
   const handleSearchTermGraph = async () => {
+    console.info('[news][audit][term_graph] param', searchTermGraphQo);
+
     if (!searchTermGraphQo['name'] || !searchTermGraphQo['relation_type']) {
       console.info('[news][audit][term_graph][skip] No search term graph qo specified:', searchTermGraphQo);
       return;
     }
-    console.info('[news][audit][term_graph] param', searchTermGraphQo, thinking);
 
     const graphVectorVo = await searchGraphVector(
       routing,
@@ -241,6 +246,7 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
   // thinking result
   const [newsTitleMap, setNewsTitleMap] = useState<ThinkingResultNewsTitleMap | null>(null);
 
+
   return (
     <MyStepper
       sx={{backgroundColor: COLOR.light_yellow}}
@@ -266,6 +272,9 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
         setFormData={setSearchTermGraphQo}
         label={'Search Graph'}
         onClick={handleSearchTermGraph}
+        isAutoSubmit={true}
+        activeAt={activeTermGraphSearchAt}
+        setActiveAt={setActiveTermGraphSearchAt}
         isNextEnabled={!!termGraph}
       />
 
@@ -281,6 +290,7 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
 
       <ThinkingCreate
         title={'Thinking'}
+        label={'Search'}
         formData={thinking}
         setFormData={setThinking}
         speechVectorMap={speechVectorMap}

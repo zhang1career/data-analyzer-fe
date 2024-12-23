@@ -1,10 +1,13 @@
-import * as React from 'react';
+import React from 'react';
 import clsx from 'clsx';
 import {css, styled} from '@mui/system';
 import {Modal as BaseModal} from '@mui/base/Modal';
 import {Box, Button} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import {GREY} from "@/lookings/color.ts";
+import {setupChildren} from "@/defines/combines/NestableProps.ts";
+import {DerivableProps} from "@/defines/abilities/DerivableProps.ts";
+import {ClickableProps} from "@/defines/combines/ClickableProps.ts";
 
 /**
  * Modal component
@@ -12,23 +15,26 @@ import {GREY} from "@/lookings/color.ts";
  * @param children the content of the modal, properties will be passed to children as following:
  *   onClose
  */
-interface ModalProps {
-  title: string;
-  children?: React.ReactNode;
+interface ModalProps extends ClickableProps, DerivableProps {
+  onClose?: () => void;
 }
 
 const MyModal: React.FC<ModalProps> = ({
-                                         title,
-                                         children = undefined
+                                         label,
+                                         onClick = () => console.warn('MyModal.onOpen is not set'),
+                                         onClose = () => console.warn('MyModal.onClose is not set'),
+                                         children
                                        }) => {
 
   const [open, setOpen] = React.useState(false);
 
   const handleOpen = () => {
+    onClick();
     setOpen(true);
   }
 
   const handleClose = () => {
+    onClose();
     setOpen(false);
   }
 
@@ -40,7 +46,7 @@ const MyModal: React.FC<ModalProps> = ({
         justifyContent="flex-end"
       >
         <Button startIcon={<AddIcon/>} onClick={handleOpen}>
-          {title}
+          {label}
         </Button>
       </Box>
 
@@ -49,9 +55,9 @@ const MyModal: React.FC<ModalProps> = ({
         onClose={handleClose}
         slots={{backdrop: StyledBackdrop}}
       >
-        <ModalContent sx={{width: 400}}>
-          {React.Children.map(children, (child) => {
-            return React.cloneElement(child as React.ReactElement, {onClose: handleClose});
+        <ModalContent sx={{width: '50%'}}>
+          {setupChildren(children, {
+            onClose: handleClose,
           })}
         </ModalContent>
       </Modal>

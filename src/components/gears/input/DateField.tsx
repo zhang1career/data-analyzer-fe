@@ -1,14 +1,14 @@
 import React, {FC} from "react";
+import MyDateField from "@/hocs/mui/input/MyDateField.tsx";
 import {LabeledProps} from "@/defines/abilities/LabeledProps.ts";
 import {ChangeableProps} from "@/defines/abilities/ChangeableProps.ts";
-import {ValuableProps} from "@/defines/abilities/ValuableProps.ts";
-import MyDateField from "@/hocs/mui/input/MyDateField.tsx";
+import {NamedValueProps} from "@/defines/combines/NamedValueProps.ts";
 
 
 const DATE_FORMAT = 'YYYY-MM-DDTHH:mm:ssZ';
 
 
-interface DateFieldProps extends LabeledProps, ValuableProps<string>, ChangeableProps<string> {
+interface DateFieldProps extends LabeledProps, NamedValueProps<string>, ChangeableProps<string> {
 }
 
 const DateField: FC<DateFieldProps> = ({

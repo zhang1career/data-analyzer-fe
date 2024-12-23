@@ -24,6 +24,9 @@ const ParsingTagSearchBar: React.FC<SearchBarForParsingTagProps> = ({
                                                                       options,
                                                                       isNextEnabled,
                                                                     }) => {
+  // active submit
+  const [activeSubmitAt, setActiveSubmitAt] = React.useState<number | null>(null);
+
   return (
     <MySearchBar
       isEditable={!isNextEnabled}
@@ -32,6 +35,8 @@ const ParsingTagSearchBar: React.FC<SearchBarForParsingTagProps> = ({
       label={label}
       onClick={onClick}
       isAutoSubmit={true}
+      activeAt={activeSubmitAt}
+      setActiveAt={setActiveSubmitAt}
       isNextEnabled={isNextEnabled}
     >
       <MyDropdownList

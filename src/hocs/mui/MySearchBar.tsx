@@ -2,15 +2,15 @@ import React, {Dispatch, FC, SetStateAction, useEffect, useState} from 'react';
 import {Button, Stack, Toolbar} from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import {MyAssembleProps} from "@/hocs/defines/MyAssembleProps.ts";
+import {StylableProps} from "@/defines/abilities/StylableProps.ts";
 import {ClickableProps} from "@/defines/combines/ClickableProps.ts";
 import {handleInputChangeByEvent} from "@/defines/combines/NamedValueProps.ts";
 import {NestableProps, setupChildren} from "@/defines/combines/NestableProps.ts";
-import {StylableProps} from "@/defines/abilities/StylableProps.ts";
+import {AutoSubmitableProps} from "@/defines/combines/AutoSubmitableProps.ts";
 
 
-interface SearchBarProps<T> extends MyAssembleProps, ClickableProps, NestableProps, StylableProps {
+interface SearchBarProps<T> extends MyAssembleProps, ClickableProps, NestableProps, StylableProps, AutoSubmitableProps {
   setFormData: Dispatch<SetStateAction<T>>;
-  isAutoSubmit?: boolean;
 }
 
 /**
@@ -21,6 +21,8 @@ interface SearchBarProps<T> extends MyAssembleProps, ClickableProps, NestablePro
  * @param onSetFormData
  * @param onClick
  * @param isAutoSubmit
+ * @param activeAt
+ * @param setActiveAt
  * @param children
  * @constructor
  */
@@ -32,24 +34,25 @@ const MySearchBar: FC<SearchBarProps<any>> = <T, >({
                                                        console.warn('SearchBarProps.onSubmit is not set');
                                                      },
                                                      isAutoSubmit = false,
+                                                     activeAt,
+                                                     setActiveAt = () => console.debug('SearchBarProps.setActiveSubmitAt is not set'),
                                                      children
                                                    }: SearchBarProps<T>) => {
-  // onChange version, initial null
-  const [onChangeAt, setOnChangeAt] = useState<number | null>(null);
-
   // wrap the input change event with named_input
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     handleInputChangeByEvent<T>(event, setFormData);
-    setOnChangeAt(Date.now());
+    setActiveAt(Date.now());
   };
 
   // auto submit
   useEffect(() => {
     // if auto submit and changed
-    if (isAutoSubmit && onChangeAt !== null) {
+    if (isAutoSubmit && activeAt !== null) {
       onClick();
     }
-  }, [onChangeAt]);
+    // reset active submit
+    setActiveAt(null);
+  }, [activeAt, isAutoSubmit, onClick]);
 
   return (
     <Toolbar>

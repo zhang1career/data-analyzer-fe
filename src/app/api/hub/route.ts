@@ -45,33 +45,31 @@ export async function POST(request: Request, response: Response) {
     if (!response) {
       throw new Error(`method ${method} not supported`);
     }
-    if (response.code !== 0) {
-      console.error('[apihub][server] failed:', response.code, response.msg);
-      return NextResponse.json(response.data, {status: HTTP_STATUS.OK});
-    }
 
     // return input
-    return NextResponse.json(response.data, {status: HTTP_STATUS.OK});
+    return NextResponse.json({
+      data: response.data,
+      code: response.code,
+      msg: response.msg,
+    }, {
+      status: HTTP_STATUS.OK
+    });
   } catch (error: unknown) {
     if (error instanceof AxiosError) {
       const status = error.response?.status;
       const message = error.response?.data?.message;
       console.error('[apihub][server][skip] failed querying:', url, 'status:', status, 'message:', message);
-      return NextResponse.json(
-        {},
-        {
-          status: status,
-          statusText: message
-        });
+      return NextResponse.json({}, {
+        status: status,
+        statusText: message
+      });
     } else {
       // Handle other types of errors
       console.error("An unknown error occurred:", error);
-      return NextResponse.json(
-        {},
-        {
-          status: HTTP_STATUS.INTERNAL_SERVER_ERROR,
-          statusText: 'An unknown error occurred:' + error
-        });
+      return NextResponse.json({}, {
+        status: HTTP_STATUS.INTERNAL_SERVER_ERROR,
+        statusText: 'An unknown error occurred:' + error
+      });
     }
   }
 }

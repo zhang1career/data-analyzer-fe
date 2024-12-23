@@ -18,6 +18,12 @@ export function modelToDto(m: Thinking, speechVectorMap: ObjMap<SpeechVectorKey,
     aspect: m.mret ? m.term : '',
     thinking: thinking,
   };
+  if (m.owner) {
+    dto.owner = m.owner;
+  }
+  if (m.filter) {
+    dto.filter = m.filter;
+  }
   // further thinking
   if (m.further) {
     dto.further = m.further.map((f) => modelToDto(f, speechVectorMap));

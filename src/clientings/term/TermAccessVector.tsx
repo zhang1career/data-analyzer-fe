@@ -1,14 +1,14 @@
 'use client';
 
-import React, {FC, useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {accessGraphVector} from "@/io/TermIO.ts";
 import {AccessVectorVo} from "@/pojo/vo/GraphVo.ts";
 import {TermRelationModel} from "@/models/TermModel.ts";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
 import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
+import {TermRelation} from "@/components/repos/term/TermRelation.tsx";
 import {TermRelationOpt} from "@/pojo/opt/TermRelationOpt.ts";
 import {accessVectorVoToTermRelationOptList, termRelationModelToString} from "@/mappers/TermMapper.ts";
-import TermRelation from "@/components/repos/term/TermRelation.tsx";
 import MyDropdownList from "@/hocs/mui/MyDropdownList.tsx";
 import {TEXTBOX_WIDTH_MIN_PX} from "@/lookings/size.ts";
 
@@ -17,9 +17,9 @@ interface TermAccessVectorProps {
   rawData: TermRelationModel;
 }
 
-const TermAccessVector: FC<TermAccessVectorProps> = ({
-                                                       rawData,
-                                                     }) => {
+const TermAccessVector: React.FC<TermAccessVectorProps> = ({
+                                                             rawData,
+                                                           }) => {
   // context
   const routing = useContext(RoutingContext);
   const noticing = useContext(NoticingContext);

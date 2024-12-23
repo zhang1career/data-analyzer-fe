@@ -11,6 +11,7 @@ import {
 import {HTTP_STATUS} from "@/consts/HttpStatusConst.ts";
 import {PATH_PARAM_CALLBACK, PATH_SIGNIN} from "@/consts/UrlConst.ts";
 import {sprintf} from "sprintf-js";
+import {ResponseObj} from "@/models/Http.ts";
 
 const API_HUB_URL = 'api/hub';
 
@@ -65,14 +66,19 @@ async function requestApiHub({
   });
 
   if (!response.ok) {
-    console.error('[apihub][client][skip] failure:', response.statusText);
-    return handleError(context, destBodyObj, response);
+    console.error('[apihub][client][skip] http failure:', response.statusText);
+    return handleHttpError(context, destBodyObj, response);
   }
 
-  return response.json();
+  const responseObj = await response.json() as ResponseObj<any>;
+  if (responseObj.code !== 0) {
+    console.error('[apihub][client][skip] biz failed:', responseObj);
+    throw new Error(`code=${responseObj.code}, msg=${responseObj.msg}`);
+  }
+  return responseObj.data;
 }
 
-function handleError(context: MyRouting | null, requestBody: any, response: Response): Promise<any> {
+function handleHttpError(context: MyRouting | null, requestBody: any, response: Response): Promise<any> {
   if (!context) {
     throw new Error(`Nothing to do with error, status=${response.status}, message=${response.statusText}`);
   }

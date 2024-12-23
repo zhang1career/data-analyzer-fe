@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import MuiTextField from "@mui/material/TextField";
 import {ThemeProvider} from "@mui/material";
 import {outlinedTextFieldTheme} from "@/lookings/themes/textFieldTheme.ts";

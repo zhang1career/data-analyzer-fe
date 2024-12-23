@@ -1,7 +1,7 @@
 'use client';
 
 import React, {FC, useContext, useEffect, useState} from 'react';
-import {Checkbox, List, ListItem} from "@mui/material";
+import {List, ListItem} from "@mui/material";
 import {RoutingContext} from '@/components/providers/RoutingProvider.tsx';
 import {NoticingContext} from '@/components/providers/NoticingProvider.tsx';
 import MySearchBar from "@/hocs/mui/MySearchBar.tsx";
@@ -17,7 +17,7 @@ import {DICT_SPEECH_ATTR, DICT_SPEECH_PRED} from "@/consts/Misc.ts";
 import {MyAssembleProps} from "@/hocs/defines/MyAssembleProps.ts";
 import {EMPTY_STRING} from "@/consts/StrConst.ts";
 import {LabeledValueProps} from "@/defines/combines/LabeledValueProps.ts";
-import {TEXTBOX_WIDTH_MIN_PX} from "@/lookings/size.ts";
+import {TEXTBOX_WIDTH_200_PX} from "@/lookings/size.ts";
 import {SpeechVectorKey} from "@/pojo/map/SpeechVectorMap.ts";
 import {voToNewsTitleMap} from "@/mappers/ThinkingResultMapper.ts";
 import {ThinkingResultNewsTitleMap} from "@/models/ThinkingResult.ts";
@@ -25,14 +25,17 @@ import {ThinkingResultVo} from "@/pojo/vo/ThinkingResultVo.ts";
 import Typography from "@mui/material/Typography";
 import {FormableProps} from "@/defines/abilities/FormableProps.ts";
 import DirectionDropdownList from "@/components/gears/input/DirectionDropdownList.tsx";
+import {LabeledProps} from "@/defines/abilities/LabeledProps.ts";
+import MyTextField from "@/hocs/mui/input/MyTextField.tsx";
 
 
-interface ThinkingCreateProps extends MyAssembleProps, FormableProps<Thinking> {
+interface ThinkingCreateProps extends MyAssembleProps, LabeledProps, FormableProps<Thinking> {
   speechVectorMap?: ObjMap<SpeechVectorKey, string>
   onSetResultData?: (result: ThinkingResultNewsTitleMap) => void
 }
 
 const ThinkingCreate: FC<ThinkingCreateProps> = ({
+                                                   label,
                                                    formData,
                                                    setFormData,
                                                    speechVectorMap = new ObjMap(),
@@ -95,8 +98,9 @@ const ThinkingCreate: FC<ThinkingCreateProps> = ({
       <MySearchBar
         isEditable={true}
         setFormData={setFormData}
-        label={'Create'}
+        label={label}
         onClick={handleCreateThinking}
+        isAutoSubmit={false}
         isNextEnabled={true}
       >
         <MyDropdownList
@@ -105,7 +109,7 @@ const ThinkingCreate: FC<ThinkingCreateProps> = ({
           name={'attribute'}
           value={formData ? formData['attribute'] : EMPTY_STRING}
           options={attrOpts}
-          sx={{width: TEXTBOX_WIDTH_MIN_PX}}
+          sx={{width: TEXTBOX_WIDTH_200_PX}}
         />
         <DirectionDropdownList
           id={'isAttrReverse'}
@@ -119,13 +123,19 @@ const ThinkingCreate: FC<ThinkingCreateProps> = ({
           name={'predicate'}
           value={formData ? formData['predicate'] : EMPTY_STRING}
           options={predOpts}
-          sx={{width: TEXTBOX_WIDTH_MIN_PX}}
+          sx={{width: TEXTBOX_WIDTH_200_PX}}
         />
         <DirectionDropdownList
           id={'isPredReverse'}
           name={'isPredReverse'}
           value={formData?.['isPredReverse'] ?? false}
           label={'Is Pred Reverse?'}
+        />
+        <MyTextField
+          id={'owner'}
+          label={'owner'}
+          name={'owner'}
+          value={formData?.['owner']}
         />
       </MySearchBar>
 

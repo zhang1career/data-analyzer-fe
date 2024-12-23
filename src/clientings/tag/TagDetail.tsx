@@ -67,7 +67,8 @@ const TagDetail: React.FC<TagDetailProps> = ({
         onSetFormData={setFormData}
         onSave={handleSave}
         sxButton={{ml: "auto"}}
-        key={activeEditableFormAt}>
+        key={activeEditableFormAt}
+      >
         <MyTextField
           id="outlined-controlled"
           label="id"
@@ -80,12 +81,6 @@ const TagDetail: React.FC<TagDetailProps> = ({
           label="name"
           name="name"
           value={formData['name']}
-        />
-        <MyTextField
-          id="outlined-controlled"
-          label="content"
-          name="content"
-          value={formData['content']}
         />
       </MyEditableForm>
       {children}

@@ -7,6 +7,9 @@ export interface Thinking {
   predicate: string;
   isPredReverse: boolean;
 
+  owner?: string;
+  filter?: string[];
+
   further?: Thinking[];
 }
 

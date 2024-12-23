@@ -98,7 +98,6 @@ const NewsDetail: React.FC<NewsDetailProps> = ({
           isReadOnly={true}
         />
         <DateField
-          id={'published_at'}
           label={'Published At'}
           name={'published_at'}
           value={formData['published_at']}
