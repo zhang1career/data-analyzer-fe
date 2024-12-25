@@ -1,8 +1,6 @@
-export function checkEmpty(map: Map<string, any>): boolean {
-  return map != null && Object.keys(map).length > 0;
+export function checkEmpty(map: Map<string, any> | undefined | null): map is null | undefined {
+  return !map || map.size <= 0;
 }
-
-export const EMPTY_MAP = new Map();
 
 /**
  * Deep clone an object to a new map.
@@ -11,7 +9,7 @@ export const EMPTY_MAP = new Map();
  */
 export function deepCopyFrom(obj: any): Map<string, any> {
   if (obj == null || !obj) {
-    return EMPTY_MAP;
+    return new Map();
   }
 
   // simple value

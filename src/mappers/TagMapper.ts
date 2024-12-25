@@ -7,6 +7,7 @@ export function voToModel(vo: TagVo): Tag {
   return {
     id: vo.id,
     name: vo.name,
+    news: vo.news,
   };
 }
 

@@ -14,7 +14,7 @@ import {voToModel} from "@/mappers/TermGraphMapper.ts";
 import {speechVectorVoToMapBatch} from "@/mappers/SpeechMapper.ts";
 import {parseResultVoToTermMretOptBatch} from "@/mappers/TagMapper.ts";
 import {buildEmptyNews, News} from "@/models/News.ts";
-import {GraphPath} from "@/models/GraphPath.ts";
+import {GraphPath, metaEqual} from "@/models/GraphPath.ts";
 import {TermGraphModel} from "@/models/TermModel.ts";
 import {Thinking} from "@/models/Thinking.ts";
 import {ThinkingResultNewsTitleMap} from "@/models/ThinkingResult.ts";
@@ -24,37 +24,18 @@ import {buildEmptyParseTagQo, ParseTagQo} from "@/pojo/qo/TagQo.ts";
 import {TermVo} from "@/pojo/vo/TermVo.ts";
 import {SpeechVectorKey} from "@/pojo/map/SpeechVectorMap.ts";
 import {GraphNodeVo, GraphVectorVo, GraphVo} from "@/pojo/vo/GraphVo.ts";
-import {DICT_SPEECH_VECTOR} from "@/consts/Misc.ts";
+import {DICT_SPEECH_ATTR, DICT_SPEECH_PRED, DICT_SPEECH_VECTOR} from "@/consts/Misc.ts";
 import {COLOR} from "@/lookings/color.ts";
 import ParsingTagSearchBar from "@/components/repos/tag/ParsingTagSearchBar.tsx";
 import TermGraphSearchBar from "@/components/repos/term/TermGraphSearchBar.tsx";
+import {checkEmpty as ArrayUtil_checkEmpty} from "@/utils/ArrayUtil.ts";
+import {checkEmpty as SetUtil_checkEmpty} from "@/utils/SetUtil.ts"
+import {DictVo} from "@/pojo/vo/misc/DictVo.ts";
+import {dictVoToSetBatch} from "@/mappers/misc/DictMapper.ts";
 
 
 interface NewsAuditProps {
   formData?: News;
-}
-
-function buildTerm(searchTermGraphQo: SearchTermGraphQo, graphNodeVoList: GraphNodeVo[]): TermVo {
-  // prepare input
-  // name
-  const name = searchTermGraphQo['name'];
-  // id
-  let id = 0;
-  for (const graphNodeVo of graphNodeVoList) {
-    if (graphNodeVo.l === name) {
-      id = graphNodeVo.id;
-      break;
-    }
-  }
-
-  return {
-    id: id,
-    name: name,
-    content: '',
-    src_term: new Map(),
-    dest_term: new Map(),
-    r: new Map(),
-  };
 }
 
 const NewsAudit: React.FC<NewsAuditProps> = ({
@@ -67,17 +48,24 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
   // prepare input
   // graph vector map
   const [speechVectorMap, setSpeechVectorMap] = useState<ObjMap<SpeechVectorKey, string>>(new ObjMap());
+  const [attrSet, setAttrSet] = useState<Set<string> | null>(null);
+  const [predSet, setPredSet] = useState<Set<string> | null>(null);
+  const [activeMiscDictAt, setActiveMiscDictAt] = useState<number>(Date.now());
 
   useEffect(() => {
     const miscDictPromise = getMiscDict(
       routing,
-      [DICT_SPEECH_VECTOR],
+      [DICT_SPEECH_VECTOR, DICT_SPEECH_ATTR, DICT_SPEECH_PRED],
       {});
     miscDictPromise.then((miscDict) => {
       const speechVectorVoList = miscDict[DICT_SPEECH_VECTOR] as GraphVectorVo[];
       setSpeechVectorMap(speechVectorVoToMapBatch(speechVectorVoList));
+      const speechAttrVoList = miscDict[DICT_SPEECH_ATTR] as DictVo[];
+      setAttrSet(dictVoToSetBatch(speechAttrVoList));
+      const speechPredVoList = miscDict[DICT_SPEECH_PRED] as DictVo[];
+      setPredSet(dictVoToSetBatch(speechPredVoList));
     });
-  }, []);
+  }, [routing, activeMiscDictAt]);
 
   // query param
   const [parseTagQo, setParseTagQo] = useState<ParseTagQo>(buildEmptyParseTagQo());
@@ -189,41 +177,64 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
   }
 
   // operation - travel path
-  const [graphPathMap, setGraphPathMap] = useState<Map<string, GraphPath> | null>(null);
+  const [graphPathList, setGraphPathList] = useState<GraphPath[] | null>(null);
 
   function handleSetTravelPath(graphPath: GraphPath) {
     console.debug('[news][audit][path] Set travel path:', graphPath);
-    if (!graphPathMap) {
-      setGraphPathMap(new Map([[graphPath.id, graphPath]]));
+    if (!graphPathList) {
+      setGraphPathList([graphPath]);
       return;
     }
-    setGraphPathMap((prevMap) => {
-      const newMap = new Map(prevMap);
-      newMap.set(graphPath.id, graphPath);
-      return newMap;
+    setGraphPathList((prevList) => {
+      if (!prevList) {
+        return [graphPath];
+      }
+      return [
+        ...prevList,
+        graphPath
+      ]
     });
   }
 
   useEffect(() => {
-    console.info('[news][audit][vector] param:', graphPathMap);
-
-    const len = graphPathMap?.size;
-    if (!len || len <= 1) {
-      console.info('[news][audit][vector][skip] No path to think.');
+    // check
+    if (SetUtil_checkEmpty(attrSet) || SetUtil_checkEmpty(predSet)) {
+      console.info('[news][audit][vector][retry] No attribute or predicate to think.');
+      setActiveMiscDictAt(Date.now());
       return;
     }
+    if (ArrayUtil_checkEmpty(graphPathList)) {
+      console.debug('[news][audit][vector][skip] No path to think.');
+      return;
+    }
+    console.debug('[news][audit][vector] param:', graphPathList);
 
     let attrPath: GraphPath | undefined;
     let predPath: GraphPath | undefined;
-    for (const [_path_id, _path] of graphPathMap) {
+    for (const _path of graphPathList) {
+      // check
+      if (!attrSet.has(_path.label) && !predSet.has(_path.label)) {
+        throw new Error('[news][audit][vector] Only attribute or predicate paths are allowed to clicked.');
+      }
+      // start travel
       if (!attrPath) {
+        if (!attrSet.has(_path.label)) {
+          throw new Error('[news][audit][vector] Click attribute path first, please.');
+        }
         attrPath = _path;
         continue;
       }
-      if (!predPath) {
-        predPath = _path;
-        break;
+      // intermediate travel
+      if (attrSet.has(_path.label)) {
+        if (!metaEqual(_path, attrPath)) {
+          throw new Error('[news][audit][vector] Only meta-equally attribute paths are allowed to clicked.');
+        }
+        continue;
       }
+      // end travel
+      predPath = _path;
+      setGraphPathList(null);
+      break;
     }
     if (!attrPath || !predPath) {
       console.info('[news][audit][vector][skip] Invalid path to think.');
@@ -238,7 +249,7 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
       predicate: predPath.label,
       isPredReverse: predPath.isReverse,
     });
-  }, [graphPathMap]);
+  }, [attrSet, predSet, graphPathList]);
 
   // build thinking
   const [thinking, setThinking] = useState<Thinking | null>(null);
@@ -299,6 +310,29 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
       />
     </MyStepper>
   );
+}
+
+function buildTerm(searchTermGraphQo: SearchTermGraphQo, graphNodeVoList: GraphNodeVo[]): TermVo {
+  // prepare input
+  // name
+  const name = searchTermGraphQo['name'];
+  // id
+  let id = 0;
+  for (const graphNodeVo of graphNodeVoList) {
+    if (graphNodeVo.l === name) {
+      id = graphNodeVo.id;
+      break;
+    }
+  }
+
+  return {
+    id: id,
+    name: name,
+    content: '',
+    src_term: new Map(),
+    dest_term: new Map(),
+    r: new Map(),
+  };
 }
 
 export default NewsAudit;

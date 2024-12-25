@@ -17,7 +17,7 @@ export async function searchTagPage(context: MyRouting,
       method: 'GET',
       url: '/da/knowledge/tags',
       queryParam: {
-        tag: getValueSafely(condition, 'tag', EMPTY_STRING),
+        tag_like: getValueSafely(condition, 'name', EMPTY_STRING),
         offset: offset,
         count: count,
       },

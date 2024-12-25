@@ -9,6 +9,7 @@ import {TagVo} from "@/pojo/vo/TagVo.ts";
 import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
 import {voToModel} from "@/mappers/TagMapper.ts";
+import {List, ListItem} from "@mui/material";
 
 interface TagDetailProps {
   item: TagVo;
@@ -24,10 +25,10 @@ interface TagDetailProps {
  * @constructor
  */
 const TagDetail: React.FC<TagDetailProps> = ({
-                                                 item,
-                                                 callbackRefresh,
-                                                 children = undefined
-                                               }) => {
+                                               item,
+                                               callbackRefresh,
+                                               children = undefined
+                                             }) => {
   // context
   const routing = useContext(RoutingContext);
   const noticing = useContext(NoticingContext);
@@ -82,6 +83,15 @@ const TagDetail: React.FC<TagDetailProps> = ({
           name="name"
           value={formData['name']}
         />
+        {formData['news'] && (
+          <List>
+            {formData['news'].map((news) => (
+              <ListItem key={news}>
+                <p>{news}</p>
+              </ListItem>
+            ))}
+          </List>
+        )}
       </MyEditableForm>
       {children}
     </div>

@@ -1,4 +1,4 @@
-export function checkEmpty(arr: any[] | null): arr is [] | null{
+export function checkEmpty(arr: any[] | undefined | null): arr is null | undefined | [] {
     return !arr || arr.length === 0;
 }
 

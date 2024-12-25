@@ -1,8 +1,8 @@
 import {getGridStringOperators, GridColDef} from "@mui/x-data-grid";
 
 export const TAG_COLUMNS: GridColDef[] = [
-  {field: 'id', headerName: 'ID', width: 70, filterable: false},
-  {field: 'name', headerName: 'Name', width: 130, filterable: true,
+  {field: 'id', headerName: 'ID', width: 85, filterable: false},
+  {field: 'name', headerName: 'Name', width: 250, filterable: true,
     filterOperators: getGridStringOperators().filter(op => op.value === 'equals')},
 ];
 

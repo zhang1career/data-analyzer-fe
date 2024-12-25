@@ -54,8 +54,8 @@ const TermGraphSearchBar: React.FC<SearchBarForTermGraphProps> = ({
       [DICT_SPEECH_PRED],
       {});
     miscDictPromise.then((miscDict) => {
-      const predDictVoList = miscDict[DICT_SPEECH_PRED] as DictVo[];
-      const _predSet = dictVoToSetBatch(predDictVoList);
+      const speechPredVoList = miscDict[DICT_SPEECH_PRED] as DictVo[];
+      const _predSet = dictVoToSetBatch(speechPredVoList);
       setPredSet(_predSet);
     });
   }, [routing]);
