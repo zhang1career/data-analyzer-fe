@@ -15,7 +15,7 @@ import {
   TermRelationExtProps
 } from "@/components/repos/term/TermRelation.tsx";
 import {withListEditor} from "@/hocs/mui/list/MyListEditor.tsx";
-import {setFormField} from "@/defines/abilities/FormableProps.ts";
+import {setFormField} from "@/defines/combines/FormRWProps.ts";
 
 interface TermCreateProps {
   callbackRefresh?: () => void;

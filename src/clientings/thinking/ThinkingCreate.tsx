@@ -23,13 +23,13 @@ import {voToNewsTitleMap} from "@/mappers/ThinkingResultMapper.ts";
 import {ThinkingResultNewsTitleMap} from "@/models/ThinkingResult.ts";
 import {ThinkingResultVo} from "@/pojo/vo/ThinkingResultVo.ts";
 import Typography from "@mui/material/Typography";
-import {FormableProps} from "@/defines/abilities/FormableProps.ts";
+import {FormRWProps} from "@/defines/combines/FormRWProps.ts";
 import DirectionDropdownList from "@/components/gears/input/DirectionDropdownList.tsx";
 import {LabeledProps} from "@/defines/abilities/LabeledProps.ts";
 import MyTextField from "@/hocs/mui/input/MyTextField.tsx";
 
 
-interface ThinkingCreateProps extends MyAssembleProps, LabeledProps, FormableProps<Thinking> {
+interface ThinkingCreateProps extends MyAssembleProps, LabeledProps, FormRWProps<Thinking> {
   speechVectorMap?: ObjMap<SpeechVectorKey, string>
   onSetResultData?: (result: ThinkingResultNewsTitleMap) => void
 }

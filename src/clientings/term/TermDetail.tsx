@@ -6,20 +6,26 @@ import MyTextField from "@/hocs/mui/input/MyTextField.tsx";
 import {withListEditor} from "@/hocs/mui/list/MyListEditor.tsx";
 import {updateTerm} from "@/io/TermIO.ts";
 import {buildEmptyTermModel, TermModel, TermRelationModel} from "@/models/TermModel.ts";
-import {TermVo} from "@/pojo/vo/TermVo.ts";
 import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
-import {modelToDto, voToModel} from "@/mappers/TermMapper.ts";
+import {modelToDto} from "@/mappers/TermMapper.ts";
 import {
   checkRelationBlank,
   getTrimmedRelationValue,
   TermRelation,
   TermRelationExtProps
 } from "@/components/repos/term/TermRelation.tsx";
+import {List, ListItem} from "@mui/material";
+import {searchTagPage} from "@/io/TagIO.ts";
+import {voToModelBatch} from "@/mappers/TagMapper.ts";
+import MyDataList from "@/hocs/mui/MyDataList.tsx";
+import {TAG_COLUMNS, TAG_COLUMNS_SIMPLE} from "@/schema/TagSchema.ts";
+import {TagModel} from "@/models/TagModel.ts";
+import MyDataListRo from "@/hocs/mui/MyDataListRo.tsx";
 
 
 interface TermDetailProps {
-  item: TermVo;
+  item: TermModel;
   callbackRefresh?: () => void;
   children?: React.ReactNode;
 }
@@ -43,7 +49,7 @@ const TermDetail: React.FC<TermDetailProps> = ({
   // form
   const [formData, setFormData] = useState<TermModel>(buildEmptyTermModel());
 
-  // form.relation
+  // operation - set form.relation
   function setFormDataRelation(relation: TermRelationModel[]) {
     setFormData(prevState => ({
       ...prevState,
@@ -51,11 +57,37 @@ const TermDetail: React.FC<TermDetailProps> = ({
     }));
   }
 
+  // operation - search similar tag list
+  const searchTagList = async (term: string) => {
+    try {
+      const tagVoPage = await searchTagPage(
+        routing,
+        0,
+        20,
+        {name: term});
+      return voToModelBatch(tagVoPage.data);
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        console.error('Failed to search tags.\n', e.message);
+      } else {
+        console.error('Failed to search tags.\n', e);
+      }
+      return [];
+    }
+  }
+
+  // actives
   // editable form refreshment
   const [activeEditableFormAt, setActiveEditableFormAt] = useState<number>(Date.now());
 
+  // prepare data
   useEffect(() => {
-    setFormData(voToModel(item));
+    searchTagList(item.name).then((tagList) => {
+      setFormData({
+        ...item,
+        tagList: tagList
+      });
+    });
     setActiveEditableFormAt(Date.now());
   }, [item]);
 
@@ -78,41 +110,49 @@ const TermDetail: React.FC<TermDetailProps> = ({
   };
 
   return (
-    <div>
-      <MyEditableForm
-        onSetFormData={setFormData}
-        onSave={handleSave}
-        sxButton={{ml: 'auto'}}
-        key={activeEditableFormAt}
-      >
-        <MyTextField
-          id='outlined-controlled'
-          label='id'
-          name='id'
-          value={formData['id'] ?? 0}
-          isReadOnly={true}
-        />
-        <MyTextField
-          id='outlined-controlled'
-          label='name'
-          name='name'
-          value={formData['name']}
-        />
-        <MyTextField
-          id='outlined-controlled'
-          label='content'
-          name='content'
-          value={formData['content']}
-        />
-        <TermRelationList
-          formData={formData.relation}
-          setFormData={setFormDataRelation}
-          checkBlank={checkRelationBlank}
-          getTrimmedValue={getTrimmedRelationValue}
-        />
-      </MyEditableForm>
+    <>
+      <div>
+        <MyEditableForm
+          onSetFormData={setFormData}
+          onSave={handleSave}
+          sxButton={{ml: 'auto'}}
+          key={activeEditableFormAt}
+        >
+          <MyTextField
+            id='outlined-controlled'
+            label='id'
+            name='id'
+            value={formData['id'] ?? 0}
+            isReadOnly={true}
+          />
+          <MyTextField
+            id='outlined-controlled'
+            label='name'
+            name='name'
+            value={formData['name']}
+          />
+          <MyTextField
+            id='outlined-controlled'
+            label='content'
+            name='content'
+            value={formData['content']}
+          />
+          <TermRelationList
+            formData={formData.relation}
+            setFormData={setFormDataRelation}
+            checkBlank={checkRelationBlank}
+            getTrimmedValue={getTrimmedRelationValue}
+          />
+        </MyEditableForm>
+      </div>
+
       {children}
-    </div>
+
+      <MyDataListRo
+        columns={TAG_COLUMNS_SIMPLE}
+        formData={formData['tagList']}
+      />
+    </>
   );
 }
 

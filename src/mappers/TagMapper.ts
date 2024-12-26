@@ -1,14 +1,19 @@
 import {TermMretOpt} from "@/pojo/opt/TermMretOpt.ts";
-import {TagVo, TagParseResultVo} from "@/pojo/vo/TagVo.ts";
-import {Tag} from "@/models/Tag.ts";
+import {TagParseResultVo, TagVo} from "@/pojo/vo/TagVo.ts";
+import {TagModel} from "@/models/TagModel.ts";
 
 
-export function voToModel(vo: TagVo): Tag {
+export function voToModel(vo: TagVo): TagModel {
   return {
     id: vo.id,
     name: vo.name,
     news: vo.news,
+    newsCount: vo.news.length,
   };
+}
+
+export function voToModelBatch(vos: TagVo[]): TagModel[] {
+  return vos.map(voToModel);
 }
 
 export function parseResultVoToTermMretOpt(vo: TagParseResultVo): TermMretOpt {

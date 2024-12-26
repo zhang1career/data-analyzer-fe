@@ -13,7 +13,7 @@ import {MyAutocompleteTextField} from '@/hocs/mui/MyAutocompleteTextField.tsx';
 import {searchSimilarTagNameList} from "@/io/TagIO.ts";
 import {getCachedData, setCachedData} from "@/utils/CacheUtil.ts";
 import DateField from "@/components/gears/input/DateField.tsx";
-import {setFormField} from "@/defines/abilities/FormableProps.ts";
+import {setFormField} from "@/defines/combines/FormRWProps.ts";
 
 
 interface NewsCreateProps {

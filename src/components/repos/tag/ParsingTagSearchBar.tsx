@@ -4,13 +4,13 @@ import MySearchBar from "@/hocs/mui/MySearchBar.tsx";
 import {ParseTagQo} from "@/pojo/qo/TagQo.ts";
 import {TEXTBOX_WIDTH_MIN_PX} from "@/lookings/size.ts";
 import {SteppableProps} from "@/defines/abilities/SteppableProps.ts";
-import {FormableProps} from "@/defines/abilities/FormableProps.ts";
+import {FormRWProps} from "@/defines/combines/FormRWProps.ts";
 import {TitledProps} from "@/defines/abilities/TitledProps.ts";
 import {ClickableProps} from "@/defines/combines/ClickableProps.ts";
 import {NamedProps} from "@/defines/abilities/NamedProps.ts";
 
 
-interface SearchBarForParsingTagProps extends SteppableProps, TitledProps, NamedProps, FormableProps<ParseTagQo>, ClickableProps {
+interface SearchBarForParsingTagProps extends SteppableProps, TitledProps, NamedProps, FormRWProps<ParseTagQo>, ClickableProps {
   options: string[];
 }
 

@@ -26,14 +26,14 @@ function MyComponent() {
         formData={itemList}
         setFormData={setItemList}
         checkBlank={(data) => !data
-          || (!data['name'] || data['name'].trim().length === 0)
-          || (!data['relation_type'] || data['relation_type'].trim().length === 0)}
+          || (!data['destName'] || data['destName'].trim().length === 0)
+          || (!data['relationType'] || data['relationType'].trim().length === 0)}
         getTrimmedValue={(data) => {
           return {
             id: data.id,
-            name: data.name,
-            relation_type: data.relation_type,
-            is_reverse: data.is_reverse,
+            destName: data.destName,
+            relationType: data.relationType,
+            isReverse: data.isReverse,
           };
         }}
       />

@@ -4,7 +4,7 @@ import MyTextField from "@/hocs/mui/input/MyTextField.tsx";
 import MyFieldGroup from "@/hocs/mui/input/MyFieldGroup.tsx";
 import {EditableProps} from "@/defines/abilities/EditableProps.ts";
 import DirectionDropdownList from "@/components/gears/input/DirectionDropdownList.tsx";
-import {FormableProps} from "@/defines/abilities/FormableProps.ts";
+import {FormRWProps} from "@/defines/combines/FormRWProps.ts";
 import MyDropdownList from "@/hocs/mui/MyDropdownList.tsx";
 import {EMPTY_STRING} from "@/consts/StrConst.ts";
 import {TEXTBOX_WIDTH_120_PX} from "@/lookings/size.ts";
@@ -16,7 +16,7 @@ import {dictVoToOptBatch} from "@/mappers/misc/DictMapper.ts";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
 
 
-interface TermRelationProps extends FormableProps<TermRelationModel>, EditableProps {
+interface TermRelationProps extends FormRWProps<TermRelationModel>, EditableProps {
 }
 
 // todo: move EditableProps to TermRelationProps
@@ -67,7 +67,7 @@ export const TermRelation: React.FC<TermRelationProps> = ({
         id={'term-relation-relation_type'}
         label={'relation_type'}
         name={'relation_type'}
-        value={formData ? formData['relation_type'] : EMPTY_STRING}
+        value={formData ? formData['relationType'] : EMPTY_STRING}
         options={relationTypeOpts}
         sx={{width: TEXTBOX_WIDTH_120_PX}}
       />
@@ -75,13 +75,13 @@ export const TermRelation: React.FC<TermRelationProps> = ({
         id="term-relation-is_reverse"
         label="is_reverse"
         name="is_reverse"
-        value={formData?.['is_reverse'] ?? false}
+        value={formData?.['isReverse'] ?? false}
       />
       <MyTextField
         id="term-relation-name"
         label="name"
         name="name"
-        value={formData?.['name'] ?? ''}
+        value={formData?.['destName'] ?? ''}
       />
     </MyFieldGroup>
   );
@@ -89,15 +89,17 @@ export const TermRelation: React.FC<TermRelationProps> = ({
 
 export function checkRelationBlank(relation: TermRelationModel | null) {
   return !relation
-    || (!relation['name'] || relation['name'].trim().length === 0)
-    || (!relation['relation_type'] || relation['relation_type'].trim().length === 0);
+    || (!relation['destName'] || relation['destName'].trim().length === 0)
+    || (!relation['relationType'] || relation['relationType'].trim().length === 0);
 }
 
-export function getTrimmedRelationValue(relation: TermRelationModel) {
+export function getTrimmedRelationValue(relation: TermRelationModel): TermRelationModel {
   return {
     id: relation.id,
-    name: relation.name,
-    relation_type: relation.relation_type,
-    is_reverse: relation.is_reverse,
+    destId: relation.destId,
+    destName: relation.destName,
+    relationType: relation.relationType,
+    isReverse: relation.isReverse,
+    speechType: relation.speechType,
   };
 }

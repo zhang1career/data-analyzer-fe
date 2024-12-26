@@ -13,7 +13,7 @@ export function modelToDto(m: TermModel): TermDto {
 }
 
 export function termRelationModelToTermRelationDto(m: TermRelationModel): TermRelationDto {
-  return new TermRelationDto(m.name, m.relation_type, m.is_reverse);
+  return new TermRelationDto(m.destName, m.relationType, m.isReverse);
 }
 
 
@@ -34,7 +34,12 @@ export function voToModel(vo: TermVo): TermModel {
     name: vo.name,
     content: vo.content,
     relation: termVoToTermRelationModelList(vo),
+    tagList: [],
   };
+}
+
+export function voToModelBatch(vos: TermVo[]): TermModel[] {
+  return vos.map(voToModel);
 }
 
 function termVoToTermRelationModelList(vo: TermVo): TermRelationModel[] {
@@ -43,13 +48,14 @@ function termVoToTermRelationModelList(vo: TermVo): TermRelationModel[] {
   const srcTermMap = vo.src_term;
   if (Object.keys(srcTermMap).length !== 0) {
     Object.values(srcTermMap).forEach((_v) => {
-      const destNodeName = _v.name;
       Object.values(_v.r as { [key: number]: GraphEdgeVo }).forEach((_vv) => {
         relationList.push({
           id: _vv.id,
-          name: destNodeName,
-          relation_type: _vv.l,
-          is_reverse: true
+          destId: _v.id,
+          destName: _v.name,
+          relationType: _vv.l,
+          isReverse: true,
+          speechType: _vv.sp,
         });
       });
     });
@@ -58,13 +64,14 @@ function termVoToTermRelationModelList(vo: TermVo): TermRelationModel[] {
   const destTermMap = vo.dest_term;
   if (Object.keys(destTermMap).length !== 0) {
     Object.values(destTermMap).forEach((_v) => {
-      const destNodeName = _v.name;
       Object.values(_v.r as { [key: number]: GraphEdgeVo }).forEach((_vv) => {
         relationList.push({
           id: _vv.id,
-          name: destNodeName,
-          relation_type: _vv.l,
-          is_reverse: false
+          destId: _v.id,
+          destName: _v.name,
+          relationType: _vv.l,
+          isReverse: false,
+          speechType: _vv.sp,
         });
       });
     });
@@ -74,7 +81,7 @@ function termVoToTermRelationModelList(vo: TermVo): TermRelationModel[] {
 }
 
 export function termRelationModelToString(m: TermRelationModel): string {
-  return m.is_reverse ? `<-${m.relation_type}- ${m.name}` : `-${m.relation_type}-> ${m.name}`
+  return m.isReverse ? `<-${m.relationType}- ${m.destName}` : `-${m.relationType}-> ${m.destName}`
 }
 
 
@@ -90,9 +97,9 @@ function termRelationVoToTermRelationOpt(vo: TermRelationVo): TermRelationOpt {
     label: termRelationVoToString(vo),
     value: {
       id: 0,
-      relation_type: vo.a,
-      is_reverse: vo.ad,
-      name: vo.d,
+      relationType: vo.a,
+      isReverse: vo.ad,
+      destName: vo.d,
     } as TermRelationModel,
   } as TermRelationOpt;
 }

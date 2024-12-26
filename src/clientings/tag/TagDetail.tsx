@@ -4,15 +4,13 @@ import React, {useContext, useEffect, useState} from "react";
 import MyEditableForm from "@/hocs/mui/MyEditableForm.tsx";
 import MyTextField from "@/hocs/mui/input/MyTextField.tsx";
 import {updateTag} from "@/io/TagIO.ts";
-import {buildEmptyTag, Tag} from "@/models/Tag.ts";
-import {TagVo} from "@/pojo/vo/TagVo.ts";
+import {buildEmptyTagModel, TagModel} from "@/models/TagModel.ts";
 import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
-import {voToModel} from "@/mappers/TagMapper.ts";
 import {List, ListItem} from "@mui/material";
 
 interface TagDetailProps {
-  item: TagVo;
+  item: TagModel;
   callbackRefresh?: () => void;
   children?: React.ReactNode;
 }
@@ -34,13 +32,13 @@ const TagDetail: React.FC<TagDetailProps> = ({
   const noticing = useContext(NoticingContext);
 
   // form
-  const [formData, setFormData] = useState<Tag>(buildEmptyTag());
+  const [formData, setFormData] = useState<TagModel>(buildEmptyTagModel());
 
   // editable form refreshment
   const [activeEditableFormAt, setActiveEditableFormAt] = useState<number>(Date.now());
 
   useEffect(() => {
-    setFormData(voToModel(item));
+    setFormData(item);
     setActiveEditableFormAt(Date.now());
   }, [item]);
 
@@ -63,26 +61,30 @@ const TagDetail: React.FC<TagDetailProps> = ({
   };
 
   return (
-    <div>
-      <MyEditableForm
-        onSetFormData={setFormData}
-        onSave={handleSave}
-        sxButton={{ml: "auto"}}
-        key={activeEditableFormAt}
-      >
-        <MyTextField
-          id="outlined-controlled"
-          label="id"
-          name="id"
-          value={formData['id'] ?? 0}
-          isReadOnly={true}
-        />
-        <MyTextField
-          id="outlined-controlled"
-          label="name"
-          name="name"
-          value={formData['name']}
-        />
+    <>
+      <div>
+        <MyEditableForm
+          onSetFormData={setFormData}
+          onSave={handleSave}
+          sxButton={{ml: "auto"}}
+          key={activeEditableFormAt}
+        >
+          <MyTextField
+            id="outlined-controlled"
+            label="id"
+            name="id"
+            value={formData['id'] ?? 0}
+            isReadOnly={true}
+          />
+          <MyTextField
+            id="outlined-controlled"
+            label="name"
+            name="name"
+            value={formData['name']}
+          />
+        </MyEditableForm>
+      </div>
+      <div>
         {formData['news'] && (
           <List>
             {formData['news'].map((news) => (
@@ -92,9 +94,9 @@ const TagDetail: React.FC<TagDetailProps> = ({
             ))}
           </List>
         )}
-      </MyEditableForm>
+      </div>
       {children}
-    </div>
+    </>
   );
 }
 

@@ -5,7 +5,7 @@ import {getValueSafely} from "@/utils/ObjUtil.ts";
 import {EMPTY_STRING} from "@/consts/StrConst.ts";
 import {TagParseResultVo, TagVo} from "@/pojo/vo/TagVo.ts";
 import {implode} from "@/utils/ArrayUtil.ts";
-import {Tag} from "@/models/Tag.ts";
+import {TagModel} from "@/models/TagModel.ts";
 
 
 export async function searchTagPage(context: MyRouting,
@@ -60,7 +60,7 @@ export async function getTag(context: MyRouting,
 
 export async function updateTag(context: MyRouting,
                                 tagId: number,
-                                tag: Tag): Promise<void> {
+                                tag: TagModel): Promise<void> {
   await requestApiHub(
     {
       method: 'PUT',

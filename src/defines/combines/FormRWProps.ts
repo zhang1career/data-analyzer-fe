@@ -1,6 +1,8 @@
 import {SetStateAction} from "react";
+import {FormRoProps} from "@/defines/abilities/FormRoProps.ts";
+import {FormWoProps} from "@/defines/abilities/FormWoProps.ts";
 
-export interface FormableProps<V> {
+export interface FormRWProps<V> extends FormRoProps<V>, FormWoProps<V> {
 
   formData: V | null;
 

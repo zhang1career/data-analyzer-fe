@@ -10,18 +10,18 @@ import ThinkingCreate from "@/clientings/thinking/ThinkingCreate.tsx";
 import {getTerm, searchGraphVector} from "@/io/TermIO.ts";
 import {parseTag} from "@/io/TagIO.ts";
 import {getMiscDict} from "@/io/MiscIO.ts";
-import {voToModel} from "@/mappers/TermGraphMapper.ts";
+import {voToModel as termGraphVoToModel} from "@/mappers/TermGraphMapper.ts";
+import {voToModel as termVoToModel} from "@/mappers/TermMapper.ts";
 import {speechVectorVoToMapBatch} from "@/mappers/SpeechMapper.ts";
 import {parseResultVoToTermMretOptBatch} from "@/mappers/TagMapper.ts";
 import {buildEmptyNews, News} from "@/models/News.ts";
 import {GraphPath, metaEqual} from "@/models/GraphPath.ts";
-import {TermGraphModel} from "@/models/TermModel.ts";
+import {TermGraphModel, TermModel, TermRelationModel} from "@/models/TermModel.ts";
 import {Thinking} from "@/models/Thinking.ts";
 import {ThinkingResultNewsTitleMap} from "@/models/ThinkingResult.ts";
 import {TermMretOpt} from "@/pojo/opt/TermMretOpt.ts";
 import {buildEmptySearchTermGraphQo, SearchTermGraphQo} from "@/pojo/qo/TermQo.ts";
 import {buildEmptyParseTagQo, ParseTagQo} from "@/pojo/qo/TagQo.ts";
-import {TermVo} from "@/pojo/vo/TermVo.ts";
 import {SpeechVectorKey} from "@/pojo/map/SpeechVectorMap.ts";
 import {GraphNodeVo, GraphVectorVo, GraphVo} from "@/pojo/vo/GraphVo.ts";
 import {DICT_SPEECH_ATTR, DICT_SPEECH_PRED, DICT_SPEECH_VECTOR} from "@/consts/Misc.ts";
@@ -50,7 +50,6 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
   const [speechVectorMap, setSpeechVectorMap] = useState<ObjMap<SpeechVectorKey, string>>(new ObjMap());
   const [attrSet, setAttrSet] = useState<Set<string> | null>(null);
   const [predSet, setPredSet] = useState<Set<string> | null>(null);
-  const [activeMiscDictAt, setActiveMiscDictAt] = useState<number>(Date.now());
 
   useEffect(() => {
     const miscDictPromise = getMiscDict(
@@ -65,7 +64,7 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
       const speechPredVoList = miscDict[DICT_SPEECH_PRED] as DictVo[];
       setPredSet(dictVoToSetBatch(speechPredVoList));
     });
-  }, [routing, activeMiscDictAt]);
+  }, [routing]);
 
   // query param
   const [parseTagQo, setParseTagQo] = useState<ParseTagQo>(buildEmptyParseTagQo());
@@ -133,11 +132,11 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
   }
 
   // query term graph
-  const [selectedTerm, setSelectedTerm] = useState<TermVo | null>(null);
+  const [selectedTerm, setSelectedTerm] = useState<TermModel | null>(null);
   const [termGraph, setTermGraph] = useState<TermGraphModel | null>(null);
 
   const handleSearchTermGraph = async () => {
-    console.info('[news][audit][term_graph] param', searchTermGraphQo);
+    console.debug('[news][audit][term_graph] param', searchTermGraphQo);
 
     if (!searchTermGraphQo['name'] || !searchTermGraphQo['relation_type']) {
       console.info('[news][audit][term_graph][skip] No search term graph qo specified:', searchTermGraphQo);
@@ -156,16 +155,17 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
       return;
     }
     setSelectedTerm(buildTerm(searchTermGraphQo, graphVectorVo.nodes));
-    setTermGraph(voToModel(graphVectorVo));
+    setTermGraph(termGraphVoToModel(graphVectorVo));
     refreshRelation();
   }
 
   // operation - detail an item
   const handleDetail = async (termId: number) => {
     try {
-      return await getTerm(
+      const termVo = await getTerm(
         routing,
         termId);
+      return termVoToModel(termVo);
     } catch (e: unknown) {
       if (e instanceof Error) {
         console.error('Failed to get term.\n', e.message);
@@ -198,13 +198,8 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
 
   useEffect(() => {
     // check
-    if (SetUtil_checkEmpty(attrSet) || SetUtil_checkEmpty(predSet)) {
-      console.info('[news][audit][vector][retry] No attribute or predicate to think.');
-      setActiveMiscDictAt(Date.now());
-      return;
-    }
-    if (ArrayUtil_checkEmpty(graphPathList)) {
-      console.debug('[news][audit][vector][skip] No path to think.');
+    if (SetUtil_checkEmpty(attrSet) || SetUtil_checkEmpty(predSet) || ArrayUtil_checkEmpty(graphPathList)) {
+      console.debug('[news][audit][vector][skip] No attribute or predicate set or no path list.');
       return;
     }
     console.debug('[news][audit][vector] param:', graphPathList);
@@ -241,7 +236,6 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
       return;
     }
 
-    console.info('[news][audit][vector] setThinking:', attrPath, predPath);
     setThinking({
       ...thinking,
       attribute: attrPath.label,
@@ -312,7 +306,7 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
   );
 }
 
-function buildTerm(searchTermGraphQo: SearchTermGraphQo, graphNodeVoList: GraphNodeVo[]): TermVo {
+function buildTerm(searchTermGraphQo: SearchTermGraphQo, graphNodeVoList: GraphNodeVo[]): TermModel {
   // prepare input
   // name
   const name = searchTermGraphQo['name'];
@@ -329,9 +323,8 @@ function buildTerm(searchTermGraphQo: SearchTermGraphQo, graphNodeVoList: GraphN
     id: id,
     name: name,
     content: '',
-    src_term: new Map(),
-    dest_term: new Map(),
-    r: new Map(),
+    relation: [],
+    tagList: [],
   };
 }
 

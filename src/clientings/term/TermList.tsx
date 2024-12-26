@@ -13,6 +13,9 @@ import {EMPTY_PAGE} from "@/consts/PaginateConst.ts";
 import {TermVo} from "@/pojo/vo/TermVo.ts";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
 import {GRID_WIDTH_1_OF_3, GRID_WIDTH_2_OF_3} from "@/lookings/size.ts";
+import {TermModel} from "@/models/TermModel.ts";
+import {voToModel, voToModelBatch} from "@/mappers/TermMapper.ts";
+import {Paginate} from "@/models/Paginate.ts";
 
 function handleBuildCondition(originCondition: { [key: string]: any }, item: GridFilterItem): { [key: string]: any } {
   if (item.operator !== 'equals') {
@@ -32,30 +35,29 @@ const TermList: React.FC = () => {
 
   // search refreshment
   const [activeSearchAt, setActiveSearchAt] = useState(Date.now());
-
+  // refresh handler
   function refreshSearch() {
     setActiveSearchAt(Date.now());
   }
 
   // item selection
-  const [selectedItem, setSelectedItem] = useState<TermVo | null>(null);
-
+  const [selectedItem, setSelectedItem] = useState<TermModel | null>(null);
+  // operation - clear an item
   function clearItem() {
     setSelectedItem(null);
   }
-
-  // item refreshment
-  const [activeItemAt, setActiveItemAt] = useState(Date.now());
-
-  function refreshRelation() {
-    setActiveItemAt(Date.now());
-  }
-
   // operation - select an item
-  const handleClickItem = (item: TermVo) => {
+  const handleClickItem = (item: TermModel) => {
     setSelectedItem(item);
     refreshRelation();
   };
+
+  // item refreshment
+  const [activeItemAt, setActiveItemAt] = useState(Date.now());
+  // refresh handler
+  function refreshRelation() {
+    setActiveItemAt(Date.now());
+  }
 
   // operation - search
   const handleSearch = async (offset: number, count: number, condition?: { [key: string]: string | number }) => {
@@ -63,11 +65,15 @@ const TermList: React.FC = () => {
     clearItem();
     // query
     try {
-      return await searchTermPage(
+      const termVoPage = await searchTermPage(
         routing,
         offset,
         count,
         condition);
+      return {
+        data: voToModelBatch(termVoPage.data),
+        total_num: termVoPage.total_num,
+      } as Paginate<TermModel>;
     } catch (e: unknown) {
       if (e instanceof Error) {
         console.error('Failed to search terms.\n', e.message);
@@ -81,11 +87,12 @@ const TermList: React.FC = () => {
   }
 
   // operation - detail an item
-  const handleDetail = async (termId: number): Promise<TermVo | null> => {
+  const handleDetail = async (termId: number): Promise<TermModel | null> => {
     try {
-      return await getTerm(
+      const termVo = await getTerm(
         routing,
         termId);
+      return voToModel(termVo);
     } catch (e: unknown) {
       if (e instanceof Error) {
         console.error('Failed to get term.\n', e.message);
@@ -132,10 +139,10 @@ const TermList: React.FC = () => {
           columns={TERM_COLUMNS}
           onSearch={handleSearch}
           onBuildCondition={handleBuildCondition}
-          onMappingBatch={(vs: TermVo[]) => vs}
+          onMappingBatch={(vs: TermModel[]) => vs}
           onRowDelete={handleDelete}
           onRowClick={(params) => {
-            handleClickItem(params.row as TermVo);
+            handleClickItem(params.row as TermModel);
           }}
           componentConfig={{
             filterable: 'toolbar'

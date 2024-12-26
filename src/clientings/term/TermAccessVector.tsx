@@ -34,8 +34,8 @@ const TermAccessVector: React.FC<TermAccessVectorProps> = ({
   const handleAccessOption = async (dest: TermRelationModel) => {
     const accessVectorVo = await accessGraphVector(
       routing,
-      dest['relation_type'],
-      dest['is_reverse']
+      dest['relationType'],
+      dest['isReverse']
     ) as AccessVectorVo;
     if (!accessVectorVo) {
       noticing('No Access Found.', {

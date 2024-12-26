@@ -1,26 +1,35 @@
+import {TagModel} from "@/models/TagModel.ts";
+
+// todo: rename relation to relatonList
 export interface TermModel {
   id: number;
   name: string;
   content: string;
   relation: TermRelationModel[];
+  tagList: TagModel[];
 }
 
+// todo: remove this function, assign the caller a null value
 export function buildEmptyTermModel(): TermModel {
   return {
     id: 0,
     name: '',
     content: '',
     relation: [],
+    tagList: [],
   };
 }
 
 export interface TermRelationModel {
   id: number;
-  name: string;
-  relation_type: string;
-  is_reverse: boolean;
+  destId: number;
+  destName: string;
+  relationType: string;
+  isReverse: boolean;
+  speechType: number;
 }
 
+// todo: rename nodes and edges to nodeList and edgeList
 export interface TermGraphModel {
   nodes: TermGraphNodeModel[];
   edges: TermGraphEdgeModel[];

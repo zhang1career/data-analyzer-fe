@@ -20,7 +20,7 @@ interface ComponentConfig {
   filterable: 'toolbar' | undefined;
 }
 
-interface DataTableProps<V, M> {
+interface MyDataListProps<V, M> {
   columns: GridColDef[];
   onSearch: (offset: number, count: number, condition?: { [key: string]: string | number }) => Promise<Paginate<V>>;
   onBuildCondition: (originCondition: { [key: string]: any }, item: GridFilterItem) => { [key: string]: any };
@@ -48,30 +48,30 @@ interface DataTableProps<V, M> {
  * @param callbackRefreshSearch callback refresh search
  * @constructor
  */
-const MyDataList: React.FC<DataTableProps<any, any>> = <V, M, >({
-                                                                  columns,
-                                                                  onSearch,
-                                                                  onBuildCondition,
-                                                                  onMappingBatch,
-                                                                  pageSizeOptions = [10, 20, 50, 100],
-                                                                  onRowClick = (params, event, detail) => {
-                                                                    console.log('[adaptr][datagrid] row clicked, {params, event, detail}:', {
-                                                                      params,
-                                                                      event,
-                                                                      detail
-                                                                    });
-                                                                  },
-                                                                  onRowDelete = (rowId: GridRowId) => () => {
-                                                                    console.warn('[adaptr][datagrid] onRowDelete not implemented');
-                                                                  },
-                                                                  componentConfig = {
-                                                                    filterable: undefined
-                                                                  },
-                                                                  refreshSearch,
-                                                                  callbackRefreshSearch = () => {
-                                                                    console.warn('[adaptr][datagrid] callbackRefreshSearch not implemented');
-                                                                  }
-                                                                }: DataTableProps<V, M>) => {
+const MyDataList: React.FC<MyDataListProps<any, any>> = <V, M, >({
+                                                                   columns,
+                                                                   onSearch,
+                                                                   onBuildCondition,
+                                                                   onMappingBatch,
+                                                                   pageSizeOptions = [10, 20, 50, 100],
+                                                                   onRowClick = (params, event, detail) => {
+                                                                     console.log('[adaptr][datagrid] row clicked, {params, event, detail}:', {
+                                                                       params,
+                                                                       event,
+                                                                       detail
+                                                                     });
+                                                                   },
+                                                                   onRowDelete = (rowId: GridRowId) => () => {
+                                                                     console.warn('[adaptr][datagrid] onRowDelete not implemented');
+                                                                   },
+                                                                   componentConfig = {
+                                                                     filterable: undefined
+                                                                   },
+                                                                   refreshSearch,
+                                                                   callbackRefreshSearch = () => {
+                                                                     console.warn('[adaptr][datagrid] callbackRefreshSearch not implemented');
+                                                                   }
+                                                                 }: MyDataListProps<V, M>) => {
   // filters
   const [filter, setFilter] = useState<GridFilterModel>({items: []});
 

@@ -6,7 +6,7 @@ import {SearchTermGraphQo} from "@/pojo/qo/TermQo.ts";
 import {TEXTBOX_WIDTH_MIN_PX} from "@/lookings/size.ts";
 import {SteppableProps} from "@/defines/abilities/SteppableProps.ts";
 import {TitledProps} from "@/defines/abilities/TitledProps.ts";
-import {FormableProps} from "@/defines/abilities/FormableProps.ts";
+import {FormRWProps} from "@/defines/combines/FormRWProps.ts";
 import {ClickableProps} from "@/defines/combines/ClickableProps.ts";
 import {getMiscDict} from "@/io/MiscIO.ts";
 import {DICT_SPEECH_PRED} from "@/consts/Misc.ts";
@@ -18,7 +18,7 @@ import {checkEmpty as SetUtil_checkEmpty} from "@/utils/SetUtil.ts";
 import {AutoSubmitableProps} from "@/defines/combines/AutoSubmitableProps.ts";
 
 
-interface SearchBarForTermGraphProps extends SteppableProps, TitledProps, FormableProps<SearchTermGraphQo>, ClickableProps, AutoSubmitableProps {
+interface SearchBarForTermGraphProps extends SteppableProps, TitledProps, FormRWProps<SearchTermGraphQo>, ClickableProps, AutoSubmitableProps {
   termMretFieldName: "term_mret";
   relationTypeFieldName: "relation_type";
   termMretOptions: LabeledValueProps<string>[] | null;

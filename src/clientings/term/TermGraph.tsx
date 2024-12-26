@@ -7,10 +7,7 @@ import cola from 'cytoscape-cola';
 // import panzoom from 'cytoscape-panzoom';
 import makeStyles from '@mui/styles/makeStyles';
 import {diff} from "@/utils/MapUtil.ts";
-import {TermVo} from "@/pojo/vo/TermVo.ts";
 import {TermGraphModel, TermModel} from "@/models/TermModel.ts";
-import {termGraphEdgeVoToModel} from "@/mappers/TermGraphMapper.ts";
-import {voToModel} from "@/mappers/TermMapper.ts";
 import {GraphPath} from "@/models/GraphPath.ts";
 import {EMPTY_STRING} from "@/consts/StrConst.ts";
 import {checkEmpty} from "@/utils/StrUtil.ts";
@@ -42,9 +39,9 @@ const warningLightStyles = makeStyles({
 });
 
 interface TermGraphProps extends TitledProps, DescribableProps, SteppableProps {
-  item: TermVo | null;
+  item: TermModel | null;
   graph?: TermGraphModel | null;
-  onDetailNode: (termId: number) => Promise<TermVo | null>;
+  onDetailNode: (termId: number) => Promise<TermModel | null>;
   onTravelPath?: (graphPathList: GraphPath) => void;
 }
 
@@ -66,7 +63,7 @@ const TermGraph: React.FC<TermGraphProps> = ({
       setTraveledNodeSet(new Set());
       return;
     }
-    setStartTerm(voToModel(item));
+    setStartTerm(item);
     setTraveledNodeSet(new Set([String(item.id)]));
   }, [item]);
 
@@ -130,17 +127,18 @@ const TermGraph: React.FC<TermGraphProps> = ({
                   onTravelGraph: ((graphPathList: GraphPath) => void) | undefined) => {
     const srcId = data.source;
     const destId = data.target;
+
     // check param
     if (srcId === undefined || destId === undefined) {
       throw new Error('Edge source or target is undefined.');
     }
     if (!traveledNodeSet.has(srcId) && !traveledNodeSet.has(destId)) {
-      console.log('[term][graph][skip] The edge tapped is invalid to travel.')
+      console.debug('[term][graph][skip] The edge tapped is invalid to travel');
       setError(true);
       return;
     }
     if (traveledNodeSet.has(srcId) && traveledNodeSet.has(destId)) {
-      console.log('[term][graph][skip] Circling edge is invalid to travel.')
+      console.debug('[term][graph][skip] Circling edge is invalid to travel.')
       setError(true);
       return;
     }
@@ -203,25 +201,40 @@ const TermGraph: React.FC<TermGraphProps> = ({
   );
 };
 
-function buildElementMapFromNode(term: TermVo): Map<string, ElementDefinition> {
+function buildElementMapFromNode(term: TermModel): Map<string, ElementDefinition> {
   const nodeList: ElementDefinition[] = []
   const edgeList: ElementDefinition[] = []
   // addNode with origin node
   addTerm(nodeList, term)
   // add src nodes and edges
-  const srcTermMap = term.src_term;
-  if (Object.keys(srcTermMap).length !== 0) {
-    Object.values(srcTermMap).forEach(_srcTerm => {
-      addRelatingTerm(nodeList, edgeList, _srcTerm, _srcTerm, term);
-    });
-  }
-  // add dest nodes and edges
-  const destTermMap = term.dest_term;
-  if (Object.keys(destTermMap).length !== 0) {
-    Object.values(destTermMap).forEach(_destTerm => {
-      addRelatingTerm(nodeList, edgeList, _destTerm, term, _destTerm);
-    });
-  }
+
+  term.relation.forEach(_r => {
+    if (_r.isReverse) {
+      addRelatingTerm(nodeList, edgeList,
+        {
+          id: _r.destId,
+          name: _r.destName,
+        }, {
+          id: _r.id,
+          srcId: _r.destId,
+          destId: term.id,
+          relationType: _r.relationType,
+          speechType: _r.speechType
+        });
+    } else {
+      addRelatingTerm(nodeList, edgeList,
+        {
+          id: _r.destId,
+          name: _r.destName,
+        }, {
+          id: _r.id,
+          srcId: term.id,
+          destId: _r.destId,
+          relationType: _r.relationType,
+          speechType: _r.speechType
+        });
+    }
+  });
 
   return buildElementMap(nodeList, edgeList);
 }
@@ -266,24 +279,29 @@ function buildElementMap(nodeList: cytoscape.ElementDefinition[], edgeList: cyto
   return elementMap;
 }
 
-function addTerm(nodeList: ElementDefinition[], addTerm: TermVo) {
+interface TermInGraph {
+  id: number;
+  name: string;
+}
+
+interface GraphEdge {
+  id: number;
+  srcId: number;
+  destId: number;
+  relationType: string;
+  speechType: number;
+}
+
+function addTerm(nodeList: ElementDefinition[], addTerm: TermModel) {
   addNode(nodeList, addTerm.id.toString(), addTerm.name);
 }
 
 function addRelatingTerm(nodeList: ElementDefinition[],
                          edgeList: ElementDefinition[],
-                         addTerm: TermVo,
-                         srcTerm: TermVo,
-                         destTerm: TermVo) {
-  addNode(nodeList, addTerm.id.toString(), addTerm.name);
-
-  Object.entries(addTerm.r).forEach(([key, value]) => {
-    const _model = termGraphEdgeVoToModel(value);
-    const edgeId = key;
-    const srcId = srcTerm.id.toString();
-    const destId = destTerm.id.toString();
-    addEdge(edgeList, edgeId, srcId, destId, _model.label, _model.speech_type);
-  });
+                         n: TermInGraph,
+                         e: GraphEdge) {
+  addNode(nodeList, n.id.toString(), n.name);
+  addEdge(edgeList, e.id.toString(), e.srcId.toString(), e.destId.toString(), e.relationType, e.speechType);
 }
 
 function addNode(nodeList: ElementDefinition[], nodeId: string, nodeLabel: string) {

@@ -8,10 +8,11 @@ import MyDataList from "@/hocs/mui/MyDataList.tsx";
 import TagDetail from "@/clientings/tag/TagDetail.tsx";
 import {searchTagPage, getTag, deleteTag} from "@/io/TagIO.ts";
 import {EMPTY_PAGE} from "@/consts/PaginateConst.ts";
-import {TagVo} from "@/pojo/vo/TagVo.ts";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
 import {GRID_WIDTH_1_OF_3, GRID_WIDTH_2_OF_3} from "@/lookings/size.ts";
-import {deleteTerm} from "@/io/TermIO.ts";
+import {voToModel, voToModelBatch} from "@/mappers/TagMapper.ts";
+import {Paginate} from "@/models/Paginate.ts";
+import {TagModel} from "@/models/TagModel.ts";
 
 function handleBuildCondition(originCondition: { [key: string]: any }, item: GridFilterItem): { [key: string]: any } {
   if (item.operator !== 'equals') {
@@ -37,24 +38,15 @@ const TagList: React.FC = () => {
   }
 
   // item selection
-  const [selectedItem, setSelectedItem] = useState<TagVo | null>(null);
-
+  const [selectedItem, setSelectedItem] = useState<TagModel | null>(null);
+  // operation - select an item
+  const handleClickItem = (item: TagModel) => {
+    setSelectedItem(item);
+  };
+  // operation - clear an item
   function clearItem() {
     setSelectedItem(null);
   }
-
-  // item refreshment
-  const [activeItemAt, setActiveItemAt] = useState(Date.now());
-
-  function refreshRelation() {
-    setActiveItemAt(Date.now());
-  }
-
-  // operation - select an item
-  const handleClickItem = (item: TagVo) => {
-    setSelectedItem(item);
-    refreshRelation();
-  };
 
   // operation - search
   const handleSearch = async (offset: number, count: number, condition?: { [key: string]: string | number }) => {
@@ -62,11 +54,15 @@ const TagList: React.FC = () => {
     clearItem();
     // query
     try {
-      return await searchTagPage(
+      const tagVoPage = await searchTagPage(
         routing,
         offset,
         count,
         condition);
+      return {
+        data: voToModelBatch(tagVoPage.data),
+        total_num: tagVoPage.total_num,
+      } as Paginate<TagModel>;
     } catch (e: unknown) {
       if (e instanceof Error) {
         console.error('Failed to search tags.\n', e.message);
@@ -80,11 +76,12 @@ const TagList: React.FC = () => {
   }
 
   // operation - detail an item
-  const handleDetail = async (tagId: number): Promise<TagVo | null> => {
+  const handleDetail = async (tagId: number): Promise<TagModel | null> => {
     try {
-      return await getTag(
+      const tagVo = await getTag(
         routing,
         tagId);
+      return voToModel(tagVo);
     } catch (e: unknown) {
       if (e instanceof Error) {
         console.error('Failed to get tag.\n', e.message);
@@ -127,10 +124,10 @@ const TagList: React.FC = () => {
           columns={TAG_COLUMNS}
           onSearch={handleSearch}
           onBuildCondition={handleBuildCondition}
-          onMappingBatch={(vs: TagVo[]) => vs}
+          onMappingBatch={(vs: TagModel[]) => vs}
           onRowDelete={handleDelete}
           onRowClick={(params) => {
-            handleClickItem(params.row as TagVo);
+            handleClickItem(params.row as TagModel);
           }}
           componentConfig={{
             filterable: 'toolbar'

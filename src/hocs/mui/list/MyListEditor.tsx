@@ -3,15 +3,15 @@ import {Box, Button} from "@mui/material";
 import {styled} from '@mui/material/styles';
 import AddIcon from "@mui/icons-material/Add";
 import ClearIcon from '@mui/icons-material/Clear';
-import {FormableProps} from "@/defines/abilities/FormableProps.ts";
+import {FormRWProps} from "@/defines/combines/FormRWProps.ts";
 import {InputValueProps} from "@/defines/combines/InputValueProps.ts";
 import {COLOR, GREY} from "@/lookings/color.ts";
 
 
-interface WrappedComponentProps<V> extends FormableProps<V> {
+interface WrappedComponentProps<V> extends FormRWProps<V> {
 }
 
-interface ListEditorProps<V> extends FormableProps<V[]>, InputValueProps<V> {
+interface ListEditorProps<V> extends FormRWProps<V[]>, InputValueProps<V> {
 }
 
 export const withListEditor = <V, P>(
