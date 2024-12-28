@@ -1,13 +1,9 @@
-'use client';
-
-import React, {useContext, useState} from 'react';
-import MuiModal from '@/components/hocs/mui/modals/MuiModal.tsx';
-import MyTextField from "@/components/hocs/mui/input/MyTextField.tsx";
-import MyEditableForm from "@/components/hocs/mui/MyEditableForm.tsx";
-import {createTerm} from "@/io/TermIO.ts";
+import React, {useContext, useEffect, useState} from "react";
 import {buildEmptyTermModel, TermModel, TermRelationModel} from "@/models/TermModel.ts";
-import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
-import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
+import MuiDrawer from "@/components/hocs/mui/modals/MuiDrawer.tsx";
+import MyEditableForm from "@/components/hocs/mui/MyEditableForm.tsx";
+import MyTextField from "@/components/hocs/mui/input/MyTextField.tsx";
+import {setFormField} from "@/defines/combines/FormRWProps.ts";
 import {
   checkRelationBlank,
   getTrimmedRelationValue,
@@ -15,22 +11,37 @@ import {
   TermRelationExtProps
 } from "@/components/repos/term/TermRelation.tsx";
 import {withListEditor} from "@/components/hocs/mui/list/MyListEditor.tsx";
-import {setFormField} from "@/defines/combines/FormRWProps.ts";
+import {createTerm} from "@/io/TermIO.ts";
+import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
+import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
 
 
-interface TermCreateProps {
+interface TermCreateDrawerProps {
+  termName: string;
+  termRelation?: TermRelationModel | null;
   callbackRefresh?: () => void;
 }
 
-const TermCreate: React.FC<TermCreateProps> = ({
-                                                 callbackRefresh
-                                               }) => {
+const TermCreateDrawer: React.FC<TermCreateDrawerProps> = ({
+                                                             termName,
+                                                             termRelation,
+                                                             callbackRefresh
+                                                           }) => {
   // context
   const routing = useContext(RoutingContext);
   const noticing = useContext(NoticingContext);
 
   // form
   const [formData, setFormData] = useState<TermModel | null>(null);
+  // set term
+  useEffect(() => {
+    setFormField(setFormData, 'name', termName);
+  }, [termName]);
+  // set relations
+  useEffect(() => {
+    setFormField(setFormData, 'relation', termRelation ? [termRelation] : []);
+  }, [termRelation]);
+
 
   // operation - create
   const handleCreate = async () => {
@@ -53,11 +64,14 @@ const TermCreate: React.FC<TermCreateProps> = ({
     }
   };
 
+
   return (
-    <MuiModal
+    <MuiDrawer
       label={'Add'}
-      onClick={() => {}}
-      onClose={() => {}}
+      onClick={() => {
+      }}
+      onClose={() => {
+      }}
     >
       <MyEditableForm
         initEditable={true}
@@ -78,17 +92,19 @@ const TermCreate: React.FC<TermCreateProps> = ({
         />
         <TermRelationList
           formData={formData ? formData.relation : []}
-          setFormData={(relation) => setFormField(setFormData, 'relation', relation)}
+          setFormData={(relation) => {
+            console.log('[debug] relation:', relation);
+            setFormField(setFormData, 'relation', relation);
+          }}
           checkBlank={checkRelationBlank}
           getTrimmedValue={getTrimmedRelationValue}
         />
       </MyEditableForm>
-    </MuiModal>
+    </MuiDrawer>
   );
 }
 
 // term relation component
 const TermRelationList = withListEditor<TermRelationModel, TermRelationExtProps>(TermRelation);
 
-
-export default TermCreate;
+export default TermCreateDrawer;

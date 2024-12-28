@@ -1,15 +1,15 @@
 'use client';
 
 import React, {useContext, useState} from 'react';
-import MyModal from '@/hocs/mui/MyModal.tsx';
-import MyTextField from '@/hocs/mui/input/MyTextField.tsx';
-import MyEditableForm from '@/hocs/mui/MyEditableForm.tsx';
+import MuiModal from '@/components/hocs/mui/modals/MuiModal.tsx';
+import MyTextField from '@/components/hocs/mui/input/MyTextField.tsx';
+import MyEditableForm from '@/components/hocs/mui/MyEditableForm.tsx';
 import {createNews} from '@/io/NewsIO.ts';
 import {buildEmptyNews, News} from '@/models/News.ts';
 import {RoutingContext} from '@/components/providers/RoutingProvider.tsx';
 import {NoticingContext} from '@/components/providers/NoticingProvider.tsx';
 import {modelToDto} from '@/mappers/NewsMapper.ts';
-import {MyAutocompleteTextField} from '@/hocs/mui/MyAutocompleteTextField.tsx';
+import {MyAutocompleteTextField} from '@/components/hocs/mui/MyAutocompleteTextField.tsx';
 import {searchSimilarTagNameList} from "@/io/TagIO.ts";
 import {getCachedData, setCachedData} from "@/utils/CacheUtil.ts";
 import DateField from "@/components/gears/input/DateField.tsx";
@@ -65,7 +65,7 @@ const NewsCreate: React.FC<NewsCreateProps> = ({
   };
 
   return (
-    <MyModal
+    <MuiModal
       label={'Add'}
       onClick={initFormData}
       onClose={() => {}}
@@ -115,7 +115,7 @@ const NewsCreate: React.FC<NewsCreateProps> = ({
           sx={{width: '100%'}}
         />
       </MyEditableForm>
-    </MyModal>
+    </MuiModal>
   );
 }
 

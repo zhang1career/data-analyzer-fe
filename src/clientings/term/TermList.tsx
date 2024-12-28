@@ -4,7 +4,7 @@ import React, {useContext, useState} from "react";
 import {Grid2} from "@mui/material";
 import {GridFilterItem, GridRowId} from "@mui/x-data-grid";
 import {TERM_COLUMNS, translateQueryField} from "@/schema/TermSchema.ts";
-import MyDataList from "@/hocs/mui/MyDataList.tsx";
+import MyDataList from "@/components/hocs/mui/MyDataList.tsx";
 import TermCreate from "@/clientings/term/TermCreate.tsx";
 import TermDetail from "@/clientings/term/TermDetail.tsx";
 import TermGraph from "@/clientings/term/TermGraph.tsx";

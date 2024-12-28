@@ -2,8 +2,8 @@
 
 import React from 'react';
 import {PropertibleProps} from "@/defines/abilities/PropertibleProps.ts";
-import MyButton from "@/hocs/mui/MyButton.tsx";
-import MyReplaceComponents from "@/hocs/mui/base/MyReplaceComponent.tsx";
+import MyButton from "@/components/hocs/mui/MyButton.tsx";
+import MyReplaceComponents from "@/components/hocs/mui/base/MyReplaceComponent.tsx";
 import {ClickableProps} from "@/defines/combines/ClickableProps.ts";
 
 

@@ -4,7 +4,7 @@ import React, {createContext, FC, ReactNode, useEffect, useState} from 'react';
 import {usePathname, useRouter} from "next/navigation";
 import DummyError from "@/errors/DummyError.ts";
 import {ErrMsg} from "@/consts/MsgConst.ts";
-import {MyRouting} from "@/hocs/next/MyRouting.ts";
+import {MyRouting} from "@/components/hocs/next/MyRouting.ts";
 
 const dummy: MyRouting = {
   protocol: '',

@@ -1,6 +1,6 @@
 import {GraphVectorVo} from "@/pojo/vo/GraphVo.ts";
 import {SpeechVectorKey} from "@/pojo/map/SpeechVectorMap.ts";
-import {ObjMap} from "@/components/helpers/ObjMap.ts";
+import {ObjMap} from "@/defines/structures/ObjMap.ts";
 
 
 export function speechVectorVoToMapBatch(vos: GraphVectorVo[]): ObjMap<SpeechVectorKey, string> {

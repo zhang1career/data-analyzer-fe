@@ -4,17 +4,17 @@ import React, {FC, useContext, useEffect, useState} from 'react';
 import {List, ListItem} from "@mui/material";
 import {RoutingContext} from '@/components/providers/RoutingProvider.tsx';
 import {NoticingContext} from '@/components/providers/NoticingProvider.tsx';
-import MySearchBar from "@/hocs/mui/MySearchBar.tsx";
+import MySearchBar from "@/components/hocs/mui/MySearchBar.tsx";
 import {createThinking} from "@/io/ThinkingIO.ts";
 import {Thinking} from "@/models/Thinking.ts";
 import {modelToDto} from "@/mappers/ThinkingMapper.ts";
-import {ObjMap} from "@/components/helpers/ObjMap.ts";
+import {ObjMap} from "@/defines/structures/ObjMap.ts";
 import {getMiscDict} from "@/io/MiscIO.ts";
 import {DictVo} from "@/pojo/vo/misc/DictVo.ts";
 import {dictVoToOptBatch} from "@/mappers/misc/DictMapper.ts";
-import MyDropdownList from "@/hocs/mui/MyDropdownList.tsx";
+import MyDropdownList from "@/components/hocs/mui/MyDropdownList.tsx";
 import {DICT_SPEECH_ATTR, DICT_SPEECH_PRED} from "@/consts/Misc.ts";
-import {MyAssembleProps} from "@/hocs/defines/MyAssembleProps.ts";
+import {SteppableProps} from "@/defines/combines/SteppableProps.ts";
 import {EMPTY_STRING} from "@/consts/StrConst.ts";
 import {LabeledValueProps} from "@/defines/combines/LabeledValueProps.ts";
 import {TEXTBOX_WIDTH_200_PX} from "@/lookings/size.ts";
@@ -26,10 +26,10 @@ import Typography from "@mui/material/Typography";
 import {FormRWProps} from "@/defines/combines/FormRWProps.ts";
 import DirectionDropdownList from "@/components/gears/input/DirectionDropdownList.tsx";
 import {LabeledProps} from "@/defines/abilities/LabeledProps.ts";
-import MyTextField from "@/hocs/mui/input/MyTextField.tsx";
+import MyTextField from "@/components/hocs/mui/input/MyTextField.tsx";
 
 
-interface ThinkingCreateProps extends MyAssembleProps, LabeledProps, FormRWProps<Thinking> {
+interface ThinkingCreateProps extends SteppableProps, LabeledProps, FormRWProps<Thinking> {
   speechVectorMap?: ObjMap<SpeechVectorKey, string>
   onSetResultData?: (result: ThinkingResultNewsTitleMap) => void
 }

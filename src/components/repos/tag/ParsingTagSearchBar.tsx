@@ -1,16 +1,16 @@
 import React from "react";
-import MyDropdownList from "@/hocs/mui/MyDropdownList.tsx";
-import MySearchBar from "@/hocs/mui/MySearchBar.tsx";
+import MyDropdownList from "@/components/hocs/mui/MyDropdownList.tsx";
+import MySearchBar from "@/components/hocs/mui/MySearchBar.tsx";
 import {ParseTagQo} from "@/pojo/qo/TagQo.ts";
 import {TEXTBOX_WIDTH_MIN_PX} from "@/lookings/size.ts";
-import {SteppableProps} from "@/defines/abilities/SteppableProps.ts";
+import {NextableProps} from "@/defines/abilities/NextableProps.ts";
 import {FormRWProps} from "@/defines/combines/FormRWProps.ts";
 import {TitledProps} from "@/defines/abilities/TitledProps.ts";
 import {ClickableProps} from "@/defines/combines/ClickableProps.ts";
 import {NamedProps} from "@/defines/abilities/NamedProps.ts";
 
 
-interface SearchBarForParsingTagProps extends SteppableProps, TitledProps, NamedProps, FormRWProps<ParseTagQo>, ClickableProps {
+interface SearchBarForParsingTagProps extends NextableProps, TitledProps, NamedProps, FormRWProps<ParseTagQo>, ClickableProps {
   options: string[];
 }
 

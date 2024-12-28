@@ -1,4 +1,4 @@
-import {MyRouting} from "@/hocs/next/MyRouting.ts";
+import {MyRouting} from "@/components/hocs/next/MyRouting.ts";
 import requestApiHub from "@/io/ApiHubIO.tsx";
 import {ThinkingDto} from "@/pojo/dto/ThinkingDto.ts";
 import {ThinkingResultVo} from "@/pojo/vo/ThinkingResultVo.ts";

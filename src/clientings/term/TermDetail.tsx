@@ -1,9 +1,9 @@
 'use client';
 
 import React, {useContext, useEffect, useState} from "react";
-import MyEditableForm from "@/hocs/mui/MyEditableForm.tsx";
-import MyTextField from "@/hocs/mui/input/MyTextField.tsx";
-import {withListEditor} from "@/hocs/mui/list/MyListEditor.tsx";
+import MyEditableForm from "@/components/hocs/mui/MyEditableForm.tsx";
+import MyTextField from "@/components/hocs/mui/input/MyTextField.tsx";
+import {withListEditor} from "@/components/hocs/mui/list/MyListEditor.tsx";
 import {updateTerm} from "@/io/TermIO.ts";
 import {buildEmptyTermModel, TermModel, TermRelationModel} from "@/models/TermModel.ts";
 import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
@@ -18,10 +18,10 @@ import {
 import {List, ListItem} from "@mui/material";
 import {searchTagPage} from "@/io/TagIO.ts";
 import {voToModelBatch} from "@/mappers/TagMapper.ts";
-import MyDataList from "@/hocs/mui/MyDataList.tsx";
+import MyDataList from "@/components/hocs/mui/MyDataList.tsx";
 import {TAG_COLUMNS, TAG_COLUMNS_SIMPLE} from "@/schema/TagSchema.ts";
 import {TagModel} from "@/models/TagModel.ts";
-import MyDataListRo from "@/hocs/mui/MyDataListRo.tsx";
+import MyDataListRo from "@/components/hocs/mui/MyDataListRo.tsx";
 
 
 interface TermDetailProps {

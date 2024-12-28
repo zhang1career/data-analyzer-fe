@@ -8,60 +8,65 @@ import {GREY} from "@/lookings/color.ts";
 import {setupChildren} from "@/defines/combines/NestableProps.ts";
 import {DerivableProps} from "@/defines/abilities/DerivableProps.ts";
 import {ClickableProps} from "@/defines/combines/ClickableProps.ts";
+import {CloseableProps} from "@/defines/combines/CloseableProps.ts";
 
 /**
- * Modal component
- * @param title
+ * MuiModal Component
+ * @param label the label of the modal
+ * @param onClick the action when the modal is clicked
+ * @param onClose the action when the modal is closed
  * @param children the content of the modal, properties will be passed to children as following:
  *   onClose
  */
-interface ModalProps extends ClickableProps, DerivableProps {
-  onClose?: () => void;
+interface MuiModalProps extends ClickableProps, CloseableProps, DerivableProps {
 }
 
-const MyModal: React.FC<ModalProps> = ({
-                                         label,
-                                         onClick = () => console.warn('MyModal.onOpen is not set'),
-                                         onClose = () => console.warn('MyModal.onClose is not set'),
-                                         children
-                                       }) => {
+const MuiModal: React.FC<MuiModalProps> = ({
+                                             label,
+                                             onClick = () => console.debug('MuiModal.onClick is not implemented'),
+                                             onClose = () => console.debug('MuiModal.onClose is not implemented'),
+                                             children
+                                           }) => {
 
   const [open, setOpen] = React.useState(false);
 
-  const handleOpen = () => {
+  const openModal = () => {
     onClick();
     setOpen(true);
   }
 
-  const handleClose = () => {
+  const closeModal = () => {
     onClose();
     setOpen(false);
   }
 
 
   return (
-    <div>
+    <>
       <Box
         display="flex"
         justifyContent="flex-end"
       >
-        <Button startIcon={<AddIcon/>} onClick={handleOpen}>
+        <Button
+          onClick={openModal}
+          startIcon={<AddIcon/>}
+        >
           {label}
         </Button>
       </Box>
 
       <Modal
         open={open}
-        onClose={handleClose}
+        onClose={closeModal}
         slots={{backdrop: StyledBackdrop}}
       >
         <ModalContent sx={{width: '50%'}}>
           {setupChildren(children, {
-            onClose: handleClose,
+            onClose: closeModal,
           })}
         </ModalContent>
       </Modal>
-    </div>
+    </>
   );
 }
 
@@ -129,4 +134,4 @@ const ModalContent = styled('div')(
   `,
 );
 
-export default MyModal;
+export default MuiModal;

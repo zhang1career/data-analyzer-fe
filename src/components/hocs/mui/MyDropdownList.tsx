@@ -1,14 +1,15 @@
+import React from "react";
 import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import {checkLabeledValue} from "@/defines/combines/LabeledValueProps.ts";
-import {MyOptionableProps} from "@/hocs/defines/MyOptionalbeProps.ts";
+import {MuiOptionableProps} from "@/components/hocs/mui/defines/MuiOptionalbeProps.ts";
 import {EditableProps} from "@/defines/abilities/EditableProps.ts";
 
 
-export interface MyDropdownListProps<Value> extends EditableProps, MyOptionableProps<Value> {
+export interface MyDropdownListProps<Value> extends EditableProps, MuiOptionableProps<Value> {
 }
 
 const MyDropdownList: React.FC<MyDropdownListProps<any>> = <T = string, >({

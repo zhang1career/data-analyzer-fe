@@ -1,7 +1,7 @@
 import {Thinking} from "@/models/Thinking.ts";
 import {ThinkingDto} from "@/pojo/dto/ThinkingDto.ts";
 import {SpeechVectorKey} from "@/pojo/map/SpeechVectorMap.ts";
-import {ObjMap} from "@/components/helpers/ObjMap.ts";
+import {ObjMap} from "@/defines/structures/ObjMap.ts";
 
 
 export function modelToDto(m: Thinking, speechVectorMap: ObjMap<SpeechVectorKey, string>): ThinkingDto {

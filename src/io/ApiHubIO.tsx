@@ -1,6 +1,6 @@
 'use client';
 
-import {MyRouting} from "@/hocs/next/MyRouting.ts";
+import {MyRouting} from "@/components/hocs/next/MyRouting.ts";
 import {
   checkEmpty as ObjUtil_checkEmpty,
   deepCopy as ObjUtil_deepCopy,

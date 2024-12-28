@@ -1,8 +1,6 @@
-export interface Stringable {
-  toString(): string;
-}
+import {StringableProps} from "@/defines/abilities/StringableProps.ts";
 
-export class ObjMap<K extends Stringable, V> {
+export class ObjMap<K extends StringableProps, V> {
   private map: { [key: string]: V } = {};
 
   constructor() {

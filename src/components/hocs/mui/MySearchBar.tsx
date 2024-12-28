@@ -1,7 +1,7 @@
 import React, {Dispatch, FC, SetStateAction, useEffect, useState} from 'react';
 import {Button, Stack, Toolbar} from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import {MyAssembleProps} from "@/hocs/defines/MyAssembleProps.ts";
+import {SteppableProps} from "@/defines/combines/SteppableProps.ts";
 import {StylableProps} from "@/defines/abilities/StylableProps.ts";
 import {ClickableProps} from "@/defines/combines/ClickableProps.ts";
 import {handleInputChangeByEvent} from "@/defines/combines/NamedValueProps.ts";
@@ -9,7 +9,7 @@ import {NestableProps, setupChildren} from "@/defines/combines/NestableProps.ts"
 import {AutoSubmitableProps} from "@/defines/combines/AutoSubmitableProps.ts";
 
 
-interface SearchBarProps<T> extends MyAssembleProps, ClickableProps, NestableProps, StylableProps, AutoSubmitableProps {
+interface SearchBarProps<T> extends SteppableProps, ClickableProps, NestableProps, StylableProps, AutoSubmitableProps {
   setFormData: Dispatch<SetStateAction<T>>;
 }
 

@@ -2,8 +2,8 @@
 
 import React, {FC, useState} from "react";
 import {ClickableProps} from "@/defines/combines/ClickableProps.ts";
-import MyInterruptModal from "@/hocs/mui/base/MyInterruptModal.tsx";
-import MyButton from "@/hocs/mui/MyButton.tsx";
+import MyInterruptModal from "@/components/hocs/mui/base/MyInterruptModal.tsx";
+import MyButton from "@/components/hocs/mui/MyButton.tsx";
 import {ButtonOwnProps} from "@mui/material/Button/Button";
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';

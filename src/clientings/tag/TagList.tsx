@@ -4,7 +4,7 @@ import React, {useContext, useState} from "react";
 import {Grid2} from "@mui/material";
 import {GridFilterItem, GridRowId} from "@mui/x-data-grid";
 import {TAG_COLUMNS, translateQueryField} from "@/schema/TagSchema.ts";
-import MyDataList from "@/hocs/mui/MyDataList.tsx";
+import MyDataList from "@/components/hocs/mui/MyDataList.tsx";
 import TagDetail from "@/clientings/tag/TagDetail.tsx";
 import {searchTagPage, getTag, deleteTag} from "@/io/TagIO.ts";
 import {EMPTY_PAGE} from "@/consts/PaginateConst.ts";

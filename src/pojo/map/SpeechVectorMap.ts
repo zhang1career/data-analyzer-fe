@@ -1,7 +1,7 @@
-import {Stringable} from "@/components/helpers/ObjMap.ts";
 import {SpeechVector} from "@/models/SpeechVector.ts";
+import {StringableProps} from "@/defines/abilities/StringableProps.ts";
 
-export class SpeechVectorKey implements SpeechVector, Stringable {
+export class SpeechVectorKey implements SpeechVector, StringableProps {
   attribute: string;
   isAttrReverse: boolean;
   predicate: string;

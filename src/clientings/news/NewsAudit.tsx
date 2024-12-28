@@ -1,10 +1,10 @@
 'use client';
 
 import React, {useContext, useEffect, useState} from "react";
-import MyStepper from "@/hocs/mui/MyStepper.tsx";
+import MyStepper from "@/components/hocs/mui/MyStepper.tsx";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
 import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
-import {ObjMap} from "@/components/helpers/ObjMap.ts";
+import {ObjMap} from "@/defines/structures/ObjMap.ts";
 import TermGraph from "@/clientings/term/TermGraph.tsx";
 import ThinkingCreate from "@/clientings/thinking/ThinkingCreate.tsx";
 import {getTerm, searchGraphVector} from "@/io/TermIO.ts";
@@ -28,10 +28,12 @@ import {DICT_SPEECH_ATTR, DICT_SPEECH_PRED, DICT_SPEECH_VECTOR} from "@/consts/M
 import {COLOR} from "@/lookings/color.ts";
 import ParsingTagSearchBar from "@/components/repos/tag/ParsingTagSearchBar.tsx";
 import TermGraphSearchBar from "@/components/repos/term/TermGraphSearchBar.tsx";
-import {checkEmpty as ArrayUtil_checkEmpty} from "@/utils/ArrayUtil.ts";
+import {checkEmpty, checkEmpty as ArrayUtil_checkEmpty} from "@/utils/ArrayUtil.ts";
 import {checkEmpty as SetUtil_checkEmpty} from "@/utils/SetUtil.ts"
 import {DictVo} from "@/pojo/vo/misc/DictVo.ts";
 import {dictVoToSetBatch} from "@/mappers/misc/DictMapper.ts";
+import TermCreateDrawer from "@/clientings/term/TermCreateDrawer.tsx";
+import TermAccessVector from "@/components/repos/term/TermAccessVector.tsx";
 
 
 interface NewsAuditProps {
@@ -131,18 +133,16 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
     setTermMretOpts(termMretOpts);
   }
 
-  // query term graph
+  // term graph
   const [selectedTerm, setSelectedTerm] = useState<TermModel | null>(null);
   const [termGraph, setTermGraph] = useState<TermGraphModel | null>(null);
-
-  const handleSearchTermGraph = async () => {
+  // search term graph
+  const searchTermGraph = async () => {
     console.debug('[news][audit][term_graph] param', searchTermGraphQo);
-
     if (!searchTermGraphQo['name'] || !searchTermGraphQo['relation_type']) {
       console.info('[news][audit][term_graph][skip] No search term graph qo specified:', searchTermGraphQo);
       return;
     }
-
     const graphVectorVo = await searchGraphVector(
       routing,
       searchTermGraphQo['name'],
@@ -157,6 +157,20 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
     setSelectedTerm(buildTerm(searchTermGraphQo, graphVectorVo.nodes));
     setTermGraph(termGraphVoToModel(graphVectorVo));
     refreshRelation();
+  }
+  // check term graph complete
+  function checkTermGraphComplete() {
+    if (!termGraph) {
+      return false;
+    }
+    return !checkEmpty(termGraph.nodes) && !checkEmpty(termGraph.edges);
+  }
+  // check term graph uncomplete
+  function checkTermGraphUncomplete() {
+    if (!termGraph) {
+      return false;
+    }
+    return checkEmpty(termGraph.nodes) || checkEmpty(termGraph.edges);
   }
 
   // operation - detail an item
@@ -252,57 +266,79 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
   const [newsTitleMap, setNewsTitleMap] = useState<ThinkingResultNewsTitleMap | null>(null);
 
 
+  // term relation
+  const [termRelation, setTermRelation] = useState<TermRelationModel | null>(null);
+
+  useEffect(() => {
+
+  }, []);
+
+
   return (
-    <MyStepper
-      sx={{backgroundColor: COLOR.light_yellow}}
-    >
-      <ParsingTagSearchBar
-        title={'Choose a tag as subject'}
-        name={'tags'}
-        formData={parseTagQo}
-        setFormData={setParseTagQo}
-        label={'Parse Tag'}
-        onClick={handleParseTag}
-        options={formData['tags']}
-        isNextEnabled={!!termMretOpts}
+    <>
+      <TermCreateDrawer
+        termName={searchTermGraphQo['name']}
+        termRelation={termRelation}
+        callbackRefresh={refreshRelation}
       />
 
-      <TermGraphSearchBar
-        title={'Choose term-mret and predicate'}
-        termMretFieldName={'term_mret'}
-        termMretOptions={termMretOpts}
-        relationTypeFieldName={'relation_type'}
-        relationTypeOptions={formData["tags"]}
-        formData={searchTermGraphQo}
-        setFormData={setSearchTermGraphQo}
-        label={'Search Graph'}
-        onClick={handleSearchTermGraph}
-        isAutoSubmit={true}
-        activeAt={activeTermGraphSearchAt}
-        setActiveAt={setActiveTermGraphSearchAt}
-        isNextEnabled={!!termGraph}
-      />
+      <MyStepper
+        sx={{backgroundColor: COLOR.light_yellow}}
+      >
+        <ParsingTagSearchBar
+          title={'Choose a tag as subject'}
+          name={'tags'}
+          formData={parseTagQo}
+          setFormData={setParseTagQo}
+          label={'Parse Tag'}
+          onClick={handleParseTag}
+          options={formData['tags']}
+          isNextEnabled={!!termMretOpts}
+        />
 
-      <TermGraph
-        title={'Select speech vectors on graph'}
-        item={selectedTerm}
-        graph={termGraph}
-        onDetailNode={handleDetail}
-        onTravelPath={handleSetTravelPath}
-        isNextEnabled={!!thinking?.attribute && !!thinking?.predicate}
-        key={activeAuditAt}
-      />
+        <TermGraphSearchBar
+          title={'Choose term-mret and predicate'}
+          termMretFieldName={'term_mret'}
+          termMretOptions={termMretOpts}
+          relationTypeFieldName={'relation_type'}
+          relationTypeOptions={formData["tags"]}
+          formData={searchTermGraphQo}
+          setFormData={setSearchTermGraphQo}
+          label={'Search Graph'}
+          onClick={searchTermGraph}
+          isAutoSubmit={true}
+          activeAt={activeTermGraphSearchAt}
+          setActiveAt={setActiveTermGraphSearchAt}
+          isNextEnabled={checkTermGraphComplete()}
+        >
+          {checkTermGraphUncomplete() && <TermAccessVector
+            rawData={{relationType: searchTermGraphQo['relation_type'], isReverse: searchTermGraphQo['is_reverse'] ?? false}}
+            formData={termRelation}
+            setFormData={setTermRelation}
+          />}
+        </TermGraphSearchBar>
 
-      <ThinkingCreate
-        title={'Thinking'}
-        label={'Search'}
-        formData={thinking}
-        setFormData={setThinking}
-        speechVectorMap={speechVectorMap}
-        onSetResultData={setNewsTitleMap}
-        isNextEnabled={!!newsTitleMap && !!formData && newsTitleMap.has(formData.id)}
-      />
-    </MyStepper>
+        <TermGraph
+          title={'Select speech vectors on graph'}
+          item={selectedTerm}
+          graph={termGraph}
+          onDetailNode={handleDetail}
+          onTravelPath={handleSetTravelPath}
+          isNextEnabled={!!thinking?.attribute && !!thinking?.predicate}
+          key={activeAuditAt}
+        />
+
+        <ThinkingCreate
+          title={'Thinking'}
+          label={'Search'}
+          formData={thinking}
+          setFormData={setThinking}
+          speechVectorMap={speechVectorMap}
+          onSetResultData={setNewsTitleMap}
+          isNextEnabled={!!newsTitleMap && !!formData && newsTitleMap.has(formData.id)}
+        />
+      </MyStepper>
+    </>
   );
 }
 

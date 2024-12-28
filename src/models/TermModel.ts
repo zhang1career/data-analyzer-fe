@@ -29,6 +29,11 @@ export interface TermRelationModel {
   speechType: number;
 }
 
+export interface TermRelationMetaModel {
+  relationType: string;
+  isReverse: boolean;
+}
+
 // todo: rename nodes and edges to nodeList and edgeList
 export interface TermGraphModel {
   nodes: TermGraphNodeModel[];

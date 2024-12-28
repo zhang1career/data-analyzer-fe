@@ -1,11 +1,11 @@
 import React, {useContext, useEffect, useState} from "react";
 import {TermRelationModel} from "@/models/TermModel.ts";
-import MyTextField from "@/hocs/mui/input/MyTextField.tsx";
-import MyFieldGroup from "@/hocs/mui/input/MyFieldGroup.tsx";
+import MyTextField from "@/components/hocs/mui/input/MyTextField.tsx";
+import MyFieldGroup from "@/components/hocs/mui/input/MyFieldGroup.tsx";
 import {EditableProps} from "@/defines/abilities/EditableProps.ts";
 import DirectionDropdownList from "@/components/gears/input/DirectionDropdownList.tsx";
 import {FormRWProps} from "@/defines/combines/FormRWProps.ts";
-import MyDropdownList from "@/hocs/mui/MyDropdownList.tsx";
+import MyDropdownList from "@/components/hocs/mui/MyDropdownList.tsx";
 import {EMPTY_STRING} from "@/consts/StrConst.ts";
 import {TEXTBOX_WIDTH_120_PX} from "@/lookings/size.ts";
 import {LabeledValueProps} from "@/defines/combines/LabeledValueProps.ts";

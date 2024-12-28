@@ -7,12 +7,12 @@ import {Stack, SxProps} from '@mui/material';
 import CancelIcon from '@mui/icons-material/Cancel';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
-import MyReplaceButtons from '@/hocs/mui/buttons/MyReplaceButtons.tsx';
+import MyReplaceButtons from '@/components/hocs/mui/buttons/MyReplaceButtons.tsx';
 import {NestableProps, setupChildren} from "@/defines/combines/NestableProps.ts";
 import {VerbosibleProps} from '@/defines/abilities/VerbosibleProps.ts';
 import {EMPTY_STRING} from '@/consts/StrConst.ts';
 import {flexStackTheme} from '@/lookings/themes/stackTheme.ts';
-import MyButton from "@/hocs/mui/MyButton.tsx";
+import MyButton from "@/components/hocs/mui/MyButton.tsx";
 import {handleInputChangeByEvent} from "@/defines/combines/NamedValueProps.ts";
 
 

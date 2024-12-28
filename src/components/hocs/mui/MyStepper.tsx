@@ -8,14 +8,14 @@ import Typography from "@mui/material/Typography";
 import StepContent from "@mui/material/StepContent";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
-import {MyAssembleProps} from "@/hocs/defines/MyAssembleProps.ts";
+import {SteppableProps} from "@/defines/combines/SteppableProps.ts";
 import {ComponentProps} from "@/defines/combines/ComponentProps.ts";
 
 
 interface StepperProps extends ComponentProps {
   finishText?: string;
   isResetable?: boolean;
-  children: ReactElement<MyAssembleProps>[];
+  children: ReactElement<SteppableProps>[];
 }
 
 const MyStepper: FC<StepperProps> = ({

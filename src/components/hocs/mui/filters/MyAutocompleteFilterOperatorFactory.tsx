@@ -2,7 +2,7 @@
 
 import {GridFilterOperator} from "@mui/x-data-grid";
 import {SxProps} from "@mui/material";
-import MyAutocompleteFilterInputFactory from "@/hocs/mui/filters/MyAutocompleteFilterInputFactory.tsx";
+import MyAutocompleteFilterInputFactory from "@/components/hocs/mui/filters/MyAutocompleteFilterInputFactory.tsx";
 
 
 function MyAutocompleteFilterOperatorFactory(

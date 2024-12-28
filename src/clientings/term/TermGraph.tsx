@@ -15,7 +15,7 @@ import {useDelayEffect} from "@/utils/DelayUtil.ts";
 import {WHEEL} from "@/lookings/color.ts";
 import {TitledProps} from "@/defines/abilities/TitledProps.ts";
 import {DescribableProps} from "@/defines/abilities/DescribableProps.ts";
-import {SteppableProps} from "@/defines/abilities/SteppableProps.ts";
+import {NextableProps} from "@/defines/abilities/NextableProps.ts";
 
 
 // cytoscape
@@ -38,7 +38,7 @@ const warningLightStyles = makeStyles({
   },
 });
 
-interface TermGraphProps extends TitledProps, DescribableProps, SteppableProps {
+interface TermGraphProps extends TitledProps, DescribableProps, NextableProps {
   item: TermModel | null;
   graph?: TermGraphModel | null;
   onDetailNode: (termId: number) => Promise<TermModel | null>;

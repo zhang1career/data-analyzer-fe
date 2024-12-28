@@ -1,5 +1,5 @@
 import {GridColDef} from "@mui/x-data-grid";
-import MyAutocompleteFilterOperatorFactory from "@/hocs/mui/filters/MyAutocompleteFilterOperatorFactory.tsx";
+import MyAutocompleteFilterOperatorFactory from "@/components/hocs/mui/filters/MyAutocompleteFilterOperatorFactory.tsx";
 import {searchSimilarTagNameList} from "@/io/TagIO.ts";
 
 export const NEWS_COLUMNS: GridColDef[] = [

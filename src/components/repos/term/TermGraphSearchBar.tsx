@@ -1,10 +1,10 @@
 import React, {useContext, useEffect, useState} from "react";
-import MySearchBar from "@/hocs/mui/MySearchBar.tsx";
-import MyDropdownList from "@/hocs/mui/MyDropdownList.tsx";
+import MySearchBar from "@/components/hocs/mui/MySearchBar.tsx";
+import MyDropdownList from "@/components/hocs/mui/MyDropdownList.tsx";
 import {LabeledValueProps} from "@/defines/combines/LabeledValueProps.ts";
 import {SearchTermGraphQo} from "@/pojo/qo/TermQo.ts";
 import {TEXTBOX_WIDTH_MIN_PX} from "@/lookings/size.ts";
-import {SteppableProps} from "@/defines/abilities/SteppableProps.ts";
+import {NextableProps} from "@/defines/abilities/NextableProps.ts";
 import {TitledProps} from "@/defines/abilities/TitledProps.ts";
 import {FormRWProps} from "@/defines/combines/FormRWProps.ts";
 import {ClickableProps} from "@/defines/combines/ClickableProps.ts";
@@ -16,9 +16,11 @@ import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
 import {checkEmpty as ArrayUtil_checkEmpty} from "@/utils/ArrayUtil.ts";
 import {checkEmpty as SetUtil_checkEmpty} from "@/utils/SetUtil.ts";
 import {AutoSubmitableProps} from "@/defines/combines/AutoSubmitableProps.ts";
+import {DerivableProps} from "@/defines/abilities/DerivableProps.ts";
+import {setupChildren} from "@/defines/combines/NestableProps.ts";
 
 
-interface SearchBarForTermGraphProps extends SteppableProps, TitledProps, FormRWProps<SearchTermGraphQo>, ClickableProps, AutoSubmitableProps {
+interface SearchBarForTermGraphProps extends NextableProps, TitledProps, FormRWProps<SearchTermGraphQo>, ClickableProps, AutoSubmitableProps, DerivableProps {
   termMretFieldName: "term_mret";
   relationTypeFieldName: "relation_type";
   termMretOptions: LabeledValueProps<string>[] | null;
@@ -41,6 +43,7 @@ const TermGraphSearchBar: React.FC<SearchBarForTermGraphProps> = ({
                                                                       console.warn('SearchBarProps.setActiveSubmitAt is not set');
                                                                     },
                                                                     isNextEnabled,
+                                                                    children,
                                                                   }) => {
   // context
   const routing = useContext(RoutingContext);
@@ -111,6 +114,9 @@ const TermGraphSearchBar: React.FC<SearchBarForTermGraphProps> = ({
         options={relationTypeOptions}
         sx={{width: TEXTBOX_WIDTH_MIN_PX}}
       />
+      {setupChildren(children, {
+        isEditable: !isNextEnabled,
+      })}
     </MySearchBar>
   );
 }

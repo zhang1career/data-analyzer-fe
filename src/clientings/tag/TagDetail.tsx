@@ -1,8 +1,8 @@
 'use client';
 
 import React, {useContext, useEffect, useState} from "react";
-import MyEditableForm from "@/hocs/mui/MyEditableForm.tsx";
-import MyTextField from "@/hocs/mui/input/MyTextField.tsx";
+import MyEditableForm from "@/components/hocs/mui/MyEditableForm.tsx";
+import MyTextField from "@/components/hocs/mui/input/MyTextField.tsx";
 import {updateTag} from "@/io/TagIO.ts";
 import {buildEmptyTagModel, TagModel} from "@/models/TagModel.ts";
 import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";

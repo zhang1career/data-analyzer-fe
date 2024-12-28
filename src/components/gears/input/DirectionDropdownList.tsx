@@ -1,4 +1,5 @@
-import MyDropdownList, {MyDropdownListProps} from "@/hocs/mui/MyDropdownList.tsx";
+import React from "react";
+import MyDropdownList, {MyDropdownListProps} from "@/components/hocs/mui/MyDropdownList.tsx";
 import {EditableProps} from "@/defines/abilities/EditableProps.ts";
 
 
