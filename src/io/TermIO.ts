@@ -6,6 +6,8 @@ import {TermVo} from "@/pojo/vo/TermVo.ts";
 import {getValueSafely} from "@/utils/ObjUtil.ts";
 import {EMPTY_STRING} from "@/consts/StrConst.ts";
 import {AccessVectorVo, GraphVo} from "@/pojo/vo/GraphVo.ts";
+import {TermDto} from "@/pojo/dto/TermDto.ts";
+import {modelToDto} from "@/mappers/TermMapper.ts";
 
 
 export async function searchTermPage(context: MyRouting,
@@ -44,7 +46,7 @@ export async function createTerm(context: MyRouting,
     {
       method: 'POST',
       url: '/da/knowledge/terms',
-      body: term,
+      body: modelToDto(term),
       context: context
     });
 }

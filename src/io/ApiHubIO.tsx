@@ -32,7 +32,7 @@ async function requestApiHub({
                                body,
                                context = null
                              }: ApiHubRequestable): Promise<any> {
-  // prepare input
+  // prepare inputs
   let destBodyObj = newObj<{ [p: string]: any }>();
   // destination body
   if (!ObjUtil_checkEmpty(body)) {

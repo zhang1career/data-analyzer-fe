@@ -1,8 +1,8 @@
 'use client';
 
 import React, {useContext, useEffect, useState} from "react";
-import MyEditableForm from "@/components/hocs/mui/MyEditableForm.tsx";
-import MyTextField from "@/components/hocs/mui/input/MyTextField.tsx";
+import MuiEditableForm from "@/components/hocs/mui/forms/MuiEditableForm.tsx";
+import MyTextField from "@/components/hocs/mui/inputs/MyTextField.tsx";
 import {updateTag} from "@/io/TagIO.ts";
 import {buildEmptyTagModel, TagModel} from "@/models/TagModel.ts";
 import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
@@ -31,10 +31,10 @@ const TagDetail: React.FC<TagDetailProps> = ({
   const routing = useContext(RoutingContext);
   const noticing = useContext(NoticingContext);
 
-  // form
+  // forms
   const [formData, setFormData] = useState<TagModel>(buildEmptyTagModel());
 
-  // editable form refreshment
+  // editable forms refreshment
   const [activeEditableFormAt, setActiveEditableFormAt] = useState<number>(Date.now());
 
   useEffect(() => {
@@ -63,7 +63,7 @@ const TagDetail: React.FC<TagDetailProps> = ({
   return (
     <>
       <div>
-        <MyEditableForm
+        <MuiEditableForm
           onSetFormData={setFormData}
           onSave={handleSave}
           sxButton={{ml: "auto"}}
@@ -82,7 +82,7 @@ const TagDetail: React.FC<TagDetailProps> = ({
             name="name"
             value={formData['name']}
           />
-        </MyEditableForm>
+        </MuiEditableForm>
       </div>
       <div>
         {formData['news'] && (

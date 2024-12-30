@@ -23,7 +23,7 @@ import {NextableProps} from "@/defines/abilities/NextableProps.ts";
 cytoscape.use(cola);
 // cytoscape.use(panzoom);
 
-// input
+// inputs
 type Node = ElementDefinition & { group: 'nodes' };
 type Edge = ElementDefinition & { group: 'edges' };
 
@@ -51,7 +51,7 @@ const TermGraph: React.FC<TermGraphProps> = ({
                                                onDetailNode,
                                                onTravelPath = undefined,
                                              }: TermGraphProps) => {
-  // input state
+  // inputs state
   // start term
   const [startTerm, setStartTerm] = useState<TermModel | null>(null);
   // traveled node

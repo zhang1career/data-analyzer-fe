@@ -2,8 +2,8 @@
 
 import React, {useContext, useState} from 'react';
 import MuiModal from '@/components/hocs/mui/modals/MuiModal.tsx';
-import MyTextField from "@/components/hocs/mui/input/MyTextField.tsx";
-import MyEditableForm from "@/components/hocs/mui/MyEditableForm.tsx";
+import MyTextField from "@/components/hocs/mui/inputs/MyTextField.tsx";
+import MuiEditableForm from "@/components/hocs/mui/forms/MuiEditableForm.tsx";
 import {createTerm} from "@/io/TermIO.ts";
 import {buildEmptyTermModel, TermModel, TermRelationModel} from "@/models/TermModel.ts";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
@@ -14,7 +14,7 @@ import {
   TermRelation,
   TermRelationExtProps
 } from "@/components/repos/term/TermRelation.tsx";
-import {withListEditor} from "@/components/hocs/mui/list/MyListEditor.tsx";
+import {withListEditor} from "@/components/hocs/mui/lists/MyListEditor.tsx";
 import {setFormField} from "@/defines/combines/FormRWProps.ts";
 
 
@@ -29,7 +29,7 @@ const TermCreate: React.FC<TermCreateProps> = ({
   const routing = useContext(RoutingContext);
   const noticing = useContext(NoticingContext);
 
-  // form
+  // forms
   const [formData, setFormData] = useState<TermModel | null>(null);
 
   // operation - create
@@ -59,7 +59,7 @@ const TermCreate: React.FC<TermCreateProps> = ({
       onClick={() => {}}
       onClose={() => {}}
     >
-      <MyEditableForm
+      <MuiEditableForm
         initEditable={true}
         initFormData={buildEmptyTermModel()}
         onSetFormData={setFormData}
@@ -82,7 +82,7 @@ const TermCreate: React.FC<TermCreateProps> = ({
           checkBlank={checkRelationBlank}
           getTrimmedValue={getTrimmedRelationValue}
         />
-      </MyEditableForm>
+      </MuiEditableForm>
     </MuiModal>
   );
 }

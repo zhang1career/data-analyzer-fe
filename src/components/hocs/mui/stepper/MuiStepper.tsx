@@ -1,5 +1,5 @@
 import * as React from "react";
-import {FC, ReactElement, useEffect, useState} from "react";
+import {ReactElement, useEffect, useState} from "react";
 import Box from "@mui/material/Box";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
@@ -12,18 +12,18 @@ import {SteppableProps} from "@/defines/combines/SteppableProps.ts";
 import {ComponentProps} from "@/defines/combines/ComponentProps.ts";
 
 
-interface StepperProps extends ComponentProps {
+interface MuiStepperProps extends ComponentProps {
   finishText?: string;
   isResetable?: boolean;
   children: ReactElement<SteppableProps>[];
 }
 
-const MyStepper: FC<StepperProps> = ({
-                                       finishText = 'All steps completed - you\'re finished',
-                                       isResetable = false,
-                                       children,
-                                       ...rest
-                                     }) => {
+const MuiStepper: React.FC<MuiStepperProps> = ({
+                                                 finishText = 'All steps completed - you\'re finished',
+                                                 isResetable = false,
+                                                 children,
+                                                 ...rest
+                                               }) => {
   const [activeStep, setActiveStep] = React.useState(0);
   const [canProceed, setCanProceed] = useState<boolean>(true);
 
@@ -113,4 +113,4 @@ const MyStepper: FC<StepperProps> = ({
   );
 }
 
-export default MyStepper;
+export default MuiStepper;

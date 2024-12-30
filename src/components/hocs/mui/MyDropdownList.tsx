@@ -18,11 +18,12 @@ const MyDropdownList: React.FC<MyDropdownListProps<any>> = <T = string, >({
                                                                             value = '',
                                                                             options = [],
                                                                             onChange = () => {
-                                                                              console.warn('[adaptr][dropdown] onChange is not implemented');
+                                                                              console.debug('[adaptr][dropdown] onChange is not implemented');
                                                                             },
                                                                             sx,
                                                                             ...rest
                                                                           }: MyDropdownListProps<T>) => {
+
   return (
     <Box sx={sx}>
       <FormControl

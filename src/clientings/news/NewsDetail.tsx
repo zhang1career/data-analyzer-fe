@@ -1,8 +1,8 @@
 'use client';
 
 import React, {useContext, useEffect, useState} from "react";
-import MyEditableForm from "@/components/hocs/mui/MyEditableForm.tsx";
-import MyTextField from "@/components/hocs/mui/input/MyTextField.tsx";
+import MuiEditableForm from "@/components/hocs/mui/forms/MuiEditableForm.tsx";
+import MyTextField from "@/components/hocs/mui/inputs/MyTextField.tsx";
 import {updateNews} from "@/io/NewsIO.ts";
 import {buildEmptyNews, News} from "@/models/News.ts";
 import {NewsVo} from "@/pojo/vo/NewsVo.ts";
@@ -35,10 +35,10 @@ const NewsDetail: React.FC<NewsDetailProps> = ({
   const routing = useContext(RoutingContext);
   const noticing = useContext(NoticingContext);
 
-  // form
+  // forms
   const [formData, setFormData] = useState<News>(buildEmptyNews());
 
-  // editable form refreshment
+  // editable forms refreshment
   const [activeEditableFormAt, setActiveEditableFormAt] = useState<number>(Date.now());
 
   useEffect(() => {
@@ -66,7 +66,7 @@ const NewsDetail: React.FC<NewsDetailProps> = ({
 
   return (
     <>
-      <MyEditableForm
+      <MuiEditableForm
         onSetFormData={setFormData}
         onSave={handleSave}
         isVerbose={true}
@@ -117,7 +117,7 @@ const NewsDetail: React.FC<NewsDetailProps> = ({
           onSearch={searchSimilarTagNameList}
           sx={{width: '100%'}}
         />
-      </MyEditableForm>
+      </MuiEditableForm>
 
       {React.Children.map(children, (child) => {
         return React.cloneElement(child as React.ReactElement, {formData: formData});

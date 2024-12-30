@@ -1,9 +1,9 @@
 'use client';
 
 import React, {useContext, useEffect, useState} from "react";
-import MyEditableForm from "@/components/hocs/mui/MyEditableForm.tsx";
-import MyTextField from "@/components/hocs/mui/input/MyTextField.tsx";
-import {withListEditor} from "@/components/hocs/mui/list/MyListEditor.tsx";
+import MuiEditableForm from "@/components/hocs/mui/forms/MuiEditableForm.tsx";
+import MyTextField from "@/components/hocs/mui/inputs/MyTextField.tsx";
+import {withListEditor} from "@/components/hocs/mui/lists/MyListEditor.tsx";
 import {updateTerm} from "@/io/TermIO.ts";
 import {buildEmptyTermModel, TermModel, TermRelationModel} from "@/models/TermModel.ts";
 import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
@@ -46,10 +46,10 @@ const TermDetail: React.FC<TermDetailProps> = ({
   const routing = useContext(RoutingContext);
   const noticing = useContext(NoticingContext);
 
-  // form
+  // forms
   const [formData, setFormData] = useState<TermModel>(buildEmptyTermModel());
 
-  // operation - set form.relation
+  // operation - set forms.relation
   function setFormDataRelation(relation: TermRelationModel[]) {
     setFormData(prevState => ({
       ...prevState,
@@ -57,7 +57,7 @@ const TermDetail: React.FC<TermDetailProps> = ({
     }));
   }
 
-  // operation - search similar tag list
+  // operation - search similar tag lists
   const searchTagList = async (term: string) => {
     try {
       const tagVoPage = await searchTagPage(
@@ -77,7 +77,7 @@ const TermDetail: React.FC<TermDetailProps> = ({
   }
 
   // actives
-  // editable form refreshment
+  // editable forms refreshment
   const [activeEditableFormAt, setActiveEditableFormAt] = useState<number>(Date.now());
 
   // prepare data
@@ -112,7 +112,7 @@ const TermDetail: React.FC<TermDetailProps> = ({
   return (
     <>
       <div>
-        <MyEditableForm
+        <MuiEditableForm
           onSetFormData={setFormData}
           onSave={handleSave}
           sxButton={{ml: 'auto'}}
@@ -143,7 +143,7 @@ const TermDetail: React.FC<TermDetailProps> = ({
             checkBlank={checkRelationBlank}
             getTrimmedValue={getTrimmedRelationValue}
           />
-        </MyEditableForm>
+        </MuiEditableForm>
       </div>
 
       {children}

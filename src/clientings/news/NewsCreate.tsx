@@ -2,8 +2,8 @@
 
 import React, {useContext, useState} from 'react';
 import MuiModal from '@/components/hocs/mui/modals/MuiModal.tsx';
-import MyTextField from '@/components/hocs/mui/input/MyTextField.tsx';
-import MyEditableForm from '@/components/hocs/mui/MyEditableForm.tsx';
+import MyTextField from '@/components/hocs/mui/inputs/MyTextField.tsx';
+import MuiEditableForm from '@/components/hocs/mui/forms/MuiEditableForm.tsx';
 import {createNews} from '@/io/NewsIO.ts';
 import {buildEmptyNews, News} from '@/models/News.ts';
 import {RoutingContext} from '@/components/providers/RoutingProvider.tsx';
@@ -27,12 +27,12 @@ const NewsCreate: React.FC<NewsCreateProps> = ({
   const routing = useContext(RoutingContext);
   const noticing = useContext(NoticingContext);
 
-  // form
+  // forms
   const [formData, setFormData] = useState<News | null>(null);
 
   // init
   const initFormData = () => {
-    setFormData(getCachedData('input-news_form', buildEmptyNews, {ttl: 3600}));
+    setFormData(getCachedData('inputs-news_form', buildEmptyNews, {ttl: 3600}));
   }
 
   // operation - create
@@ -48,7 +48,7 @@ const NewsCreate: React.FC<NewsCreateProps> = ({
       url: formData.url,
       published_at: formData.published_at,
     } as News;
-    setCachedData('input-news_form', newsForm, {ttl: 3600});
+    setCachedData('inputs-news_form', newsForm, {ttl: 3600});
     // create
     await createNews(
       routing,
@@ -70,7 +70,7 @@ const NewsCreate: React.FC<NewsCreateProps> = ({
       onClick={initFormData}
       onClose={() => {}}
     >
-      <MyEditableForm
+      <MuiEditableForm
         initEditable={true}
         initFormData={buildEmptyNews()}
         onSetFormData={setFormData}
@@ -114,7 +114,7 @@ const NewsCreate: React.FC<NewsCreateProps> = ({
           onSearch={searchSimilarTagNameList}
           sx={{width: '100%'}}
         />
-      </MyEditableForm>
+      </MuiEditableForm>
     </MuiModal>
   );
 }

@@ -1,10 +1,11 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Box, Button, Drawer} from "@mui/material";
 import {ClickableProps} from "@/defines/combines/ClickableProps.ts";
 import {CloseableProps} from "@/defines/combines/CloseableProps.ts";
 import {DerivableProps} from "@/defines/abilities/DerivableProps.ts";
 import AddIcon from "@mui/icons-material/Add";
 import {setupChildren} from "@/defines/combines/NestableProps.ts";
+import {OpenSesameProps} from "@/defines/abilities/OpenSesameProps.tsx";
 
 
 /**
@@ -15,27 +16,39 @@ import {setupChildren} from "@/defines/combines/NestableProps.ts";
  * @param children the content of the modal, properties will be passed to children as following:
  *   onClose
  */
-interface MuiDrawerProps extends ClickableProps, CloseableProps, DerivableProps {
+interface MuiDrawerProps extends ClickableProps, CloseableProps, OpenSesameProps, DerivableProps {
 }
 
 const MuiDrawer: React.FC<MuiDrawerProps> = ({
                                                label,
                                                onClick = () => console.debug('MuiDrawer.onClick is not implemented'),
                                                onClose = () => console.debug('MuiDrawer.onClose is not implemented'),
+                                               openSesame,
+                                               setOpenSesame,
                                                children
                                              }) => {
+  // open/close the drawer
   const [open, setOpen] = useState(false);
 
+  // open handler
   function openDrawer() {
     onClick();
     setOpen(true);
   }
 
+  // close handler
   function closeDrawer() {
     onClose();
+    setOpenSesame && setOpenSesame(false);
     setOpen(false);
   }
 
+  // monitor openSesame
+  useEffect(() => {
+    if (openSesame && !open) {
+      openDrawer();
+    }
+  }, [openSesame, openDrawer]);
 
   return (
     <>

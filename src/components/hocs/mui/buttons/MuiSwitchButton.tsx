@@ -3,7 +3,7 @@
 import React, {useState} from 'react';
 import {Button} from "@mui/material";
 
-function MySwitchButton() {
+function MuiSwitchButton() {
   const [activeButton, setActiveButton] = useState('Button1');
 
   const handleButtonClick = (buttonName: string) => {
@@ -26,7 +26,7 @@ function MySwitchButton() {
   );
 }
 
-export default MySwitchButton;
+export default MuiSwitchButton;
 
 
 function Button1() {

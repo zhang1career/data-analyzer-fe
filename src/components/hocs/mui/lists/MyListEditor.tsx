@@ -27,7 +27,7 @@ export const withListEditor = <V, P>(
           }: ListEditorProps<V>) => {
     // edit item
     const [inputValue, setInputValue] = useState<V | null>(null);
-    // refresh input
+    // refresh inputs
     const [activeInputAt, setActiveInputAt] = useState(Date.now());
 
     const handleAddItem = () => {

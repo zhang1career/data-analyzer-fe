@@ -1,3 +1,7 @@
+export function checkObject(obj: any): boolean {
+    return obj !== null && typeof obj === 'object';
+}
+
 /**
  * Check if the object is empty
  * @param obj

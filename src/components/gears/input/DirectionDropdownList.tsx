@@ -14,8 +14,16 @@ function buildLabel(value: boolean): string {
 }
 
 
+/**
+ * DirectionDropdownListProps
+ * @param isReadOnly
+ * @param isEditable
+ * @param value
+ * @param onChange event handler
+ */
 interface DirectionDropdownListProps extends MyDropdownListProps<boolean>, EditableProps {
   isReadOnly?: boolean,
+  setValue?: (value: boolean) => void,
 }
 
 const DirectionDropdownList: React.FC<DirectionDropdownListProps> = ({

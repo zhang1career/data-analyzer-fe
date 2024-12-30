@@ -18,6 +18,7 @@ import {checkEmpty as SetUtil_checkEmpty} from "@/utils/SetUtil.ts";
 import {AutoSubmitableProps} from "@/defines/combines/AutoSubmitableProps.ts";
 import {DerivableProps} from "@/defines/abilities/DerivableProps.ts";
 import {setupChildren} from "@/defines/combines/NestableProps.ts";
+import DirectionDropdownList from "@/components/gears/input/DirectionDropdownList.tsx";
 
 
 interface SearchBarForTermGraphProps extends NextableProps, TitledProps, FormRWProps<SearchTermGraphQo>, ClickableProps, AutoSubmitableProps, DerivableProps {
@@ -113,6 +114,12 @@ const TermGraphSearchBar: React.FC<SearchBarForTermGraphProps> = ({
         value={formData?.[relationTypeFieldName as keyof SearchTermGraphQo]}
         options={relationTypeOptions}
         sx={{width: TEXTBOX_WIDTH_MIN_PX}}
+      />
+      <DirectionDropdownList
+        id={'is_reverse'}
+        label={'Is Reverse?'}
+        name={'is_reverse'}
+        value={formData?.['is_reverse'] ?? false}
       />
       {setupChildren(children, {
         isEditable: !isNextEnabled,

@@ -1,4 +1,4 @@
-import React, {FC} from "react";
+import React from "react";
 import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {MobileDatePicker} from "@mui/x-date-pickers";
@@ -16,16 +16,16 @@ dayjs.extend(timezone);
 dayjs.tz.setDefault('UTC');
 
 
-interface MyDateFieldProps extends LabeledProps, ValuableProps<string>, ChangeableProps<string> {
+interface MuiDateFieldProps extends LabeledProps, ValuableProps<string>, ChangeableProps<string> {
   dateFormat: string;
 }
 
-const MyDateField: FC<MyDateFieldProps> = ({
-                                             label,
-                                             value,
-                                             dateFormat,
-                                             onChange,
-                                           }: MyDateFieldProps) => {
+const MuiDateField: React.FC<MuiDateFieldProps> = ({
+                                                     label,
+                                                     value,
+                                                     dateFormat,
+                                                     onChange,
+                                                   }: MuiDateFieldProps) => {
   // date value
   const [date, setDate] = React.useState<Dayjs | null>(value ? dayjs(value, dateFormat) : null);
 
@@ -48,4 +48,4 @@ const MyDateField: FC<MyDateFieldProps> = ({
   );
 }
 
-export default MyDateField;
+export default MuiDateField;

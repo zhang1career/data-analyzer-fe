@@ -15,7 +15,7 @@ interface SearchBarProps<T> extends SteppableProps, ClickableProps, NestableProp
 
 /**
  * SearchBarProps
- * When isAutoSubmit is true, the search button will be hidden, and the search will be triggered automatically when any of the input fields changes.
+ * When isAutoSubmit is true, the search button will be hidden, and the search will be triggered automatically when any of the inputs fields changes.
  * @param isEditable
  * @param label
  * @param onSetFormData
@@ -38,7 +38,7 @@ const MySearchBar: FC<SearchBarProps<any>> = <T, >({
                                                      setActiveAt = () => console.debug('SearchBarProps.setActiveSubmitAt is not set'),
                                                      children
                                                    }: SearchBarProps<T>) => {
-  // wrap the input change event with named_input
+  // wrap the inputs change event with named_input
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     handleInputChangeByEvent<T>(event, setFormData);
     setActiveAt(Date.now());

@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 import {TermRelationModel} from "@/models/TermModel.ts";
-import MyTextField from "@/components/hocs/mui/input/MyTextField.tsx";
-import MyFieldGroup from "@/components/hocs/mui/input/MyFieldGroup.tsx";
+import MyTextField from "@/components/hocs/mui/inputs/MyTextField.tsx";
+import MuiFieldGroup from "@/components/hocs/mui/inputs/MuiFieldGroup.tsx";
 import {EditableProps} from "@/defines/abilities/EditableProps.ts";
 import DirectionDropdownList from "@/components/gears/input/DirectionDropdownList.tsx";
 import {FormRWProps} from "@/defines/combines/FormRWProps.ts";
@@ -16,7 +16,7 @@ import {dictVoToOptBatch} from "@/mappers/misc/DictMapper.ts";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
 
 
-interface TermRelationProps extends FormRWProps<TermRelationModel>, EditableProps {
+interface TermRelationProps extends EditableProps, FormRWProps<TermRelationModel> {
 }
 
 // todo: move EditableProps to TermRelationProps
@@ -31,9 +31,9 @@ export const TermRelation: React.FC<TermRelationProps> = ({
   // context
   const routing = useContext(RoutingContext);
 
-  // graph vector map
+  // options
   const [relationTypeOpts, setRelationTypeOpts] = useState<LabeledValueProps<string>[] | null>(null);
-
+  // init options
   useEffect(() => {
     const miscDictPromise = getMiscDict(
       routing,
@@ -45,8 +45,9 @@ export const TermRelation: React.FC<TermRelationProps> = ({
     });
   }, [routing]);
 
+
   return (
-    <MyFieldGroup
+    <MuiFieldGroup
       isEditable={isEditable}
       onSetFormData={(_setFormField) => {
         const _newFormData = _setFormField(formData);
@@ -65,25 +66,25 @@ export const TermRelation: React.FC<TermRelationProps> = ({
       />
       <MyDropdownList
         id={'term-relation-relation_type'}
-        label={'relation_type'}
-        name={'relation_type'}
+        label={'relationType'}
+        name={'relationType'}
         value={formData ? formData['relationType'] : EMPTY_STRING}
         options={relationTypeOpts}
         sx={{width: TEXTBOX_WIDTH_120_PX}}
       />
       <DirectionDropdownList
         id="term-relation-is_reverse"
-        label="is_reverse"
-        name="is_reverse"
+        label="isReverse"
+        name="isReverse"
         value={formData?.['isReverse'] ?? false}
       />
       <MyTextField
         id="term-relation-name"
-        label="name"
-        name="name"
+        label="destName"
+        name="destName"
         value={formData?.['destName'] ?? ''}
       />
-    </MyFieldGroup>
+    </MuiFieldGroup>
   );
 }
 

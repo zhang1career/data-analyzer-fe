@@ -9,7 +9,7 @@ interface MyDataListRoProps<V> extends FormRoProps<V[]> {
 }
 
 /**
- * Data list component
+ * Data lists component
  * @param columns
  * @param formData
  * @constructor

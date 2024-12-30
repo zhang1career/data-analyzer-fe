@@ -7,7 +7,7 @@ import {ColumnAction} from "@/components/hocs/mui/datagrids/MyDataColumn.tsx";
 import {useDelayEffect} from "@/utils/DelayUtil.ts";
 import {Paginate} from "@/models/Paginate.ts";
 
-// input type
+// inputs type
 type DataStateType<T> = {
   isLoading: boolean;
   rows: T[];
@@ -35,7 +35,7 @@ interface MyDataListProps<V, M> {
 }
 
 /**
- * Data list component
+ * Data lists component
  * @param columns
  * @param onSearch
  * @param onBuildCondition
@@ -81,7 +81,7 @@ const MyDataList: React.FC<MyDataListProps<any, any>> = <V, M, >({
     pageSize: 10,
   });
 
-  // input
+  // inputs
   const [data, setData] = useState<DataStateType<M>>({
     isLoading: false,
     rows: [],

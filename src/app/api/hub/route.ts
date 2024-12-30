@@ -46,7 +46,7 @@ export async function POST(request: Request, response: Response) {
       throw new Error(`method ${method} not supported`);
     }
 
-    // return input
+    // return inputs
     return NextResponse.json({
       data: response.data,
       code: response.code,

@@ -1,8 +1,8 @@
 import React, {useContext, useEffect, useState} from "react";
 import {buildEmptyTermModel, TermModel, TermRelationModel} from "@/models/TermModel.ts";
 import MuiDrawer from "@/components/hocs/mui/modals/MuiDrawer.tsx";
-import MyEditableForm from "@/components/hocs/mui/MyEditableForm.tsx";
-import MyTextField from "@/components/hocs/mui/input/MyTextField.tsx";
+import MuiEditableForm from "@/components/hocs/mui/forms/MuiEditableForm.tsx";
+import MyTextField from "@/components/hocs/mui/inputs/MyTextField.tsx";
 import {setFormField} from "@/defines/combines/FormRWProps.ts";
 import {
   checkRelationBlank,
@@ -10,13 +10,14 @@ import {
   TermRelation,
   TermRelationExtProps
 } from "@/components/repos/term/TermRelation.tsx";
-import {withListEditor} from "@/components/hocs/mui/list/MyListEditor.tsx";
+import {withListEditor} from "@/components/hocs/mui/lists/MyListEditor.tsx";
 import {createTerm} from "@/io/TermIO.ts";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
 import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
+import {OpenSesameProps} from "@/defines/abilities/OpenSesameProps.tsx";
 
 
-interface TermCreateDrawerProps {
+interface TermCreateDrawerProps extends OpenSesameProps {
   termName: string;
   termRelation?: TermRelationModel | null;
   callbackRefresh?: () => void;
@@ -25,13 +26,15 @@ interface TermCreateDrawerProps {
 const TermCreateDrawer: React.FC<TermCreateDrawerProps> = ({
                                                              termName,
                                                              termRelation,
+                                                             openSesame,
+                                                             setOpenSesame,
                                                              callbackRefresh
                                                            }) => {
   // context
   const routing = useContext(RoutingContext);
   const noticing = useContext(NoticingContext);
 
-  // form
+  // forms
   const [formData, setFormData] = useState<TermModel | null>(null);
   // set term
   useEffect(() => {
@@ -68,12 +71,12 @@ const TermCreateDrawer: React.FC<TermCreateDrawerProps> = ({
   return (
     <MuiDrawer
       label={'Add'}
-      onClick={() => {
-      }}
-      onClose={() => {
-      }}
+      onClick={() => {}}
+      onClose={() => {}}
+      openSesame={openSesame}
+      setOpenSesame={setOpenSesame}
     >
-      <MyEditableForm
+      <MuiEditableForm
         initEditable={true}
         initFormData={buildEmptyTermModel()}
         onSetFormData={setFormData}
@@ -92,14 +95,11 @@ const TermCreateDrawer: React.FC<TermCreateDrawerProps> = ({
         />
         <TermRelationList
           formData={formData ? formData.relation : []}
-          setFormData={(relation) => {
-            console.log('[debug] relation:', relation);
-            setFormField(setFormData, 'relation', relation);
-          }}
+          setFormData={(relation) => setFormField(setFormData, 'relation', relation)}
           checkBlank={checkRelationBlank}
           getTrimmedValue={getTrimmedRelationValue}
         />
-      </MyEditableForm>
+      </MuiEditableForm>
     </MuiDrawer>
   );
 }

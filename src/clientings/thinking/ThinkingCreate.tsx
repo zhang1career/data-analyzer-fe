@@ -26,7 +26,7 @@ import Typography from "@mui/material/Typography";
 import {FormRWProps} from "@/defines/combines/FormRWProps.ts";
 import DirectionDropdownList from "@/components/gears/input/DirectionDropdownList.tsx";
 import {LabeledProps} from "@/defines/abilities/LabeledProps.ts";
-import MyTextField from "@/components/hocs/mui/input/MyTextField.tsx";
+import MyTextField from "@/components/hocs/mui/inputs/MyTextField.tsx";
 
 
 interface ThinkingCreateProps extends SteppableProps, LabeledProps, FormRWProps<Thinking> {
@@ -40,14 +40,14 @@ const ThinkingCreate: FC<ThinkingCreateProps> = ({
                                                    setFormData,
                                                    speechVectorMap = new ObjMap(),
                                                    onSetResultData = (result) => {
-                                                     console.warn('[thinking][create] No result input setter specified.');
+                                                     console.warn('[thinking][create] No result inputs setter specified.');
                                                    },
                                                  }) => {
   // context
   const routing = useContext(RoutingContext);
   const noticing = useContext(NoticingContext);
 
-  // prepare input
+  // prepare inputs
   // graph vector map
   const [attrOpts, setAttrOpts] = useState<LabeledValueProps<string>[] | null>(null);
   const [predOpts, setPredOpts] = useState<LabeledValueProps<string>[] | null>(null);
@@ -73,7 +73,7 @@ const ThinkingCreate: FC<ThinkingCreateProps> = ({
   // operation - create
   const handleCreateThinking = async () => {
     if (!formData) {
-      console.log('[news][audit] No thinking form specified.');
+      console.log('[news][audit] No thinking forms specified.');
       return;
     }
     const thinkingDto = modelToDto(formData, speechVectorMap);

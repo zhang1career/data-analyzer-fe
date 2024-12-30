@@ -1,5 +1,5 @@
 import React from "react";
-import MyDateField from "@/components/hocs/mui/input/MyDateField.tsx";
+import MuiDateField from "@/components/hocs/mui/inputs/MuiDateField.tsx";
 import {LabeledProps} from "@/defines/abilities/LabeledProps.ts";
 import {ChangeableProps} from "@/defines/abilities/ChangeableProps.ts";
 import {NamedValueProps} from "@/defines/combines/NamedValueProps.ts";
@@ -15,7 +15,7 @@ const DateField: React.FC<DateFieldProps> = ({
                                                ...rest
                                              }: DateFieldProps) => {
   return (
-    <MyDateField
+    <MuiDateField
       dateFormat={DATE_FORMAT}
       {...rest}
     />

@@ -16,43 +16,43 @@ import MyButton from "@/components/hocs/mui/MyButton.tsx";
 import {handleInputChangeByEvent} from "@/defines/combines/NamedValueProps.ts";
 
 
-interface EditableFormProps<T> extends NestableProps, VerbosibleProps {
+interface MuiEditableFormProps<T> extends NestableProps, VerbosibleProps {
   initEditable?: boolean;
   initFormData?: T;
-  onSetFormData: Dispatch<SetStateAction<T>>;
+  onSetFormData: Dispatch<SetStateAction<T>>; // todo: could change to (newData: T) => void ?
   onSave?: () => void;
   onClose?: () => void;
   sxButton?: SxProps;
 }
 
 /**
- * EditableProps form component
+ * EditableProps forms component
  * @param initEditable the initial editable status
- * @param initFormData the initial form input
+ * @param initFormData the initial forms inputs
  * @param onSetFormData
  * @param onSave
  * @param onClose
  * @param isVerbose
  * @param sxButton
- * @param children the form fields, properties will be passed to children as following:
+ * @param children the forms fields, properties will be passed to children as following:
  *   onChange
  *   isEditable
  * @constructor
  */
-const MyEditableForm: React.FC<EditableFormProps<any>> = <T, >({
-                                                                 initEditable = false,
-                                                                 initFormData,
-                                                                 onSetFormData,
-                                                                 onSave,
-                                                                 onClose,
-                                                                 isVerbose = false,
-                                                                 sxButton,
-                                                                 children = []
-                                                               }: EditableFormProps<T>) => {
+const MuiEditableForm: React.FC<MuiEditableFormProps<any>> = <T, >({
+                                                                     initEditable = false,
+                                                                     initFormData,
+                                                                     onSetFormData,
+                                                                     onSave,
+                                                                     onClose,
+                                                                     isVerbose = false,
+                                                                     sxButton,
+                                                                     children = []
+                                                                   }: MuiEditableFormProps<T>) => {
   // readonly / editable
   const [isEditable, setEditable] = useState(initEditable);
 
-  // form
+  // forms
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     handleInputChangeByEvent<T>(event, onSetFormData);
   };
@@ -68,11 +68,11 @@ const MyEditableForm: React.FC<EditableFormProps<any>> = <T, >({
   // save
   const handleSave = () => {
     setEditable(false);
-    // save input
+    // save inputs
     if (onSave) {
       onSave();
     }
-    // clear form
+    // clear forms
     if (initFormData) {
       onSetFormData(initFormData);
     }
@@ -87,7 +87,7 @@ const MyEditableForm: React.FC<EditableFormProps<any>> = <T, >({
     setShowButtonA(true);
   };
 
-  // prepare input
+  // prepare inputs
   const buttonAProps = {
     label: isVerbose ? 'Edit' : EMPTY_STRING,
     onClick: handleEdit,
@@ -160,4 +160,4 @@ const MyEditableForm: React.FC<EditableFormProps<any>> = <T, >({
   );
 };
 
-export default MyEditableForm;
+export default MuiEditableForm;

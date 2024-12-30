@@ -3,19 +3,20 @@
 import React, {useContext, useEffect, useState} from "react";
 import {accessGraphVector} from "@/io/TermIO.ts";
 import {AccessVectorVo} from "@/pojo/vo/GraphVo.ts";
-import {TermRelationMetaModel, TermRelationModel} from "@/models/TermModel.ts";
+import {TermRelationMetaModel} from "@/models/TermModel.ts";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
 import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
-import {TermRelationOpt} from "@/pojo/opt/TermRelationOpt.ts";
-import {accessVectorVoToTermRelationOptList, termRelationModelToString} from "@/mappers/TermMapper.ts";
+import {accessVectorVoToTermRelationOptList} from "@/mappers/TermMapper.ts";
 import MyDropdownList from "@/components/hocs/mui/MyDropdownList.tsx";
 import {TEXTBOX_WIDTH_MIN_PX} from "@/lookings/size.ts";
 import {FormRWProps} from "@/defines/combines/FormRWProps.ts";
 import {EMPTY_STRING} from "@/consts/StrConst.ts";
 import {EditableProps} from "@/defines/abilities/EditableProps.ts";
+import {LabeledValueProps} from "@/defines/combines/LabeledValueProps.ts";
+import {TermRelationOpt} from "@/pojo/opt/TermRelationOpt.ts";
 
 
-interface TermAccessVectorProps extends EditableProps, FormRWProps<TermRelationModel> {
+interface TermAccessVectorProps extends EditableProps, FormRWProps<TermRelationOpt> {
   rawData: TermRelationMetaModel;
 }
 
@@ -30,7 +31,7 @@ const TermAccessVector: React.FC<TermAccessVectorProps> = ({
   const noticing = useContext(NoticingContext);
 
   // options
-  const [termRelationOpt, setTermRelationOpt] = useState<TermRelationOpt[]>([]);
+  const [termRelationOpt, setTermRelationOpt] = useState<LabeledValueProps<string>[]>([]);
 
   useEffect(() => {
     buildAccessOption(rawData);
@@ -53,9 +54,6 @@ const TermAccessVector: React.FC<TermAccessVectorProps> = ({
     setTermRelationOpt(termRelationOptList);
   }
 
-  function setTermRelation(termRelation: TermRelationModel) {
-    setFormData(termRelation);
-  }
 
   return (
     <>
@@ -64,23 +62,13 @@ const TermAccessVector: React.FC<TermAccessVectorProps> = ({
         id={'term-access-vector-access_vector'}
         label={'access_vector'}
         name={'access_vector'}
-        value={!!formData ? termRelationModelToString(formData) : EMPTY_STRING}
-        onChange={(e) => {
-          const selectingTermRelation = e.target.value;
-          const selectingLabel = termRelationModelToString(selectingTermRelation);
-          const selected = termRelationOpt.find((opt) => opt.label === selectingLabel);
-          if (selected && selected.value) {
-            setTermRelation(selected.value);
-          }
+        value={formData ? JSON.stringify(formData) : EMPTY_STRING}
+        onChange={(event) => {
+          setFormData(JSON.parse(event.target.value));
         }}
         options={termRelationOpt}
         sx={{width: TEXTBOX_WIDTH_MIN_PX}}
       />
-      {/*<TermRelation*/}
-      {/*  isEditable={false}*/}
-      {/*  formData={formData}*/}
-      {/*  setFormData={setFormData}*/}
-      {/*/>*/}
     </>
   );
 }

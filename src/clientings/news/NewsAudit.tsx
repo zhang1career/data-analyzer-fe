@@ -1,7 +1,7 @@
 'use client';
 
 import React, {useContext, useEffect, useState} from "react";
-import MyStepper from "@/components/hocs/mui/MyStepper.tsx";
+import MuiStepper from "@/components/hocs/mui/stepper/MuiStepper.tsx";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
 import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
 import {ObjMap} from "@/defines/structures/ObjMap.ts";
@@ -11,12 +11,12 @@ import {getTerm, searchGraphVector} from "@/io/TermIO.ts";
 import {parseTag} from "@/io/TagIO.ts";
 import {getMiscDict} from "@/io/MiscIO.ts";
 import {voToModel as termGraphVoToModel} from "@/mappers/TermGraphMapper.ts";
-import {voToModel as termVoToModel} from "@/mappers/TermMapper.ts";
+import {termRelationOptToTermRelationModel, voToModel as termVoToModel} from "@/mappers/TermMapper.ts";
 import {speechVectorVoToMapBatch} from "@/mappers/SpeechMapper.ts";
 import {parseResultVoToTermMretOptBatch} from "@/mappers/TagMapper.ts";
 import {buildEmptyNews, News} from "@/models/News.ts";
 import {GraphPath, metaEqual} from "@/models/GraphPath.ts";
-import {TermGraphModel, TermModel, TermRelationModel} from "@/models/TermModel.ts";
+import {TermGraphModel, TermModel} from "@/models/TermModel.ts";
 import {Thinking} from "@/models/Thinking.ts";
 import {ThinkingResultNewsTitleMap} from "@/models/ThinkingResult.ts";
 import {TermMretOpt} from "@/pojo/opt/TermMretOpt.ts";
@@ -34,6 +34,7 @@ import {DictVo} from "@/pojo/vo/misc/DictVo.ts";
 import {dictVoToSetBatch} from "@/mappers/misc/DictMapper.ts";
 import TermCreateDrawer from "@/clientings/term/TermCreateDrawer.tsx";
 import TermAccessVector from "@/components/repos/term/TermAccessVector.tsx";
+import {TermRelationOpt} from "@/pojo/opt/TermRelationOpt.ts";
 
 
 interface NewsAuditProps {
@@ -47,7 +48,7 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
   const routing = useContext(RoutingContext);
   const noticing = useContext(NoticingContext);
 
-  // prepare input
+  // prepare inputs
   // graph vector map
   const [speechVectorMap, setSpeechVectorMap] = useState<ObjMap<SpeechVectorKey, string>>(new ObjMap());
   const [attrSet, setAttrSet] = useState<Set<string> | null>(null);
@@ -75,7 +76,7 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
   // actives
   const [activeTermGraphSearchAt, setActiveTermGraphSearchAt] = useState<number | null>(null);
 
-  // input mapping
+  // inputs mapping
   useEffect(() => {
     if (!termMretOpts) {
       return;
@@ -138,9 +139,8 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
   const [termGraph, setTermGraph] = useState<TermGraphModel | null>(null);
   // search term graph
   const searchTermGraph = async () => {
-    console.debug('[news][audit][term_graph] param', searchTermGraphQo);
     if (!searchTermGraphQo['name'] || !searchTermGraphQo['relation_type']) {
-      console.info('[news][audit][term_graph][skip] No search term graph qo specified:', searchTermGraphQo);
+      console.debug('[news][audit][term_graph][skip] No search term graph qo specified:', searchTermGraphQo);
       return;
     }
     const graphVectorVo = await searchGraphVector(
@@ -158,6 +158,7 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
     setTermGraph(termGraphVoToModel(graphVectorVo));
     refreshRelation();
   }
+
   // check term graph complete
   function checkTermGraphComplete() {
     if (!termGraph) {
@@ -165,6 +166,7 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
     }
     return !checkEmpty(termGraph.nodes) && !checkEmpty(termGraph.edges);
   }
+
   // check term graph uncomplete
   function checkTermGraphUncomplete() {
     if (!termGraph) {
@@ -213,7 +215,7 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
   useEffect(() => {
     // check
     if (SetUtil_checkEmpty(attrSet) || SetUtil_checkEmpty(predSet) || ArrayUtil_checkEmpty(graphPathList)) {
-      console.debug('[news][audit][vector][skip] No attribute or predicate set or no path list.');
+      console.debug('[news][audit][vector][skip] No attribute or predicate set or no path lists.');
       return;
     }
     console.debug('[news][audit][vector] param:', graphPathList);
@@ -267,22 +269,29 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
 
 
   // term relation
-  const [termRelation, setTermRelation] = useState<TermRelationModel | null>(null);
+  const [termRelation, setTermRelation] = useState<TermRelationOpt | null>(null);
 
+  // open/close term create drawer
+  const [openTermCreateDrawer, setOpenTermCreateDrawer] = useState(false);
+  // auto open term create drawer
   useEffect(() => {
-
-  }, []);
-
+    if (!termRelation || openTermCreateDrawer) {
+      return;
+    }
+    setOpenTermCreateDrawer(true);
+  }, [termRelation]);
 
   return (
     <>
       <TermCreateDrawer
         termName={searchTermGraphQo['name']}
-        termRelation={termRelation}
+        termRelation={termRelation ? termRelationOptToTermRelationModel(termRelation) : null}
+        openSesame={openTermCreateDrawer}
+        setOpenSesame={setOpenTermCreateDrawer}
         callbackRefresh={refreshRelation}
       />
 
-      <MyStepper
+      <MuiStepper
         sx={{backgroundColor: COLOR.light_yellow}}
       >
         <ParsingTagSearchBar
@@ -312,9 +321,12 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
           isNextEnabled={checkTermGraphComplete()}
         >
           {checkTermGraphUncomplete() && <TermAccessVector
-            rawData={{relationType: searchTermGraphQo['relation_type'], isReverse: searchTermGraphQo['is_reverse'] ?? false}}
-            formData={termRelation}
-            setFormData={setTermRelation}
+              rawData={{
+                relationType: searchTermGraphQo['relation_type'],
+                isReverse: searchTermGraphQo['is_reverse'] ?? false
+              }}
+              formData={termRelation}
+              setFormData={setTermRelation}
           />}
         </TermGraphSearchBar>
 
@@ -337,13 +349,13 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
           onSetResultData={setNewsTitleMap}
           isNextEnabled={!!newsTitleMap && !!formData && newsTitleMap.has(formData.id)}
         />
-      </MyStepper>
+      </MuiStepper>
     </>
   );
 }
 
 function buildTerm(searchTermGraphQo: SearchTermGraphQo, graphNodeVoList: GraphNodeVo[]): TermModel {
-  // prepare input
+  // prepare inputs
   // name
   const name = searchTermGraphQo['name'];
   // id

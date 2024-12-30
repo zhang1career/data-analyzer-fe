@@ -1,5 +1,8 @@
-import {LabeledValueProps} from "@/defines/combines/LabeledValueProps.ts";
-import {TermRelationModel} from "@/models/TermModel.ts";
-
-export interface TermRelationOpt extends LabeledValueProps<TermRelationModel> {
+export interface TermRelationOpt {
+  i: number;
+  di: number;
+  dn: string;
+  r: string;
+  dir: boolean;
+  sp: number;
 }
