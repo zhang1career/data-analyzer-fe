@@ -35,7 +35,7 @@ interface MyDataListProps<V, M> {
 }
 
 /**
- * Data lists component
+ * Data iterations component
  * @param columns
  * @param onSearch
  * @param onBuildCondition

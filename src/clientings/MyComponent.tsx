@@ -1,7 +1,8 @@
 'use client';
 
 import React, {useState} from 'react';
-import MuiJsonField from "@/components/hocs/mui/inputs/MuiJsonField.tsx";
+import NestedThinkingCreate from "@/clientings/thinking/NestedThinkingCreate.tsx";
+import {ThinkingModel} from "@/models/ThinkingModel.ts";
 
 
 interface DemoObject {
@@ -10,11 +11,13 @@ interface DemoObject {
 function MyComponent() {
 
   // forms
-  const [formData, setFormData] = useState<DemoObject | null>(null);
+  const [formData, setFormData] = useState<ThinkingModel | null>(null);
 
 
   return (
-    <MuiJsonField
+    <NestedThinkingCreate
+      formData={formData}
+      setFormData={setFormData}
     />
   );
 }

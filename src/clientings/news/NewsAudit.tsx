@@ -17,7 +17,7 @@ import {parseResultVoToTermMretOptBatch} from "@/mappers/TagMapper.ts";
 import {buildEmptyNews, News} from "@/models/News.ts";
 import {GraphPath, metaEqual} from "@/models/GraphPath.ts";
 import {TermGraphModel, TermModel} from "@/models/TermModel.ts";
-import {Thinking} from "@/models/Thinking.ts";
+import {ThinkingModel} from "@/models/ThinkingModel.ts";
 import {ThinkingResultNewsTitleMap} from "@/models/ThinkingResult.ts";
 import {TermMretOpt} from "@/pojo/opt/TermMretOpt.ts";
 import {buildEmptySearchTermGraphQo, SearchTermGraphQo} from "@/pojo/qo/TermQo.ts";
@@ -102,7 +102,7 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
         isPredReverse: false,
         term: term,
         mret: mret,
-      } as Thinking);
+      } as ThinkingModel);
     } else {
       setThinking({
         ...thinking,
@@ -215,7 +215,7 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
   useEffect(() => {
     // check
     if (SetUtil_checkEmpty(attrSet) || SetUtil_checkEmpty(predSet) || ArrayUtil_checkEmpty(graphPathList)) {
-      console.debug('[news][audit][vector][skip] No attribute or predicate set or no path lists.');
+      console.debug('[news][audit][vector][skip] No attribute or predicate set or no path iterations.');
       return;
     }
     console.debug('[news][audit][vector] param:', graphPathList);
@@ -262,7 +262,7 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
   }, [attrSet, predSet, graphPathList]);
 
   // build thinking
-  const [thinking, setThinking] = useState<Thinking | null>(null);
+  const [thinking, setThinking] = useState<ThinkingModel | null>(null);
 
   // thinking result
   const [newsTitleMap, setNewsTitleMap] = useState<ThinkingResultNewsTitleMap | null>(null);

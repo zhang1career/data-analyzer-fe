@@ -14,7 +14,7 @@ import {
   TermRelation,
   TermRelationExtProps
 } from "@/components/repos/term/TermRelation.tsx";
-import {withListEditor} from "@/components/hocs/mui/lists/MyListEditor.tsx";
+import {withListEditor} from "@/components/hocs/mui/iterations/MyListEditor.tsx";
 import {setFormField} from "@/defines/combines/FormRWProps.ts";
 
 

@@ -1,15 +1,15 @@
 import * as React from 'react';
 import {DataGrid, GridColDef} from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
-import {FormRoProps} from "@/defines/abilities/FormRoProps.ts";
+import {FormROProps} from "@/defines/abilities/FormROProps.ts";
 
 
-interface MyDataListRoProps<V> extends FormRoProps<V[]> {
+interface MyDataListRoProps<V> extends FormROProps<V[]> {
   columns: GridColDef[];
 }
 
 /**
- * Data lists component
+ * Data iterations component
  * @param columns
  * @param formData
  * @constructor

@@ -43,3 +43,42 @@ function cloneElement(child: React.ReactElement, props: { [key: string]: any }):
     ...child.props  // internal wired props will be overridden by specified ones
   });
 }
+
+export function addChild<T extends DerivableProps<T[]>>(data: T | null, path: number[], newChild: T): T {
+  if (!data) {
+    throw new Error('Data is null');
+  }
+  if (path.length === 0) {
+    return {...data, children: [...data.children ?? [], newChild]};
+  }
+  const [current, ...rest] = path;
+  return {
+    ...data,
+    children: data.children?.map((item, index) =>
+      index === current
+        ? addChild(item, rest, newChild)
+        : item
+    ),
+  };
+}
+
+export function removeChild<T extends DerivableProps<T[]>>(data: T | null, path: number[]): T {
+  if (!data) {
+    throw new Error('Data is null');
+  }
+  if (path.length === 1) {
+    return {
+      ...data,
+      children: data.children?.filter((_, index) => index !== path[0]),
+    };
+  }
+  const [current, ...rest] = path;
+  return {
+    ...data,
+    children: data.children?.map((item, index) =>
+      index === current
+        ? removeChild(item, rest)
+        : item
+    ),
+  };
+}

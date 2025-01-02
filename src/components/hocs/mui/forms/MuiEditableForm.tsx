@@ -13,7 +13,7 @@ import {VerbosibleProps} from '@/defines/abilities/VerbosibleProps.ts';
 import {EMPTY_STRING} from '@/consts/StrConst.ts';
 import {flexStackTheme} from '@/lookings/themes/stackTheme.ts';
 import MyButton from "@/components/hocs/mui/MyButton.tsx";
-import {handleInputChangeByEvent} from "@/defines/combines/NamedValueProps.ts";
+import {handleFieldChangeByEvent} from "@/defines/combines/NamedValueProps.ts";
 
 
 interface MuiEditableFormProps<T> extends NestableProps, VerbosibleProps {
@@ -54,7 +54,7 @@ const MuiEditableForm: React.FC<MuiEditableFormProps<any>> = <T, >({
 
   // forms
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    handleInputChangeByEvent<T>(event, onSetFormData);
+    handleFieldChangeByEvent<T>(event, onSetFormData);
   };
 
   // edit / save button

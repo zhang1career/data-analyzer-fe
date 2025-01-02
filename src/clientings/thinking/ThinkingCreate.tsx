@@ -6,7 +6,7 @@ import {RoutingContext} from '@/components/providers/RoutingProvider.tsx';
 import {NoticingContext} from '@/components/providers/NoticingProvider.tsx';
 import MySearchBar from "@/components/hocs/mui/MySearchBar.tsx";
 import {createThinking} from "@/io/ThinkingIO.ts";
-import {Thinking} from "@/models/Thinking.ts";
+import {ThinkingModel} from "@/models/ThinkingModel.ts";
 import {modelToDto} from "@/mappers/ThinkingMapper.ts";
 import {ObjMap} from "@/defines/structures/ObjMap.ts";
 import {getMiscDict} from "@/io/MiscIO.ts";
@@ -29,7 +29,7 @@ import {LabeledProps} from "@/defines/abilities/LabeledProps.ts";
 import MyTextField from "@/components/hocs/mui/inputs/MyTextField.tsx";
 
 
-interface ThinkingCreateProps extends SteppableProps, LabeledProps, FormRWProps<Thinking> {
+interface ThinkingCreateProps extends SteppableProps, LabeledProps, FormRWProps<ThinkingModel> {
   speechVectorMap?: ObjMap<SpeechVectorKey, string>
   onSetResultData?: (result: ThinkingResultNewsTitleMap) => void
 }

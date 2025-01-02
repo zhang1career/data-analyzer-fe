@@ -4,7 +4,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import {SteppableProps} from "@/defines/combines/SteppableProps.ts";
 import {StylableProps} from "@/defines/abilities/StylableProps.ts";
 import {ClickableProps} from "@/defines/combines/ClickableProps.ts";
-import {handleInputChangeByEvent} from "@/defines/combines/NamedValueProps.ts";
+import {handleFieldChangeByEvent} from "@/defines/combines/NamedValueProps.ts";
 import {NestableProps, setupChildren} from "@/defines/combines/NestableProps.ts";
 import {AutoSubmitableProps} from "@/defines/combines/AutoSubmitableProps.ts";
 
@@ -40,7 +40,7 @@ const MySearchBar: FC<SearchBarProps<any>> = <T, >({
                                                    }: SearchBarProps<T>) => {
   // wrap the inputs change event with named_input
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    handleInputChangeByEvent<T>(event, setFormData);
+    handleFieldChangeByEvent<T>(event, setFormData);
     setActiveAt(Date.now());
   };
 

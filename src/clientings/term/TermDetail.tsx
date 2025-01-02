@@ -3,7 +3,7 @@
 import React, {useContext, useEffect, useState} from "react";
 import MuiEditableForm from "@/components/hocs/mui/forms/MuiEditableForm.tsx";
 import MyTextField from "@/components/hocs/mui/inputs/MyTextField.tsx";
-import {withListEditor} from "@/components/hocs/mui/lists/MyListEditor.tsx";
+import {withListEditor} from "@/components/hocs/mui/iterations/MyListEditor.tsx";
 import {updateTerm} from "@/io/TermIO.ts";
 import {buildEmptyTermModel, TermModel, TermRelationModel} from "@/models/TermModel.ts";
 import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
@@ -57,7 +57,7 @@ const TermDetail: React.FC<TermDetailProps> = ({
     }));
   }
 
-  // operation - search similar tag lists
+  // operation - search similar tag iterations
   const searchTagList = async (term: string) => {
     try {
       const tagVoPage = await searchTagPage(

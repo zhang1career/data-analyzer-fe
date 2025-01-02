@@ -1,14 +1,10 @@
 import {SetStateAction} from "react";
-import {FormRoProps} from "@/defines/abilities/FormRoProps.ts";
-import {FormWoProps} from "@/defines/abilities/FormWoProps.ts";
+import {FormROProps} from "@/defines/abilities/FormROProps.ts";
+import {FormWOProps} from "@/defines/abilities/FormWOProps.ts";
 
 
 // todo: migrate with ValuableProps? It is a long way to go.
-export interface FormRWProps<V> extends FormRoProps<V>, FormWoProps<V> {
-
-  formData: V | null;
-
-  setFormData: (data: V) => void;
+export interface FormRWProps<V> extends FormROProps<V>, FormWOProps<V> {
 }
 
 

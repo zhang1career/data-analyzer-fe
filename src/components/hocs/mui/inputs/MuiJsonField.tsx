@@ -1,7 +1,7 @@
 import React, {useState} from "react";
-import {Box, Card, CardContent, IconButton, TextField, Typography,} from "@mui/material";
+import {Box, Card, CardContent, IconButton, TextField, Typography} from "@mui/material";
 import {Add, Delete} from "@mui/icons-material";
-import {emptyJsonNode, JsonNode, jsonNodeeToObject} from "@/defines/structures/Json.ts";
+import {emptyJsonNode, JsonNode, jsonNodeToObject, JsonValue} from "@/defines/structures/Json.ts";
 import {addNodeToTree, removeNodeFromTree, updateNodeInTree} from "@/utils/JsonEditUtil.ts";
 
 
@@ -17,7 +17,7 @@ const MuiJsonField: React.FC<MuiJsonFieldProps> = () => {
     setJsonTree(updatedTree);
   }
 
-  const updateNode = (path: number[], key: string, value: boolean | number | string | JsonNode[]) => {
+  const updateNode = (path: number[], key: string, value: JsonValue) => {
     const updatedTree = updateNodeInTree(jsonTree, path, key, value);
     setJsonTree(updatedTree);
   };
@@ -44,7 +44,7 @@ const MuiJsonField: React.FC<MuiJsonFieldProps> = () => {
       />
       <Box mt={2}>
         <Typography variant="h6">Generated JSON:</Typography>
-        <pre>{JSON.stringify(jsonNodeeToObject(jsonTree), null, 2)}</pre>
+        <pre>{JSON.stringify(jsonNodeToObject(jsonTree), null, 2)}</pre>
       </Box>
     </Box>
   );
@@ -54,7 +54,7 @@ const MuiJsonField: React.FC<MuiJsonFieldProps> = () => {
 interface MuiJsonTreeFieldProps {
   nodes: JsonNode[];
   onAddNode: (path: number[]) => void;
-  onUpdateNode: (path: number[], key: string, value: boolean | number | string | JsonNode[]) => void;
+  onUpdateNode: (path: number[], key: string, value: JsonValue) => void;
   onRemoveNode: (path: number[]) => void;
   parentPath?: number[];
 }

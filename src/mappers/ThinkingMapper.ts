@@ -1,10 +1,10 @@
-import {Thinking} from "@/models/Thinking.ts";
+import {ThinkingModel} from "@/models/ThinkingModel.ts";
 import {ThinkingDto} from "@/pojo/dto/ThinkingDto.ts";
 import {SpeechVectorKey} from "@/pojo/map/SpeechVectorMap.ts";
 import {ObjMap} from "@/defines/structures/ObjMap.ts";
 
 
-export function modelToDto(m: Thinking, speechVectorMap: ObjMap<SpeechVectorKey, string>): ThinkingDto {
+export function modelToDto(m: ThinkingModel, speechVectorMap: ObjMap<SpeechVectorKey, string>): ThinkingDto {
   const k = new SpeechVectorKey(m.attribute, m.isAttrReverse, m.predicate, m.isPredReverse);
   console.log('Speech vector map:', k, speechVectorMap);
   if (!speechVectorMap.has(k)) {
@@ -25,8 +25,8 @@ export function modelToDto(m: Thinking, speechVectorMap: ObjMap<SpeechVectorKey,
     dto.filter = m.filter;
   }
   // further thinking
-  if (m.further) {
-    dto.further = m.further.map((f) => modelToDto(f, speechVectorMap));
+  if (m.children) {
+    dto.further = m.children.map((f) => modelToDto(f, speechVectorMap));
   }
 
   return dto;

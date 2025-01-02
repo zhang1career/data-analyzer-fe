@@ -1,11 +1,24 @@
+export type PrimitiveJsonValue = boolean | number | string | JsonNode[];
+
+export type JsonValue = PrimitiveJsonValue | PrimitiveJsonValue[];
+
 export interface JsonNode {
   key: string;
-  value: boolean | number | string | JsonNode[];
+  value: JsonValue;
 }
 
-export function jsonNodeeToObject(tree: JsonNode[]): any {
+export function jsonNodeToObject(tree: JsonValue): any {
+  if (typeof tree === 'boolean' || typeof tree === 'number' || typeof tree === 'string') {
+    return tree;
+  }
   return tree.reduce((acc, node) => {
-    acc[node.key] = Array.isArray(node.value) ? jsonNodeeToObject(node.value) : node.value;
+    if (typeof node === 'boolean' || typeof node === 'number' || typeof node === 'string') {
+      return [...acc, node];
+    }
+    if (Array.isArray(node)) {
+      return [...acc, jsonNodeToObject(node)];
+    }
+    acc[node.key] = Array.isArray(node.value) ? jsonNodeToObject(node.value) : node.value;
     return acc;
   }, {} as any);
 }

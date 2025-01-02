@@ -10,7 +10,7 @@ import {
   TermRelation,
   TermRelationExtProps
 } from "@/components/repos/term/TermRelation.tsx";
-import {withListEditor} from "@/components/hocs/mui/lists/MyListEditor.tsx";
+import {withListEditor} from "@/components/hocs/mui/iterations/MyListEditor.tsx";
 import {createTerm} from "@/io/TermIO.ts";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
 import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";

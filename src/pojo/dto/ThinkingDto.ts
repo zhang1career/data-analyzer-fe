@@ -7,3 +7,13 @@ export interface ThinkingDto {
   further?: ThinkingDto[];
 }
 
+export function buildEmptyThinkingDto(): ThinkingDto {
+  return {
+    topic: '',
+    aspect: '',
+    owner: '',
+    filter: [],
+    thinking: '',
+    further: [],
+  }
+}

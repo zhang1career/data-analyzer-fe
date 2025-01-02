@@ -1,4 +1,4 @@
-export interface Thinking {
+export interface ThinkingModel {
   term?: string;
   mret?: string;
 
@@ -10,10 +10,10 @@ export interface Thinking {
   owner?: string;
   filter?: string[];
 
-  further?: Thinking[];
+  children?: ThinkingModel[];
 }
 
-export function buildEmptyThinking(): Thinking {
+export function buildEmptyThinking(): ThinkingModel {
   return {
     term: '',
     mret: '',
@@ -21,6 +21,6 @@ export function buildEmptyThinking(): Thinking {
     isAttrReverse: false,
     predicate: '',
     isPredReverse: false,
-    further: []
+    children: []
   }
 }
