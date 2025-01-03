@@ -27,6 +27,7 @@ import {FormRWProps} from "@/defines/combines/FormRWProps.ts";
 import DirectionDropdownList from "@/components/gears/input/DirectionDropdownList.tsx";
 import {LabeledProps} from "@/defines/abilities/LabeledProps.ts";
 import MyTextField from "@/components/hocs/mui/inputs/MyTextField.tsx";
+import ThinkingResult from "@/components/repos/thinking/ThinkingResult.tsx";
 
 
 interface ThinkingCreateProps extends SteppableProps, LabeledProps, FormRWProps<ThinkingModel> {
@@ -140,20 +141,9 @@ const ThinkingCreate: FC<ThinkingCreateProps> = ({
       </MySearchBar>
 
       {thinkingResultObj && (
-        <List>
-          {Object.entries(thinkingResultObj).map(([_title, _vo]) => (
-            <ListItem key={_title}>
-              <Typography>{_title}</Typography>
-              <Typography>{_vo.news_id}</Typography>
-              <Typography>{_vo.content}</Typography>
-              <Typography>{_vo.refer.toString()}</Typography>
-              <Typography>{_vo.recover_tag}</Typography>
-              <Typography>{_vo.thinking}</Typography>
-              <Typography>{_vo.trace.toString()}</Typography>
-              <Typography>{_vo.score}</Typography>
-            </ListItem>
-          ))}
-        </List>
+        <ThinkingResult
+          formData={thinkingResultObj}
+        />
       )}
     </>
   );

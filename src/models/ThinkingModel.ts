@@ -13,7 +13,7 @@ export interface ThinkingModel {
   children?: ThinkingModel[];
 }
 
-export function buildEmptyThinking(): ThinkingModel {
+export function buildEmptyThinkingModel(): ThinkingModel {
   return {
     term: '',
     mret: '',

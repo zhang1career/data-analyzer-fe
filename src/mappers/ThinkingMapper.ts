@@ -6,10 +6,6 @@ import {ObjMap} from "@/defines/structures/ObjMap.ts";
 
 export function modelToDto(m: ThinkingModel, speechVectorMap: ObjMap<SpeechVectorKey, string>): ThinkingDto {
   const k = new SpeechVectorKey(m.attribute, m.isAttrReverse, m.predicate, m.isPredReverse);
-  console.log('Speech vector map:', k, speechVectorMap);
-  if (!speechVectorMap.has(k)) {
-    throw new Error('Speech vector not found: ' + k.toString());
-  }
   const thinking = speechVectorMap.get(k) || '';
 
   // base info

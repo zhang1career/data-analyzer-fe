@@ -34,11 +34,13 @@ export function handleFieldChangeByEvent<T>(event: ChangeEvent<HTMLInputElement>
 /**
  * handle nested field change event
  * @param event
- * @param setFormData
+ * @param setLocalFormData
+ * @param setNestedFormData
  * @param path
  */
 export function handleNestedFieldChangeByEvent<T extends DerivableProps<T[]>>(event: ChangeEvent<HTMLInputElement>,
-                                                                              setFormData: Dispatch<SetStateAction<T>>,
+                                                                              setLocalFormData: Dispatch<SetStateAction<T>>,
+                                                                              setNestedFormData: Dispatch<SetStateAction<T>>,
                                                                               path: number[]) {
   // todo: how to check if event is not a SyntheticEvent?
   if (typeof event !== 'object') {
@@ -49,11 +51,13 @@ export function handleNestedFieldChangeByEvent<T extends DerivableProps<T[]>>(ev
 
 
   if (event.target.type === 'checkbox') {
-    setFormData((prevObj) => changeNestedField(prevObj, event.target.name, event.target.checked, path));
+    setLocalFormData((prevObj) => ({...prevObj, [event.target.name]: event.target.checked}));
+    setNestedFormData((prevObj) => changeNestedField(prevObj, event.target.name, event.target.checked, path));
     return;
   }
   // use event.target.value by default
-  setFormData((prevObj) => changeNestedField(prevObj, event.target.name, event.target.value, path));
+  setLocalFormData((prevObj) => ({...prevObj, [event.target.name]: event.target.value}));
+  setNestedFormData((prevObj) => changeNestedField(prevObj, event.target.name, event.target.value, path));
 }
 
 function changeNestedField<T extends DerivableProps<T[]>>(originData: T,
@@ -72,4 +76,16 @@ function changeNestedField<T extends DerivableProps<T[]>>(originData: T,
         : _child
     ),
   };
+}
+
+export function getNestedChild<T extends DerivableProps<T[]>>(originData: T,
+                                                              path: number[]): T {
+  if (path.length === 0) {
+    return originData;
+  }
+  const [_focus_index, ...rest] = path;
+  if (!originData.children || originData.children.length < _focus_index + 1) {
+    throw new Error(`[define][get_nested_field] path out of range: ${path}`);
+  }
+  return getNestedChild(originData.children[_focus_index], rest);
 }

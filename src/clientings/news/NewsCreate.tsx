@@ -9,7 +9,7 @@ import {buildEmptyNews, News} from '@/models/News.ts';
 import {RoutingContext} from '@/components/providers/RoutingProvider.tsx';
 import {NoticingContext} from '@/components/providers/NoticingProvider.tsx';
 import {modelToDto} from '@/mappers/NewsMapper.ts';
-import {MyAutocompleteTextField} from '@/components/hocs/mui/MyAutocompleteTextField.tsx';
+import {MyAutoCompleteTextField} from '@/components/hocs/mui/MyAutoCompleteTextField.tsx';
 import {searchSimilarTagNameList} from "@/io/TagIO.ts";
 import {getCachedData, setCachedData} from "@/utils/CacheUtil.ts";
 import DateField from "@/components/gears/input/DateField.tsx";
@@ -102,7 +102,7 @@ const NewsCreate: React.FC<NewsCreateProps> = ({
             setFormField(setFormData, 'published_at', value);
           }}
         />
-        <MyAutocompleteTextField
+        <MyAutoCompleteTextField
           id={'tags'}
           label={'tags'}
           placeholder={'tags'}

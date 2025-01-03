@@ -4,7 +4,7 @@ import {GridFilterInputValueProps} from "@mui/x-data-grid";
 import * as React from "react";
 import {useEffect, useState} from "react";
 import Box from "@mui/material/Box";
-import {MyAutocompleteTextField} from "@/components/hocs/mui/MyAutocompleteTextField.tsx";
+import {MyAutoCompleteTextField} from "@/components/hocs/mui/MyAutoCompleteTextField.tsx";
 import {SxProps} from "@mui/material";
 
 function MyAutocompleteFilterInputFactory(
@@ -28,7 +28,7 @@ function MyAutocompleteFilterInputFactory(
       <Box
         sx={sxTextField}
       >
-        <MyAutocompleteTextField
+        <MyAutoCompleteTextField
           id={fieldName}
           label={fieldName}
           placeholder={fieldName}

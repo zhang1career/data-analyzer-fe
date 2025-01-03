@@ -13,20 +13,22 @@ import {DerivableProps} from "@/defines/abilities/DerivableProps.ts";
  * @param children
  */
 interface MuiNestedFieldGroupProps<T> extends NestableProps, Omit<StackOwnProps, 'children'> {
-  onSetFormData: Dispatch<SetStateAction<T>>; // todo: could change to (newData: T) => void ?
   path: number[];
+  onSetLocalFormData: Dispatch<SetStateAction<T>>;  // todo: could change to (newData: T) => void ?
+  onSetNestedFormData: Dispatch<SetStateAction<T>>;  // todo: could change to (newData: T) => void ?
 }
 
 const MuiNestedFieldGroup: React.FC<MuiNestedFieldGroupProps<any>> = <T extends DerivableProps<T[]>, >({
                                                                                                          isEditable,
-                                                                                                         onSetFormData,
                                                                                                          path,
+                                                                                                         onSetLocalFormData,
+                                                                                                         onSetNestedFormData,
                                                                                                          children = [],
                                                                                                          ...rest
                                                                                                        }: MuiNestedFieldGroupProps<T>) => {
   // wrap the inputs change event with named_input
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    handleNestedFieldChangeByEvent<T>(event, onSetFormData, path);
+    handleNestedFieldChangeByEvent<T>(event, onSetLocalFormData, onSetNestedFormData, path);
   };
 
   return (

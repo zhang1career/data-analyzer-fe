@@ -10,7 +10,7 @@ import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
 import {modelToDto, voToModel} from "@/mappers/NewsMapper.ts";
 import {searchSimilarTagNameList} from "@/io/TagIO.ts";
-import {MyAutocompleteTextField} from "@/components/hocs/mui/MyAutocompleteTextField.tsx";
+import {MyAutoCompleteTextField} from "@/components/hocs/mui/MyAutoCompleteTextField.tsx";
 import {DerivableProps} from "@/defines/abilities/DerivableProps.ts";
 import DateField from "@/components/gears/input/DateField.tsx";
 
@@ -105,7 +105,7 @@ const NewsDetail: React.FC<NewsDetailProps> = ({
             setFormData((prevObject) => ({...prevObject, ['published_at']: value}));
           }}
         />
-        <MyAutocompleteTextField
+        <MyAutoCompleteTextField
           id={'tags'}
           label={'tags'}
           placeholder={'tags'}

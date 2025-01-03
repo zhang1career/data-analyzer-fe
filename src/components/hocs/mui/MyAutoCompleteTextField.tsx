@@ -16,7 +16,7 @@ import {useDelayEffect} from "@/utils/DelayUtil.ts";
  * @param onSetValues the callback to set values
  * @param onSearch the callback to search options
  */
-interface AutocompleteTextFieldProps {
+interface MyAutoCompleteTextFieldProps {
   // Custom props
   isReadOnly?: boolean,
   isEditable?: boolean,
@@ -35,7 +35,7 @@ interface AutocompleteTextFieldProps {
   value: string[];
 }
 
-export const MyAutocompleteTextField: React.FC<AutocompleteTextFieldProps> = ({
+export const MyAutoCompleteTextField: React.FC<MyAutoCompleteTextFieldProps> = ({
                                                                                 isReadOnly = false,
                                                                                 isEditable,
                                                                                 label,
