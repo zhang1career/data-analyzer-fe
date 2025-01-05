@@ -20,7 +20,7 @@ export async function POST(request: Request, response: Response) {
   // check token if missing or expired
   const token = getCookie(ACCESS_TOKEN);
   if (!token) {
-    console.warn('[apihub][skip] token not found');
+    console.warn('[apihub][server][skip] token not found');
     return NextResponse.json(
       null,
       {
@@ -45,31 +45,31 @@ export async function POST(request: Request, response: Response) {
     if (!response) {
       throw new Error(`method ${method} not supported`);
     }
-    if (response.code !== 0) {
-      throw new Error(`return error, url=${url}, code=${response.code}, msg=${response.msg}`);
-    }
-    // return data
-    return NextResponse.json(response.data, {status: HTTP_STATUS.OK});
+
+    // return inputs
+    return NextResponse.json({
+      data: response.data,
+      code: response.code,
+      msg: response.msg,
+    }, {
+      status: HTTP_STATUS.OK
+    });
   } catch (error: unknown) {
     if (error instanceof AxiosError) {
       const status = error.response?.status;
       const message = error.response?.data?.message;
-      console.error('[apihub][skip] failed querying:', url, 'status:', status, 'message:', message);
-      return NextResponse.json(
-        {},
-        {
-          status: status,
-          statusText: message
-        });
+      console.error('[apihub][server][skip] failed querying:', url, 'status:', status, 'message:', message);
+      return NextResponse.json({}, {
+        status: status,
+        statusText: message
+      });
     } else {
       // Handle other types of errors
       console.error("An unknown error occurred:", error);
-      return NextResponse.json(
-        {},
-        {
-          status: HTTP_STATUS.INTERNAL_SERVER_ERROR,
-          statusText: 'An unknown error occurred:' + error
-        });
+      return NextResponse.json({}, {
+        status: HTTP_STATUS.INTERNAL_SERVER_ERROR,
+        statusText: 'An unknown error occurred:' + error
+      });
     }
   }
 }
@@ -80,7 +80,7 @@ async function _doGet(url: string, token: String): Promise<ApiHubResponse> {
       Authorization: `Bearer ${token}`
     }
   });
-  console.log('[apihub] GET:', url, 'resp:', response.data);
+  console.debug('[apihub][server] GET:', url, 'resp:', response.data);
   return response.data as ApiHubResponse;
 }
 
@@ -90,7 +90,7 @@ async function _doPost(url: string, body: BodyType, token: String): Promise<ApiH
       Authorization: `Bearer ${token}`
     }
   });
-  console.log('[apihub] POST:', url, 'body:', body, 'resp:', response.data);
+  console.debug('[apihub][server] POST:', url, 'body:', body, 'resp:', response.data);
   return response.data as ApiHubResponse;
 }
 
@@ -100,7 +100,7 @@ async function _doPut(url: string, body: BodyType, token: String): Promise<ApiHu
       Authorization: `Bearer ${token}`
     }
   });
-  console.log('[apihub] PUT:', url, 'body:', body, 'resp:', response.data);
+  console.debug('[apihub][server] PUT:', url, 'body:', body, 'resp:', response.data);
   return response.data as ApiHubResponse;
 }
 
@@ -110,7 +110,7 @@ async function _doPatch(url: string, body: BodyType, token: String): Promise<Api
       Authorization: `Bearer ${token}`
     }
   });
-  console.log('[apihub] PATCH:', url, 'body:', body, 'resp:', response.data);
+  console.debug('[apihub][server] PATCH:', url, 'body:', body, 'resp:', response.data);
   return response.data as ApiHubResponse;
 }
 
@@ -120,6 +120,6 @@ async function _doDelete(url: string, token: String): Promise<ApiHubResponse> {
       Authorization: `Bearer ${token}`
     }
   });
-  console.log('[apihub] DELETE:', url, 'resp:', response.data);
+  console.debug('[apihub][server] DELETE:', url, 'resp:', response.data);
   return response.data as ApiHubResponse;
 }

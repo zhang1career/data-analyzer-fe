@@ -1,16 +1,21 @@
 'use client';
 
-import React, {useEffect, useState} from "react";
-import {usePathname, useRouter} from "next/navigation";
+import React, {useContext, useState} from "react";
+import {Grid2} from "@mui/material";
 import {GridFilterItem, GridRowId} from "@mui/x-data-grid";
 import {TERM_COLUMNS, translateQueryField} from "@/schema/TermSchema.ts";
-import MyDataList from "@/adapter/mui/MyDataList.tsx";
+import MyDataList from "@/components/hocs/mui/MyDataList.tsx";
 import TermCreate from "@/clientings/term/TermCreate.tsx";
 import TermDetail from "@/clientings/term/TermDetail.tsx";
-import TermRelation from "@/clientings/term/TermRelation.tsx";
-import {deleteTerm, getTerm, searchTermPage} from "@/clientings/TermClienting.ts";
+import TermGraph from "@/clientings/term/TermGraph.tsx";
+import {deleteTerm, getTerm, searchTermPage} from "@/io/TermIO.ts";
 import {EMPTY_PAGE} from "@/consts/PaginateConst.ts";
-import {TermVo} from "@/pojo/vos/TermVo.ts";
+import {TermVo} from "@/pojo/vo/TermVo.ts";
+import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
+import {GRID_WIDTH_1_OF_3, GRID_WIDTH_2_OF_3} from "@/lookings/size.ts";
+import {TermModel} from "@/models/TermModel.ts";
+import {voToModel, voToModelBatch} from "@/mappers/TermMapper.ts";
+import {Paginate} from "@/models/Paginate.ts";
 
 function handleBuildCondition(originCondition: { [key: string]: any }, item: GridFilterItem): { [key: string]: any } {
   if (item.operator !== 'equals') {
@@ -22,61 +27,53 @@ function handleBuildCondition(originCondition: { [key: string]: any }, item: Gri
 
 const TermList: React.FC = () => {
   // context
-  // protocol, host
-  const [protocol, setProtocol] = useState('');
-  const [host, setHost] = useState('');
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setProtocol(window.location.protocol);
-      setHost(window.location.host);
-    }
-  }, []);
-
-  // pathname
-  const pathname = usePathname();
-
-  // router
-  const router = useRouter();
-
+  const routing = useContext(RoutingContext);
 
   // error
   const [error, setError] = useState<any>(null);
 
-  // page refreshment
-  const [activePageAt, setActivePageAt] = useState(Date.now());
 
-  function refreshPage() {
-    setActivePageAt(Date.now());
+  // search refreshment
+  const [activeSearchAt, setActiveSearchAt] = useState(Date.now());
+  // refresh handler
+  function refreshSearch() {
+    setActiveSearchAt(Date.now());
   }
 
-  // item refreshment
-  const [selectedItem, setSelectedItem] = useState<TermVo | null>(null);
-  const [activeItemAt, setActiveItemAt] = useState(Date.now());
-
-  function refreshRelation() {
-    setActiveItemAt(Date.now());
+  // item selection
+  const [selectedItem, setSelectedItem] = useState<TermModel | null>(null);
+  // operation - clear an item
+  function clearItem() {
+    setSelectedItem(null);
   }
-
   // operation - select an item
-  const handleClickItem = (item: TermVo) => {
+  const handleClickItem = (item: TermModel) => {
     setSelectedItem(item);
     refreshRelation();
   };
 
+  // item refreshment
+  const [activeItemAt, setActiveItemAt] = useState(Date.now());
+  // refresh handler
+  function refreshRelation() {
+    setActiveItemAt(Date.now());
+  }
+
   // operation - search
   const handleSearch = async (offset: number, count: number, condition?: { [key: string]: string | number }) => {
+    // clear item
+    clearItem();
+    // query
     try {
-      return await searchTermPage(
-        {
-          router: router,
-          protocol: protocol,
-          host: host,
-          pathname: pathname
-        },
+      const termVoPage = await searchTermPage(
+        routing,
         offset,
         count,
         condition);
+      return {
+        data: voToModelBatch(termVoPage.data),
+        total_num: termVoPage.total_num,
+      } as Paginate<TermModel>;
     } catch (e: unknown) {
       if (e instanceof Error) {
         console.error('Failed to search terms.\n', e.message);
@@ -90,16 +87,12 @@ const TermList: React.FC = () => {
   }
 
   // operation - detail an item
-  const handleDetail = async (termId: number) => {
+  const handleDetail = async (termId: number): Promise<TermModel | null> => {
     try {
-      return await getTerm(
-        {
-          router: router,
-          protocol: protocol,
-          host: host,
-          pathname: pathname
-        },
+      const termVo = await getTerm(
+        routing,
         termId);
+      return voToModel(termVo);
     } catch (e: unknown) {
       if (e instanceof Error) {
         console.error('Failed to get term.\n', e.message);
@@ -113,21 +106,16 @@ const TermList: React.FC = () => {
   }
 
   // operation - delete an item
-  const handleDelete = (rowId: GridRowId) => () => {
-    if (typeof rowId === "string") {
-      console.warn("Invalid row id:", rowId);
+  const handleDelete = async (termId: GridRowId) => {
+    if (typeof termId === "string") {
+      console.warn("[term][delete] invalid rowId:", termId);
       return;
     }
 
     try {
-      deleteTerm(
-        {
-          router: router,
-          protocol: protocol,
-          host: host,
-          pathname: pathname
-        },
-        rowId);
+      await deleteTerm(
+        routing,
+        termId);
     } catch (e: unknown) {
       if (e instanceof Error) {
         console.error('Failed to delete term.\n', e.message);
@@ -141,32 +129,46 @@ const TermList: React.FC = () => {
   }
 
   return (
-    <div>
-      <TermCreate/>
+    <Grid2 container spacing={2}>
+      <Grid2 size={GRID_WIDTH_1_OF_3}>
+        <TermCreate
+          callbackRefresh={refreshSearch}
+        />
 
-      <MyDataList
-        columns={TERM_COLUMNS}
-        onSearch={handleSearch}
-        onBuildCondition={handleBuildCondition}
-        onRowDelete={handleDelete}
-        onRowClick={(params) => {
-          handleClickItem(params.row as TermVo);
-        }}
-        componentConfig={{
-          filterable: 'toolbar'
-        }}
-        key={activePageAt}
-      />
+        <MyDataList
+          columns={TERM_COLUMNS}
+          onSearch={handleSearch}
+          onBuildCondition={handleBuildCondition}
+          onMappingBatch={(vs: TermModel[]) => vs}
+          onRowDelete={handleDelete}
+          onRowClick={(params) => {
+            handleClickItem(params.row as TermModel);
+          }}
+          componentConfig={{
+            filterable: 'toolbar'
+          }}
+          refreshSearch={activeSearchAt}
+          callbackRefreshSearch={refreshSearch}
+        />
+      </Grid2>
 
-      {/* detail */}
-      {selectedItem && (
-        <TermDetail
-          item={selectedItem}
-          callbackRefresh={refreshPage}>
-          <TermRelation item={selectedItem} onDetail={handleDetail} key={activeItemAt}/>
-        </TermDetail>
-      )}
-    </div>
+      <Grid2 size={GRID_WIDTH_2_OF_3}>
+        {/* detail */}
+        {selectedItem && (
+          <TermDetail
+            item={selectedItem}
+            callbackRefresh={refreshSearch}
+          >
+            <TermGraph
+              item={selectedItem}
+              onDetailNode={handleDetail}
+              isNextEnabled={true}
+              key={activeItemAt}
+            />
+          </TermDetail>
+        )}
+      </Grid2>
+    </Grid2>
   );
 };
 

@@ -1,6 +1,10 @@
 import * as React from 'react';
-import Typography from '@mui/material/Typography';
+import TagList from "@/clientings/tag/TagList.tsx";
 
 export default function TagsPage() {
-  return <Typography>Welcome to the Toolpad orders!</Typography>;
+  return (
+    <>
+      <TagList/>
+    </>
+  );
 }

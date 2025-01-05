@@ -1,4 +1,31 @@
-import {deepCopyFrom} from '@/utils/MapUtil.ts';
+import {checkEmpty, deepCopyFrom} from '@/utils/MapUtil.ts';
+
+describe('checkEmpty', () => {
+  it('normal map', () => {
+    const actualResult = checkEmpty(new Map([['hello', 'world']]));
+    const expectedResult = false;
+    expect(actualResult).toEqual(expectedResult);
+  });
+
+  it('null map', () => {
+    const actualResult = checkEmpty(null);
+    const expectedResult = true;
+    expect(actualResult).toEqual(expectedResult);
+  });
+
+  it('undefined map', () => {
+    const actualResult = checkEmpty(undefined);
+    const expectedResult = true;
+    expect(actualResult).toEqual(expectedResult);
+  });
+
+  it('empty map', () => {
+    const actualResult = checkEmpty(new Map());
+    const expectedResult = true;
+    expect(actualResult).toEqual(expectedResult);
+  });
+});
+
 
 describe('deepCopyFrom', () => {
   it('simple value', () => {

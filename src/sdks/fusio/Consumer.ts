@@ -1,5 +1,5 @@
 import axios from "axios";
-import {LoginQo, LoginFuncType, User} from "../../models/User.ts";
+import {LoginQo, LoginFuncType, UserPlus} from "@/models/UserPlus.ts";
 
 interface LoginDto {
   username: string;
@@ -13,8 +13,8 @@ export const Login: LoginFuncType = async (loginQo: LoginQo) => {
       password: loginQo.password,
     };
     const response = await axios.post('http://www.risk-conquer.com/api-man/consumer/login', loginDto);
-    console.log('User login.');
-    const user = response.data as User;
+    console.log('UserPlus login.');
+    const user = response.data as UserPlus;
     user.id = 0;
     user.name = '';
     user.email = loginQo.username;

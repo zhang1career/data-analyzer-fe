@@ -1,78 +1,94 @@
-import React, {useEffect, useState} from 'react';
-import {useNotifications} from '@toolpad/core/useNotifications';
-import MyModal from '@/adapter/mui/MyModal.tsx';
+'use client';
 
-import {Term} from "@/pojo/models/Term.ts";
-import MyTextField from "@/adapter/mui/MyTextField.tsx";
-import MyEditableForm from "@/adapter/mui/MyEditableForm.tsx";
-import {usePathname, useRouter} from "next/navigation";
-import {createTerm} from "@/clientings/TermClienting.ts";
+import React, {useContext, useState} from 'react';
+import MuiModal from '@/components/hocs/mui/modals/MuiModal.tsx';
+import MyTextField from "@/components/hocs/mui/inputs/MyTextField.tsx";
+import MuiEditableForm from "@/components/hocs/mui/forms/MuiEditableForm.tsx";
+import {createTerm} from "@/io/TermIO.ts";
+import {buildEmptyTermModel, TermModel, TermRelationModel} from "@/models/TermModel.ts";
+import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
+import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
+import {
+  checkRelationBlank,
+  getTrimmedRelationValue,
+  TermRelation,
+  TermRelationExtProps
+} from "@/components/repos/term/TermRelation.tsx";
+import {withListEditor} from "@/components/hocs/mui/iterations/MyListEditor.tsx";
+import {setFormField} from "@/defines/combines/FormRWProps.ts";
 
-const TermCreate: React.FC = () => {
+
+interface TermCreateProps {
+  callbackRefresh?: () => void;
+}
+
+const TermCreate: React.FC<TermCreateProps> = ({
+                                                 callbackRefresh
+                                               }) => {
   // context
-  // protocol, host
-  const [protocol, setProtocol] = useState('');
-  const [host, setHost] = useState('');
+  const routing = useContext(RoutingContext);
+  const noticing = useContext(NoticingContext);
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setProtocol(window.location.protocol);
-      setHost(window.location.host);
-    }
-  }, []);
+  // forms
+  const [formData, setFormData] = useState<TermModel | null>(null);
 
-  // pathname
-  const pathname = usePathname();
-
-  // router
-  const router = useRouter();
-
-  // notice
-  const notifications = useNotifications();
-
-  // form
-  const [formData, setFormData] = useState<Term>({
-    id: 0,
-    name: '',
-    content: '',
-    relation: [],
-  });
-
+  // operation - create
   const handleCreate = async () => {
+    if (!formData) {
+      console.warn('[term][create][skip] formData is null');
+      return;
+    }
     console.debug('[term][create] param', formData);
     await createTerm(
-      {
-        router: router,
-        protocol: protocol,
-        host: host,
-        pathname: pathname
-      },
+      routing,
       formData);
     // notice
-    notifications.show('Term created!', {
+    noticing('Term created!', {
       severity: 'success',
       autoHideDuration: 3000,
     });
+    // callback
+    if (callbackRefresh) {
+      callbackRefresh();
+    }
   };
 
   return (
-    <MyModal title={'Add'}>
-      <MyEditableForm initEditable={true} onSetFormData={setFormData} onSave={handleCreate}>
+    <MuiModal
+      label={'Add'}
+      onClick={() => {}}
+      onClose={() => {}}
+    >
+      <MuiEditableForm
+        initEditable={true}
+        initFormData={buildEmptyTermModel()}
+        onSetFormData={setFormData}
+        onSave={handleCreate}>
         <MyTextField
           id="outlined-controlled"
           label="name"
           name="name"
-          value={formData['name']}
+          value={formData?.['name']}
         />
         <MyTextField
           id="outlined-controlled"
           label="content"
           name="content"
-          value={formData['content']}
+          value={formData?.['content']}
         />
-      </MyEditableForm>
-    </MyModal>
+        <TermRelationList
+          formData={formData ? formData.relation : []}
+          setFormData={(relation) => setFormField(setFormData, 'relation', relation)}
+          checkBlank={checkRelationBlank}
+          getTrimmedValue={getTrimmedRelationValue}
+        />
+      </MuiEditableForm>
+    </MuiModal>
   );
 }
+
+// term relation component
+const TermRelationList = withListEditor<TermRelationModel, TermRelationExtProps>(TermRelation);
+
 
 export default TermCreate;

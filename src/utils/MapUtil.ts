@@ -1,7 +1,5 @@
-import {EMPTY_MAP} from "@/consts/MapConst.ts";
-
-export function checkEmpty(map: Map<string, any>): boolean {
-  return map != null && Object.keys(map).length > 0;
+export function checkEmpty(map: Map<string, any> | undefined | null): map is null | undefined {
+  return !map || map.size <= 0;
 }
 
 /**
@@ -11,7 +9,7 @@ export function checkEmpty(map: Map<string, any>): boolean {
  */
 export function deepCopyFrom(obj: any): Map<string, any> {
   if (obj == null || !obj) {
-    return EMPTY_MAP;
+    return new Map();
   }
 
   // simple value
@@ -42,17 +40,6 @@ export function deepCopyFrom(obj: any): Map<string, any> {
 
   return target;
 }
-
-// Usage
-const sourceObj = {
-  key1: 'value1',
-  key2: {
-    key3: 'value3',
-    key4: {
-      key5: 'value5'
-    }
-  }
-};
 
 export function diff(map1: Map<string, any>,
                      map2: Map<string, any>): Map<string, any> {

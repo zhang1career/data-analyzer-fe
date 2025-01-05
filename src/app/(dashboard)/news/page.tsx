@@ -1,6 +1,10 @@
 import * as React from 'react';
-import Typography from '@mui/material/Typography';
+import NewsList from "@/clientings/news/NewsList.tsx";
 
 export default function NewsPage() {
-  return <Typography>Welcome to the Toolpad orders!</Typography>;
+  return (
+    <>
+      <NewsList/>
+    </>
+  );
 }

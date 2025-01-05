@@ -1,16 +1,31 @@
-import React, {useEffect, useState} from "react";
+'use client';
 
-import {usePathname, useRouter} from "next/navigation";
-import MyEditableForm from "@/adapter/mui/MyEditableForm.tsx";
-import MyTextField from "@/adapter/mui/MyTextField.tsx";
-import {updateTerm} from "@/clientings/TermClienting.ts";
-import {termVoToModel} from "@/repo/TermRepo.ts";
-import {Term} from "@/pojo/models/Term.ts";
-import {TermVo} from "@/pojo/vos/TermVo.ts";
-import {useNotifications} from "@toolpad/core/useNotifications";
+import React, {useContext, useEffect, useState} from "react";
+import MuiEditableForm from "@/components/hocs/mui/forms/MuiEditableForm.tsx";
+import MyTextField from "@/components/hocs/mui/inputs/MyTextField.tsx";
+import {withListEditor} from "@/components/hocs/mui/iterations/MyListEditor.tsx";
+import {updateTerm} from "@/io/TermIO.ts";
+import {buildEmptyTermModel, TermModel, TermRelationModel} from "@/models/TermModel.ts";
+import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
+import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
+import {modelToDto} from "@/mappers/TermMapper.ts";
+import {
+  checkRelationBlank,
+  getTrimmedRelationValue,
+  TermRelation,
+  TermRelationExtProps
+} from "@/components/repos/term/TermRelation.tsx";
+import {List, ListItem} from "@mui/material";
+import {searchTagPage} from "@/io/TagIO.ts";
+import {voToModelBatch} from "@/mappers/TagMapper.ts";
+import MyDataList from "@/components/hocs/mui/MyDataList.tsx";
+import {TAG_COLUMNS, TAG_COLUMNS_SIMPLE} from "@/schema/TagSchema.ts";
+import {TagModel} from "@/models/TagModel.ts";
+import MyDataListRo from "@/components/hocs/mui/MyDataListRo.tsx";
+
 
 interface TermDetailProps {
-  item: TermVo;
+  item: TermModel;
   callbackRefresh?: () => void;
   children?: React.ReactNode;
 }
@@ -28,52 +43,63 @@ const TermDetail: React.FC<TermDetailProps> = ({
                                                  children = undefined
                                                }) => {
   // context
-  // protocol, host
-  const [protocol, setProtocol] = useState('');
-  const [host, setHost] = useState('');
+  const routing = useContext(RoutingContext);
+  const noticing = useContext(NoticingContext);
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setProtocol(window.location.protocol);
-      setHost(window.location.host);
+  // forms
+  const [formData, setFormData] = useState<TermModel>(buildEmptyTermModel());
+
+  // operation - set forms.relation
+  function setFormDataRelation(relation: TermRelationModel[]) {
+    setFormData(prevState => ({
+      ...prevState,
+      relation: relation
+    }));
+  }
+
+  // operation - search similar tag iterations
+  const searchTagList = async (term: string) => {
+    try {
+      const tagVoPage = await searchTagPage(
+        routing,
+        0,
+        20,
+        {name: term});
+      return voToModelBatch(tagVoPage.data);
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        console.error('Failed to search tags.\n', e.message);
+      } else {
+        console.error('Failed to search tags.\n', e);
+      }
+      return [];
     }
-  }, []);
+  }
 
-  // pathname
-  const pathname = usePathname();
+  // actives
+  // editable forms refreshment
+  const [activeEditableFormAt, setActiveEditableFormAt] = useState<number>(Date.now());
 
-  // router
-  const router = useRouter();
-
-  // notice
-  const notifications = useNotifications();
-
-  // form
-  const [formData, setFormData] = useState<Term>({
-    id: 0,
-    name: '',
-    content: '',
-    relation: [],
-  });
-
+  // prepare data
   useEffect(() => {
-    setFormData(termVoToModel(item));
+    searchTagList(item.name).then((tagList) => {
+      setFormData({
+        ...item,
+        tagList: tagList
+      });
+    });
+    setActiveEditableFormAt(Date.now());
   }, [item]);
 
   // operation - save
   const handleSave = async () => {
     console.debug('[term][update] param', formData);
     await updateTerm(
-      {
-        router: router,
-        protocol: protocol,
-        host: host,
-        pathname: pathname
-      },
+      routing,
       item.id,
-      formData);
+      modelToDto(formData));
     // notice
-    notifications.show('Term created!', {
+    noticing('Term updated!', {
       severity: 'success',
       autoHideDuration: 3000,
     });
@@ -84,35 +110,54 @@ const TermDetail: React.FC<TermDetailProps> = ({
   };
 
   return (
-    <div>
-      <MyEditableForm
-        onSetFormData={setFormData}
-        onSave={handleSave}
-        btnSx={{ml: "auto"}}>
-        <MyTextField
-          id="outlined-controlled"
-          label="id"
-          name="id"
-          value={formData['id'] ?? 0}
-          isReadOnly={true}
-        />
-        <MyTextField
-          id="outlined-controlled"
-          label="name"
-          name="name"
-          value={formData['name']}
-        />
-        <MyTextField
-          id="outlined-controlled"
-          label="content"
-          name="content"
-          value={formData['content']}
-        />
-      </MyEditableForm>
+    <>
+      <div>
+        <MuiEditableForm
+          onSetFormData={setFormData}
+          onSave={handleSave}
+          sxButton={{ml: 'auto'}}
+          key={activeEditableFormAt}
+        >
+          <MyTextField
+            id='outlined-controlled'
+            label='id'
+            name='id'
+            value={formData['id'] ?? 0}
+            isReadOnly={true}
+          />
+          <MyTextField
+            id='outlined-controlled'
+            label='name'
+            name='name'
+            value={formData['name']}
+          />
+          <MyTextField
+            id='outlined-controlled'
+            label='content'
+            name='content'
+            value={formData['content']}
+          />
+          <TermRelationList
+            formData={formData.relation}
+            setFormData={setFormDataRelation}
+            checkBlank={checkRelationBlank}
+            getTrimmedValue={getTrimmedRelationValue}
+          />
+        </MuiEditableForm>
+      </div>
+
       {children}
-    </div>
+
+      <MyDataListRo
+        columns={TAG_COLUMNS_SIMPLE}
+        formData={formData['tagList']}
+      />
+    </>
   );
 }
 
-export default TermDetail;
+// term relation component
+const TermRelationList = withListEditor<TermRelationModel, TermRelationExtProps>(TermRelation);
 
+
+export default TermDetail;
