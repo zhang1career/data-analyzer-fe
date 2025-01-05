@@ -5,6 +5,7 @@ import {FormROProps} from "@/defines/abilities/FormROProps.ts";
 import {FormWOPropsBeta} from "@/defines/abilities/FormWOPropsBeta.ts";
 import {DerivableProps} from "@/defines/abilities/DerivableProps.ts";
 import {setupChildren} from "@/defines/combines/NestableProps.ts";
+import {StyledMuiCautiousIconButton, StyledMuiIconButton} from "@/components/styled/buttons/StyledMuiIconButton.tsx";
 
 
 interface MuiRecursiveEditorProps<T extends DerivableProps<T[]>> extends FormROProps<T>, FormWOPropsBeta<T>, DerivableProps {
@@ -34,18 +35,12 @@ const MuiRecursiveEditor: React.FC<MuiRecursiveEditorProps<any>> = <T extends De
               formData: formData,
               setFormData: setFormData,
             })}
-            <IconButton
-              color="primary"
-              onClick={() => onAddChild(path)}
-            >
+            <StyledMuiIconButton onClick={() => onAddChild(path)}>
               <Add/>
-            </IconButton>
-            <IconButton
-              color="error"
-              onClick={() => onRemoveChild(path)}
-            >
+            </StyledMuiIconButton>
+            <StyledMuiCautiousIconButton onClick={() => onRemoveChild(path)}>
               <Delete/>
-            </IconButton>
+            </StyledMuiCautiousIconButton>
           </Box>
           {data?.children?.map((_child, _index) => (
             <MuiRecursiveEditor

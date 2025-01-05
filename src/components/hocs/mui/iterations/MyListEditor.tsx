@@ -5,7 +5,8 @@ import AddIcon from "@mui/icons-material/Add";
 import ClearIcon from '@mui/icons-material/Clear';
 import {FormRWProps} from "@/defines/combines/FormRWProps.ts";
 import {InputValueProps} from "@/defines/combines/InputValueProps.ts";
-import {COLOR, GREY} from "@/lookings/color.ts";
+import {COLOR} from "@/lookings/color.ts";
+import {grey} from "@mui/material/colors";
 
 
 interface WrappedComponentProps<V> extends FormRWProps<V> {
@@ -73,7 +74,7 @@ export const withListEditor = <V, P>(
             boxShadow: 10,
             ...theme.applyStyles('dark', {
               bgcolor: '#101010',
-              color: GREY['300'],
+              color: grey['300'],
             }),
           })}
         >

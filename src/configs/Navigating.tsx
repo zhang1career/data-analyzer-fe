@@ -3,12 +3,13 @@ import HomeIcon from '@mui/icons-material/Home';
 import ShortTextIcon from "@mui/icons-material/ShortText";
 import TagIcon from "@mui/icons-material/Tag";
 import TextSnippetIcon from "@mui/icons-material/TextSnippet";
+import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
 
 export const NAVIGATION: Navigation = [
   {
     segment: '',
     title: 'Home',
-    icon: <HomeIcon />,
+    icon: <HomeIcon/>,
   },
 
   {
@@ -21,16 +22,21 @@ export const NAVIGATION: Navigation = [
   {
     segment: 'terms',
     title: 'Terms',
-    icon: <ShortTextIcon />,
+    icon: <ShortTextIcon/>,
   },
   {
     segment: 'tags',
     title: 'Tags',
-    icon: <TagIcon />,
+    icon: <TagIcon/>,
   },
   {
     segment: 'news',
     title: 'News',
-    icon: <TextSnippetIcon />,
+    icon: <TextSnippetIcon/>,
+  },
+  {
+    segment: 'thinkings',
+    title: 'Thinkings',
+    icon: <TipsAndUpdatesIcon/>,
   }
 ];

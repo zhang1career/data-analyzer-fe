@@ -11,9 +11,9 @@ import MyReplaceButtons from '@/components/hocs/mui/buttons/MyReplaceButtons.tsx
 import {NestableProps, setupChildren} from "@/defines/combines/NestableProps.ts";
 import {VerbosibleProps} from '@/defines/abilities/VerbosibleProps.ts';
 import {EMPTY_STRING} from '@/consts/StrConst.ts';
-import {flexStackTheme} from '@/lookings/themes/stackTheme.ts';
 import MyButton from "@/components/hocs/mui/MyButton.tsx";
 import {handleFieldChangeByEvent} from "@/defines/combines/NamedValueProps.ts";
+import {mainTheme} from "@/lookings/themes/mainTheme.ts";
 
 
 interface MuiEditableFormProps<T> extends NestableProps, VerbosibleProps {
@@ -116,7 +116,7 @@ const MuiEditableForm: React.FC<MuiEditableFormProps<any>> = <T, >({
   }
 
   return (
-    <ThemeProvider theme={flexStackTheme}>
+    <ThemeProvider theme={mainTheme}>
       <Stack
         direction='row'
         spacing={{xs: 1, sm: 2}}

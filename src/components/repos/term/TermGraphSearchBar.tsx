@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from "react";
-import MySearchBar from "@/components/hocs/mui/MySearchBar.tsx";
+import MuiSearchBar from "@/components/hocs/mui/MuiSearchBar.tsx";
 import MyDropdownList from "@/components/hocs/mui/MyDropdownList.tsx";
 import {LabeledValueProps} from "@/defines/combines/LabeledValueProps.ts";
 import {SearchTermGraphQo} from "@/pojo/qo/TermQo.ts";
@@ -88,7 +88,7 @@ const TermGraphSearchBar: React.FC<SearchBarForTermGraphProps> = ({
 
 
   return (
-    <MySearchBar
+    <MuiSearchBar
       isEditable={!isNextEnabled}
       title={title}
       setFormData={setFormData}
@@ -124,7 +124,7 @@ const TermGraphSearchBar: React.FC<SearchBarForTermGraphProps> = ({
       {setupChildren(children, {
         isEditable: !isNextEnabled,
       })}
-    </MySearchBar>
+    </MuiSearchBar>
   );
 }
 

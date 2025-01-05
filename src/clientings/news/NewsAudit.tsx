@@ -1,7 +1,7 @@
 'use client';
 
 import React, {useContext, useEffect, useState} from "react";
-import MuiStepper from "@/components/hocs/mui/stepper/MuiStepper.tsx";
+import MuiStepper from "@/components/hocs/mui/steppers/MuiStepper.tsx";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
 import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
 import {ObjMap} from "@/defines/structures/ObjMap.ts";
@@ -35,6 +35,7 @@ import {dictVoToSetBatch} from "@/mappers/misc/DictMapper.ts";
 import TermCreateDrawer from "@/clientings/term/TermCreateDrawer.tsx";
 import TermAccessVector from "@/components/repos/term/TermAccessVector.tsx";
 import {TermRelationOpt} from "@/pojo/opt/TermRelationOpt.ts";
+import {StyledMuiAuthorityStepper} from "@/components/styled/steppers/StyledMuiStepper.tsx";
 
 
 interface NewsAuditProps {
@@ -291,9 +292,7 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
         callbackRefresh={refreshRelation}
       />
 
-      <MuiStepper
-        sx={{backgroundColor: COLOR.light_yellow}}
-      >
+      <StyledMuiAuthorityStepper>
         <ParsingTagSearchBar
           title={'Choose a tag as subject'}
           name={'tags'}
@@ -349,7 +348,7 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
           onSetResultData={setNewsTitleMap}
           isNextEnabled={!!newsTitleMap && !!formData && newsTitleMap.has(formData.id)}
         />
-      </MuiStepper>
+      </StyledMuiAuthorityStepper>
     </>
   );
 }

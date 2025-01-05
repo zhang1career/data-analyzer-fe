@@ -5,5 +5,5 @@ import {LabeledProps} from "@/defines/abilities/LabeledProps.ts";
  * @param onClick
  */
 export interface ClickableProps extends LabeledProps {
-  onClick: () => void;
+  onClick?: () => void;
 }

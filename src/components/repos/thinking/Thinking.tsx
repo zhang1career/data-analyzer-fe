@@ -22,9 +22,9 @@ import {GraphVectorVo} from "@/pojo/vo/GraphVo.ts";
 import {speechVectorVoToMapBatch} from "@/mappers/SpeechMapper.ts";
 import {ThinkingResultVo} from "@/pojo/vo/ThinkingResultVo.ts";
 import ThinkingResult from "@/components/repos/thinking/ThinkingResult.tsx";
-import {Box, IconButton} from "@mui/material";
-import MuiButton from "@/components/hocs/mui/buttons/MuiButton.tsx";
+import {Box} from "@mui/material";
 import {Search} from "@mui/icons-material";
+import {StyledMuiIconButton} from "@/components/styled/buttons/StyledMuiIconButton.tsx";
 
 
 interface ThinkingProps extends FormROProps<ThinkingModel>, FormWOPropsBeta<ThinkingModel> {
@@ -158,14 +158,9 @@ const Thinking: React.FC<ThinkingProps> = ({
             />
           </MuiNestedFieldGroup>
 
-          <MuiButton
-            label={'Think'}
-            onClick={handleCreateThinking}
-          >
-            <IconButton color="primary">
-              <Search/>
-            </IconButton>
-          </MuiButton>
+          <StyledMuiIconButton onClick={handleCreateThinking}>
+            <Search/>
+          </StyledMuiIconButton>
         </Box>
 
         <ThinkingResult

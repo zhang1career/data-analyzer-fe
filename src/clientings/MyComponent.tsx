@@ -1,24 +1,31 @@
 'use client';
 
 import React, {useState} from 'react';
-import NestedThinkingCreate from "@/clientings/thinking/NestedThinkingCreate.tsx";
-import {ThinkingModel} from "@/models/ThinkingModel.ts";
+import MuiJsonField from "@/components/hocs/mui/inputs/MuiJsonField.tsx";
 
-
-interface DemoObject {
-}
 
 function MyComponent() {
 
-  // forms
-  const [formData, setFormData] = useState<ThinkingModel | null>(null);
+  const [formData, setFormData] = useState({
+    foo: "bar",
+    list: [1, 2, 3],
+    nested: {key: "value"},
+  });
 
+  function handleSubmit() {
+    console.log("Submitted JSON Object:", formData);
+  }
 
   return (
-    <NestedThinkingCreate
-      formData={formData}
-      setFormData={setFormData}
-    />
+    <>
+      <MuiJsonField
+        formData={formData}
+        setFormData={setFormData}
+        label="Submit"
+        onClick={handleSubmit}
+      >
+      </MuiJsonField>
+    </>
   );
 }
 

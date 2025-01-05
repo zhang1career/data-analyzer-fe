@@ -1,6 +1,6 @@
 import React from "react";
 import MyDropdownList from "@/components/hocs/mui/MyDropdownList.tsx";
-import MySearchBar from "@/components/hocs/mui/MySearchBar.tsx";
+import MuiSearchBar from "@/components/hocs/mui/MuiSearchBar.tsx";
 import {ParseTagQo} from "@/pojo/qo/TagQo.ts";
 import {TEXTBOX_WIDTH_MIN_PX} from "@/lookings/size.ts";
 import {NextableProps} from "@/defines/abilities/NextableProps.ts";
@@ -28,7 +28,7 @@ const ParsingTagSearchBar: React.FC<SearchBarForParsingTagProps> = ({
   const [activeSubmitAt, setActiveSubmitAt] = React.useState<number | null>(null);
 
   return (
-    <MySearchBar
+    <MuiSearchBar
       isEditable={!isNextEnabled}
       title={title}
       setFormData={setFormData}
@@ -47,7 +47,7 @@ const ParsingTagSearchBar: React.FC<SearchBarForParsingTagProps> = ({
         options={options}
         sx={{width: TEXTBOX_WIDTH_MIN_PX}}
       />
-    </MySearchBar>
+    </MuiSearchBar>
   );
 }
 

@@ -2,25 +2,25 @@ import {DependencyList, useEffect, useState} from "react";
 
 export function useDelayEffect(callback: () => void,
                                dependencies: DependencyList,
-                               timeoutInSeconds: number = 500) {
+                               timeoutInMilliseconds: number = 500) {
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       callback();
-    }, timeoutInSeconds);
+    }, timeoutInMilliseconds);
     return () => clearTimeout(timeoutId);
   }, dependencies);
 }
 
-export function ExpirableState<T>(expireInSeconds: number): [() => T | undefined, (data: T) => void] {
+export function ExpirableState<T>(expireInMilliseconds: number): [() => T | undefined, (data: T) => void] {
   const [data, setData] = useState<T>();
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setData(undefined);
-    }, expireInSeconds);
+    }, expireInMilliseconds);
 
     return () => clearTimeout(timeoutId);
-  }, [data]);
+  }, [data, expireInMilliseconds]);
 
   return [(() => {
     return data;

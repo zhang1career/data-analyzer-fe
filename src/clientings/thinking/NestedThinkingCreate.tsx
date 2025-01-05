@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import {buildEmptyThinkingModel, ThinkingModel} from "@/models/ThinkingModel.ts";
-import {Box, IconButton, Stack, Typography} from "@mui/material";
+import {Box, Stack, Typography} from "@mui/material";
 import Thinking from "@/components/repos/thinking/Thinking.tsx";
 import MuiRecursiveEditor from "@/components/hocs/mui/iterations/MuiRecursiveEditor.tsx";
 import {addChild, removeChild} from "@/defines/combines/NestableProps.ts";
@@ -14,19 +14,31 @@ import {getMiscDict} from "@/io/MiscIO.ts";
 import {DICT_SPEECH_VECTOR} from "@/consts/Misc.ts";
 import {GraphVectorVo} from "@/pojo/vo/GraphVo.ts";
 import {speechVectorVoToMapBatch} from "@/mappers/SpeechMapper.ts";
-import {ThinkingResultVo} from "@/pojo/vo/ThinkingResultVo.ts";
 import ThinkingResult from "@/components/repos/thinking/ThinkingResult.tsx";
+import {StyledMuiIconButton} from "@/components/styled/buttons/StyledMuiIconButton.tsx";
+import {SteppableProps} from "@/defines/combines/SteppableProps.ts";
+import {ThinkingResultVo} from "@/pojo/vo/ThinkingResultVo.ts";
+import {ResultWOPropsBeta} from "@/defines/abilities/ResultWOPropsBeta.ts";
+import {ResultROProps} from "@/defines/abilities/ResultROProps.ts";
+import {FormROProps} from "@/defines/abilities/FormROProps.ts";
+import {FormWOPropsBeta} from "@/defines/abilities/FormWOPropsBeta.ts";
 
 
-interface NestedThinkingCreateProps {
+interface NestedThinkingCreateProps extends SteppableProps,
+  FormROProps<ThinkingModel>,
+  FormWOPropsBeta<ThinkingModel>,
+  ResultROProps<{ [key: string]: ThinkingResultVo }>,
+  ResultWOPropsBeta<{ [key: string]: ThinkingResultVo }> {
 }
 
-const NestedThinkingCreate: React.FC<NestedThinkingCreateProps> = ({}) => {
+const NestedThinkingCreate: React.FC<NestedThinkingCreateProps> = ({
+                                                                     formData,
+                                                                     setFormData,
+                                                                     result,
+                                                                     setResult,
+                                                                   }) => {
   // context
   const routing = useContext(RoutingContext);
-
-  // formData - thinking
-  const [formData, setFormData] = useState<ThinkingModel | null>(buildEmptyThinkingModel());
 
   // dict
   const [speechVectorMap, setSpeechVectorMap] = useState<ObjMap<SpeechVectorKey, string>>(new ObjMap());
@@ -52,9 +64,6 @@ const NestedThinkingCreate: React.FC<NestedThinkingCreateProps> = ({}) => {
     setFormData(updatedData);
   };
 
-  // thinking result
-  const [thinkingResultObj, setThinkingResultObj] = useState<{ [key: string]: ThinkingResultVo } | null>(null);
-
   // operation - create thinking
   const handleCreateThinking = async () => {
     if (!formData) {
@@ -68,19 +77,16 @@ const NestedThinkingCreate: React.FC<NestedThinkingCreateProps> = ({}) => {
     if (!thinkingResultObj) {
       throw new Error(`[news][audit] No thinking result returned. thinkingDto: ${thinkingDto}`);
     }
-    setThinkingResultObj(thinkingResultObj);
+    setResult(thinkingResultObj);
   };
 
   return (
     <Box sx={{padding: 2}}>
       <Stack direction="row" spacing={0.2}>
         <Typography variant="h5">Thinking Editor</Typography>
-        <IconButton
-          color="primary"
-          onClick={handleCreateThinking}
-        >
+        <StyledMuiIconButton onClick={handleCreateThinking}>
           <Search/>
-        </IconButton>
+        </StyledMuiIconButton>
       </Stack>
       <MuiRecursiveEditor
         path={[]}
@@ -98,7 +104,7 @@ const NestedThinkingCreate: React.FC<NestedThinkingCreateProps> = ({}) => {
       </Box>
       <Box mt={3}>
         <ThinkingResult
-          formData={thinkingResultObj}
+          formData={result}
         />
       </Box>
     </Box>

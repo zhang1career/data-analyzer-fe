@@ -4,7 +4,7 @@ import React, {FC, useContext, useEffect, useState} from 'react';
 import {List, ListItem} from "@mui/material";
 import {RoutingContext} from '@/components/providers/RoutingProvider.tsx';
 import {NoticingContext} from '@/components/providers/NoticingProvider.tsx';
-import MySearchBar from "@/components/hocs/mui/MySearchBar.tsx";
+import MuiSearchBar from "@/components/hocs/mui/MuiSearchBar.tsx";
 import {createThinking} from "@/io/ThinkingIO.ts";
 import {ThinkingModel} from "@/models/ThinkingModel.ts";
 import {modelToDto} from "@/mappers/ThinkingMapper.ts";
@@ -96,7 +96,7 @@ const ThinkingCreate: FC<ThinkingCreateProps> = ({
 
   return (
     <>
-      <MySearchBar
+      <MuiSearchBar
         isEditable={true}
         setFormData={setFormData}
         label={label}
@@ -138,7 +138,7 @@ const ThinkingCreate: FC<ThinkingCreateProps> = ({
           name={'owner'}
           value={formData?.['owner']}
         />
-      </MySearchBar>
+      </MuiSearchBar>
 
       {thinkingResultObj && (
         <ThinkingResult

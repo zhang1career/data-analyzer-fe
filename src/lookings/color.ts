@@ -7,22 +7,8 @@ export const WHEEL = {
   'main_blue': '#BEDBD7',
 }
 
-export const GREY = {
-  50: '#F3F6F9',
-  100: '#E5EAF2',
-  200: '#DAE2ED',
-  300: '#C7D0DD',
-  400: '#B0B8C4',
-  500: '#9DA8B7',
-  600: '#6B7A90',
-  700: '#434D5B',
-  800: '#303740',
-  900: '#1C2025',
-};
-
 export const COLOR = {
   'white': '#FFFFFF',
-  'light_yellow': '#FFF2CC',
   'yellow': '#FFBF00',
   'purple': '#7E57C2',
   'blue': '#3F51B5',

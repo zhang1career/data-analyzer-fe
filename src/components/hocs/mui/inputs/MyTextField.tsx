@@ -3,9 +3,9 @@
 import React, {useState} from "react";
 import MuiTextField from "@mui/material/TextField";
 import {ThemeProvider} from "@mui/material";
-import {outlinedTextFieldTheme} from "@/lookings/themes/textFieldTheme.ts";
 import {EMPTY_STRING} from "@/consts/StrConst.ts";
 import {EditableProps} from "@/defines/abilities/EditableProps.ts";
+import {mainTheme} from "@/lookings/themes/mainTheme.ts";
 
 /**
  * TextField component
@@ -61,7 +61,7 @@ const MyTextField: React.FC<MyTextFieldProps> = ({
   };
 
   return (
-    <ThemeProvider theme={outlinedTextFieldTheme}>
+    <ThemeProvider theme={mainTheme}>
       <MuiTextField
         {...rest}
         slotProps={{

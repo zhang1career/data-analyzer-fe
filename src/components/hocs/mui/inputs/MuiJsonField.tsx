@@ -1,128 +1,84 @@
 import React, {useState} from "react";
-import {Box, Card, CardContent, IconButton, TextField, Typography} from "@mui/material";
-import {Add, Delete} from "@mui/icons-material";
-import {emptyJsonNode, JsonNode, jsonNodeToObject, JsonValue} from "@/defines/structures/Json.ts";
-import {addNodeToTree, removeNodeFromTree, updateNodeInTree} from "@/utils/JsonEditUtil.ts";
+import {Box, TextField, Typography} from "@mui/material";
+import {FormROProps} from "@/defines/abilities/FormROProps.ts";
+import {FormWOPropsBeta} from "@/defines/abilities/FormWOPropsBeta.ts";
+import {ClickableProps} from "@/defines/combines/ClickableProps.ts";
+import {TitledProps} from "@/defines/abilities/TitledProps.ts";
+import MuiAutoButton from "@/components/hocs/mui/buttons/MuiAutoButton.tsx";
+import {useDelayEffect} from "@/utils/DelayUtil.ts";
 
 
-interface MuiJsonFieldProps {
+interface MuiJsonFieldProps<T> extends TitledProps, FormROProps<T>, FormWOPropsBeta<T>, ClickableProps {
 }
 
-const MuiJsonField: React.FC<MuiJsonFieldProps> = () => {
-  const [jsonTree, setJsonTree] = useState<JsonNode[]>([]);
+const MuiJsonField: React.FC<MuiJsonFieldProps<any>> = <T, >({
+                                                               title,
+                                                               formData,
+                                                               setFormData,
+                                                               label = 'Submit',
+                                                               onClick = () => {console.debug('MuiJsonField.onClick is not set')},
+                                                             }: MuiJsonFieldProps<T>) => {
+  // data
+  // json string
+  const [jsonText, setJsonText] = useState<string>(JSON.stringify(formData, null, 2));
+  // monitor
+  useDelayEffect(() => {
+    try {
+      const parsedObject = JSON.parse(jsonText);
+      setFormData(parsedObject);
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        setError('Failed to save, invalid JSON format: '.concat(e.message));
+      } else {
+        console.error('Failed to save, unknown reason.');
+      }
+    }
+  }, [jsonText], 1000);
+  // error
+  const [error, setError] = useState<string | null>(null);
 
-  function addNode(parentPath: number[] = []) {
-    const newNode: JsonNode = emptyJsonNode();
-    const updatedTree = addNodeToTree(jsonTree, parentPath, newNode);
-    setJsonTree(updatedTree);
-  }
-
-  const updateNode = (path: number[], key: string, value: JsonValue) => {
-    const updatedTree = updateNodeInTree(jsonTree, path, key, value);
-    setJsonTree(updatedTree);
+  // operation - change
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    // check
+    try {
+      JSON.parse(value); // Validate JSON
+      setError(null);
+    } catch {
+      setError("Failed to change, invalid JSON format.");
+    }
+    // save
+    setJsonText(value);
   };
 
-  const removeNode = (path: number[]) => {
-    const updatedTree = removeNodeFromTree(jsonTree, path);
-    setJsonTree(updatedTree);
+  const handleClick = () => {
+    onClick();
   };
 
   return (
-    <Box sx={{padding: 2}}>
-      <Typography variant="h5">JSON Editor</Typography>
-      <IconButton
-        color="primary"
-        onClick={() => addNode([])}
-      >
-        <Add/>
-      </IconButton>
-      <MuiJsonTreeField
-        nodes={jsonTree}
-        onAddNode={addNode}
-        onUpdateNode={updateNode}
-        onRemoveNode={removeNode}
+    <Box sx={{padding: 2, maxWidth: 600, margin: "0 auto"}}>
+      {title && <Typography variant="h5" gutterBottom>
+        {title}
+      </Typography>}
+      <TextField
+        label="json-editor"
+        multiline
+        rows={10}
+        fullWidth
+        value={jsonText}
+        onChange={handleChange}
+        error={!!error}
+        helperText={error || "Edit the JSON text"}
+        variant="outlined"
       />
       <Box mt={2}>
-        <Typography variant="h6">Generated JSON:</Typography>
-        <pre>{JSON.stringify(jsonNodeToObject(jsonTree), null, 2)}</pre>
+        <MuiAutoButton
+          label={label}
+          onClick={handleClick}
+          disabled={!!error}
+        />
       </Box>
     </Box>
-  );
-};
-
-
-interface MuiJsonTreeFieldProps {
-  nodes: JsonNode[];
-  onAddNode: (path: number[]) => void;
-  onUpdateNode: (path: number[], key: string, value: JsonValue) => void;
-  onRemoveNode: (path: number[]) => void;
-  parentPath?: number[];
-}
-
-const MuiJsonTreeField: React.FC<MuiJsonTreeFieldProps> = ({
-                                                             nodes,
-                                                             onAddNode,
-                                                             onUpdateNode,
-                                                             onRemoveNode,
-                                                             parentPath = [],
-                                                           }) => {
-  return (
-    <>
-      <Box sx={{ml: 2}}>
-        {nodes.map((node, index) => {
-          const currentPath = [...parentPath, index];
-          const isNested = Array.isArray(node.value);
-
-          return (
-            <Card key={index} sx={{marginBottom: 2}}>
-              <CardContent>
-                <Box sx={{display: "flex", alignItems: "center", gap: 2}}>
-                  <TextField
-                    label="Key"
-                    value={node.key}
-                    onChange={(e) =>
-                      onUpdateNode(currentPath, e.target.value, node.value)
-                    }
-                    size="small"
-                  />
-                  {!isNested && (
-                    <TextField
-                      label="Value"
-                      value={String(node.value)}
-                      onChange={(e) =>
-                        onUpdateNode(currentPath, node.key, e.target.value)
-                      }
-                      size="small"
-                    />
-                  )}
-                  <IconButton
-                    color="primary"
-                    onClick={() => onAddNode(currentPath)}
-                  >
-                    <Add/>
-                  </IconButton>
-                  <IconButton
-                    color="error"
-                    onClick={() => onRemoveNode(currentPath)}
-                  >
-                    <Delete/>
-                  </IconButton>
-                </Box>
-                {isNested && (
-                  <MuiJsonTreeField
-                    nodes={node.value as JsonNode[]}
-                    onAddNode={onAddNode}
-                    onUpdateNode={onUpdateNode}
-                    onRemoveNode={onRemoveNode}
-                    parentPath={currentPath}
-                  />
-                )}
-              </CardContent>
-            </Card>
-          );
-        })}
-      </Box>
-    </>
   );
 };
 
