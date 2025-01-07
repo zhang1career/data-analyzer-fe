@@ -1,13 +1,12 @@
 import React, {useContext, useEffect, useState} from "react";
 import {LabeledValueProps} from "@/defines/combines/LabeledValueProps.ts";
 import MuiNestedFieldGroup from "@/components/hocs/mui/inputs/MuiNestedFieldGroup.tsx";
-import MyTextField from "@/components/hocs/mui/inputs/MyTextField.tsx";
-import MyDropdownList from "@/components/hocs/mui/MyDropdownList.tsx";
+import MuiTextField from "@/components/hocs/mui/inputs/MuiTextField.tsx";
+import MuiDropdownList from "@/components/hocs/mui/inputs/MuiDropdownList.tsx";
 import {EMPTY_STRING} from "@/consts/StrConst.ts";
-import {TEXTBOX_WIDTH_200_PX} from "@/lookings/size.ts";
+import {WIDTH_200_PX} from "@/lookings/size.ts";
 import DirectionDropdownList from "@/components/gears/input/DirectionDropdownList.tsx";
 import {buildEmptyThinkingModel, ThinkingModel} from "@/models/ThinkingModel.ts";
-import {FormROProps} from "@/defines/abilities/FormROProps.ts";
 import {FormWOPropsBeta} from "@/defines/abilities/FormWOPropsBeta.ts";
 import {getMiscDict} from "@/io/MiscIO.ts";
 import {DICT_SPEECH_ATTR, DICT_SPEECH_PRED, DICT_SPEECH_VECTOR} from "@/consts/Misc.ts";
@@ -25,19 +24,22 @@ import ThinkingResult from "@/components/repos/thinking/ThinkingResult.tsx";
 import {Box} from "@mui/material";
 import {Search} from "@mui/icons-material";
 import {StyledMuiIconButton} from "@/components/styled/buttons/StyledMuiIconButton.tsx";
+import {FormROPropsBeta} from "@/defines/abilities/FormROPropsBeta.ts";
 
 
-interface ThinkingProps extends FormROProps<ThinkingModel>, FormWOPropsBeta<ThinkingModel> {
-  path: number[],
-  data: ThinkingModel | null,
+interface ThinkingProps extends FormROPropsBeta<ThinkingModel>, FormWOPropsBeta<ThinkingModel> {
+  path?: number[],
+  data?: ThinkingModel | null,
 }
 
 
 const Thinking: React.FC<ThinkingProps> = ({
-                                             path,
-                                             data,
-                                             formData,
-                                             setFormData,
+                                             path = [],
+                                             data = null,
+                                             formData = null,
+                                             setFormData = () => {
+                                               throw new Error('[repo][thinking] No form data setter specified.')
+                                             },
                                            }) => {
   // context
   const routing = useContext(RoutingContext);
@@ -87,8 +89,8 @@ const Thinking: React.FC<ThinkingProps> = ({
 
   return (
     <>
-      <Box sx={{display: "flex", flexDirection: "column"}}>
-        <Box sx={{display: "flex", flexDirection: "row"}}>
+      <Box sx={{display: 'flex', flexDirection: 'column', borderLeft: '1px solid grey', borderRadius: 2}}>
+        <Box sx={{display: 'flex', flexDirection: 'row'}}>
           <MuiNestedFieldGroup
             isEditable={true}
             path={path}
@@ -100,57 +102,64 @@ const Thinking: React.FC<ThinkingProps> = ({
               const _newFormData = _setFormField(formData);
               setFormData(_newFormData)
             }}
-            direction="row"
-            spacing={0.2}
-            sx={{width: "80%"}}
+            slotProps={{
+              group: {
+                direction: "row",
+                spacing: 0.25,
+                sx: {width: "80%"}
+              },
+              member: {
+                sx: {width: "100%", margin: "normal", paddingTop: 0.25, paddingBottom: 0.25}
+              }
+            }}
           >
-            <MyTextField
+            <MuiTextField
               id="term"
               label="term"
               name="term"
               value={data?.["term"]}
             />
-            <MyTextField
+            <MuiTextField
               id="mret"
               label="mret"
               name="mret"
               value={data?.["mret"]}
             />
-            <MyDropdownList
+            <MuiDropdownList
               id={"attribute"}
               label={"attribute"}
               name={"attribute"}
               value={data ? data["attribute"] : EMPTY_STRING}
               options={attrOpts}
-              sx={{width: TEXTBOX_WIDTH_200_PX}}
             />
             <DirectionDropdownList
               id={"isAttrReverse"}
               name={"isAttrReverse"}
               value={data?.["isAttrReverse"] ?? false}
               label={"Is Attr Reverse?"}
+              sx={{width: WIDTH_200_PX, margin: "normal", paddingTop: 0.25, paddingBottom: 0.25}}
             />
-            <MyDropdownList
+            <MuiDropdownList
               id={"predicate"}
               label={"predicate"}
               name={"predicate"}
               value={data ? data["predicate"] : EMPTY_STRING}
               options={predOpts}
-              sx={{width: TEXTBOX_WIDTH_200_PX}}
             />
             <DirectionDropdownList
               id={"isPredReverse"}
               name={"isPredReverse"}
               value={data?.["isPredReverse"] ?? false}
               label={"Is Pred Reverse?"}
+              sx={{width: WIDTH_200_PX, margin: "normal", paddingTop: 0.25, paddingBottom: 0.25}}
             />
-            <MyTextField
+            <MuiTextField
               id={"owner"}
               label={"owner"}
               name={"owner"}
               value={data?.["owner"]}
             />
-            <MyTextField
+            <MuiTextField
               id="filter"
               label="filter"
               name="filter"

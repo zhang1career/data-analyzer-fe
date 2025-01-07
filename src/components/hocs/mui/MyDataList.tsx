@@ -55,21 +55,21 @@ const MyDataList: React.FC<MyDataListProps<any, any>> = <V, M, >({
                                                                    onMappingBatch,
                                                                    pageSizeOptions = [10, 20, 50, 100],
                                                                    onRowClick = (params, event, detail) => {
-                                                                     console.log('[adaptr][datagrids] row clicked, {params, event, detail}:', {
+                                                                     console.log('[hoc][datagrids] row clicked, {params, event, detail}:', {
                                                                        params,
                                                                        event,
                                                                        detail
                                                                      });
                                                                    },
                                                                    onRowDelete = (rowId: GridRowId) => () => {
-                                                                     console.warn('[adaptr][datagrids] onRowDelete not implemented');
+                                                                     console.warn('[hoc][datagrids] onRowDelete not implemented');
                                                                    },
                                                                    componentConfig = {
                                                                      filterable: undefined
                                                                    },
                                                                    refreshSearch,
                                                                    callbackRefreshSearch = () => {
-                                                                     console.warn('[adaptr][datagrids] callbackRefreshSearch not implemented');
+                                                                     console.warn('[hoc][datagrids] callbackRefreshSearch not implemented');
                                                                    }
                                                                  }: MyDataListProps<V, M>) => {
   // filters
@@ -104,7 +104,7 @@ const MyDataList: React.FC<MyDataListProps<any, any>> = <V, M, >({
   }, []);
   // typo delay on filters
   useDelayEffect(() => {
-    console.debug('[adaptr][datagrids] low-pass filters, filters:', filter);
+    console.debug('[hoc][datagrids] low-pass filters, filters:', filter);
     setPagination((prev) => ({...prev, ['page']: 0}));
     callbackRefreshSearch();
   }, [filter]);
@@ -116,7 +116,7 @@ const MyDataList: React.FC<MyDataListProps<any, any>> = <V, M, >({
 
   // active search on pagination change, or by handler
   useDelayEffect(() => {
-    console.debug('[adaptr][datagrids] search, filters:', filter, 'pagination:', pagination);
+    console.debug('[hoc][datagrids] search, filters:', filter, 'pagination:', pagination);
     let condition = {};
     if (filter.items.length > 0) {
       filter.items.forEach((item) => {
@@ -124,14 +124,14 @@ const MyDataList: React.FC<MyDataListProps<any, any>> = <V, M, >({
       });
     }
 
-    console.log('[adaptr][datagrids] paginate searching, condition:', JSON.stringify(condition));
+    console.log('[hoc][datagrids] paginate searching, condition:', JSON.stringify(condition));
     setData((prev) => ({...prev, ['isLoading']: true}));
     const promiseResponse = onSearch(
       pagination.page * pagination.pageSize,
       pagination.pageSize,
       condition);
     promiseResponse.then((response) => {
-      console.log('[adaptr][datagrids] paginate searched', response.total_num);
+      console.log('[hoc][datagrids] paginate searched', response.total_num);
       setData((prev) => ({
         ...prev,
         rows: onMappingBatch(response.data),
@@ -144,7 +144,7 @@ const MyDataList: React.FC<MyDataListProps<any, any>> = <V, M, >({
 
   // delete row
   const handleRowDelete = (rowId: GridRowId) => () => {
-    console.log('[adaptr][datagrids] delete item, itemId:', rowId);
+    console.log('[hoc][datagrids] delete item, itemId:', rowId);
     onRowDelete(rowId);
     callbackRefreshSearch();
   };

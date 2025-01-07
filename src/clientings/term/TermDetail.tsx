@@ -2,7 +2,7 @@
 
 import React, {useContext, useEffect, useState} from "react";
 import MuiEditableForm from "@/components/hocs/mui/forms/MuiEditableForm.tsx";
-import MyTextField from "@/components/hocs/mui/inputs/MyTextField.tsx";
+import MuiTextField from "@/components/hocs/mui/inputs/MuiTextField.tsx";
 import {withListEditor} from "@/components/hocs/mui/iterations/MyListEditor.tsx";
 import {updateTerm} from "@/io/TermIO.ts";
 import {buildEmptyTermModel, TermModel, TermRelationModel} from "@/models/TermModel.ts";
@@ -15,28 +15,24 @@ import {
   TermRelation,
   TermRelationExtProps
 } from "@/components/repos/term/TermRelation.tsx";
-import {List, ListItem} from "@mui/material";
 import {searchTagPage} from "@/io/TagIO.ts";
 import {voToModelBatch} from "@/mappers/TagMapper.ts";
-import MyDataList from "@/components/hocs/mui/MyDataList.tsx";
-import {TAG_COLUMNS, TAG_COLUMNS_SIMPLE} from "@/schema/TagSchema.ts";
-import {TagModel} from "@/models/TagModel.ts";
+import {TAG_COLUMNS_SIMPLE} from "@/schema/TagSchema.ts";
 import MyDataListRo from "@/components/hocs/mui/MyDataListRo.tsx";
 
-
-interface TermDetailProps {
-  item: TermModel;
-  callbackRefresh?: () => void;
-  children?: React.ReactNode;
-}
 
 /**
  * Term detail component
  * @param item
  * @param callbackRefresh refresh callback
  * @param children
- * @constructor
  */
+interface TermDetailProps {
+  item: TermModel;
+  callbackRefresh?: () => void;
+  children?: React.ReactNode;
+}
+
 const TermDetail: React.FC<TermDetailProps> = ({
                                                  item,
                                                  callbackRefresh,
@@ -50,7 +46,11 @@ const TermDetail: React.FC<TermDetailProps> = ({
   const [formData, setFormData] = useState<TermModel>(buildEmptyTermModel());
 
   // operation - set forms.relation
-  function setFormDataRelation(relation: TermRelationModel[]) {
+  function setFormDataRelation(relation: TermRelationModel[] | null) {
+    if (!relation) {
+      console.log('[client][term][detail] failed to set formData, relation is null.');
+      return;
+    }
     setFormData(prevState => ({
       ...prevState,
       relation: relation
@@ -118,20 +118,20 @@ const TermDetail: React.FC<TermDetailProps> = ({
           sxButton={{ml: 'auto'}}
           key={activeEditableFormAt}
         >
-          <MyTextField
+          <MuiTextField
             id='outlined-controlled'
             label='id'
             name='id'
             value={formData['id'] ?? 0}
             isReadOnly={true}
           />
-          <MyTextField
+          <MuiTextField
             id='outlined-controlled'
             label='name'
             name='name'
             value={formData['name']}
           />
-          <MyTextField
+          <MuiTextField
             id='outlined-controlled'
             label='content'
             name='content'

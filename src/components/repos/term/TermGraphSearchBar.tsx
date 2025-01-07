@@ -1,9 +1,9 @@
 import React, {useContext, useEffect, useState} from "react";
 import MuiSearchBar from "@/components/hocs/mui/MuiSearchBar.tsx";
-import MyDropdownList from "@/components/hocs/mui/MyDropdownList.tsx";
+import MuiDropdownList from "@/components/hocs/mui/inputs/MuiDropdownList.tsx";
 import {LabeledValueProps} from "@/defines/combines/LabeledValueProps.ts";
 import {SearchTermGraphQo} from "@/pojo/qo/TermQo.ts";
-import {TEXTBOX_WIDTH_MIN_PX} from "@/lookings/size.ts";
+import {WIDTH_MIN_PX} from "@/lookings/size.ts";
 import {NextableProps} from "@/defines/abilities/NextableProps.ts";
 import {TitledProps} from "@/defines/abilities/TitledProps.ts";
 import {FormRWProps} from "@/defines/combines/FormRWProps.ts";
@@ -99,21 +99,21 @@ const TermGraphSearchBar: React.FC<SearchBarForTermGraphProps> = ({
       setActiveAt={setActiveAt}
       isNextEnabled={isNextEnabled}
     >
-      <MyDropdownList
+      <MuiDropdownList
         id={"term_mret"}
         label={"term - mret"}
         name={termMretFieldName}
         value={formData?.[termMretFieldName as keyof SearchTermGraphQo]}
         options={termMretOptions}
-        sx={{width: TEXTBOX_WIDTH_MIN_PX}}
+        sx={{width: WIDTH_MIN_PX}}
       />
-      <MyDropdownList
+      <MuiDropdownList
         id={"predicate_relation"}
         label={"predicate relation"}
         name={relationTypeFieldName}
         value={formData?.[relationTypeFieldName as keyof SearchTermGraphQo]}
         options={relationTypeOptions}
-        sx={{width: TEXTBOX_WIDTH_MIN_PX}}
+        sx={{width: WIDTH_MIN_PX}}
       />
       <DirectionDropdownList
         id={'is_reverse'}

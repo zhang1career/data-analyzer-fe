@@ -1,11 +1,12 @@
 import React from "react";
-import {Box, Card, CardContent, IconButton,} from "@mui/material";
+import {Box, Card, CardContent,} from "@mui/material";
 import {Add, Delete} from "@mui/icons-material";
 import {FormROProps} from "@/defines/abilities/FormROProps.ts";
 import {FormWOPropsBeta} from "@/defines/abilities/FormWOPropsBeta.ts";
 import {DerivableProps} from "@/defines/abilities/DerivableProps.ts";
 import {setupChildren} from "@/defines/combines/NestableProps.ts";
 import {StyledMuiCautiousIconButton, StyledMuiIconButton} from "@/components/styled/buttons/StyledMuiIconButton.tsx";
+import {StyledMuiNoPaddingCardContent} from "@/components/styled/cards/StyledMuiCardContent.tsx";
 
 
 interface MuiRecursiveEditorProps<T extends DerivableProps<T[]>> extends FormROProps<T>, FormWOPropsBeta<T>, DerivableProps {
@@ -25,10 +26,10 @@ const MuiRecursiveEditor: React.FC<MuiRecursiveEditorProps<any>> = <T extends De
                                                                                                        children,
                                                                                                      }: MuiRecursiveEditorProps<T>) => {
   return (
-    <Card sx={{marginBottom: 2}}>
-      <CardContent>
-        <Box sx={{display: "flex", flexDirection: "column", gap: 2}}>
-          <Box sx={{display: "flex", alignItems: "center", gap: 2}}>
+    <Card sx={{marginBottom: 0}}>
+      <StyledMuiNoPaddingCardContent sx={{paddingLeft: 2, paddingRight: 0, paddingTop: 0.25, paddingBottom: 0.25}}>
+        <Box sx={{display: "flex", flexDirection: "column", rowGap: 0.25}}>
+          <Box sx={{display: "flex", alignItems: "center", columnGap: 1}}>
             {setupChildren(children, {
               path: path,
               data: data,
@@ -56,7 +57,7 @@ const MuiRecursiveEditor: React.FC<MuiRecursiveEditorProps<any>> = <T extends De
             </MuiRecursiveEditor>
           ))}
         </Box>
-      </CardContent>
+      </StyledMuiNoPaddingCardContent>
     </Card>
   );
 };

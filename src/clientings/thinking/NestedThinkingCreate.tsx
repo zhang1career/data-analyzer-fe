@@ -33,7 +33,7 @@ interface NestedThinkingCreateProps extends SteppableProps,
 
 const NestedThinkingCreate: React.FC<NestedThinkingCreateProps> = ({
                                                                      formData,
-                                                                     setFormData,
+                                                                     setFormData = () => {throw new Error('[client][nested_thinking] No form data setter specified.')},
                                                                      result,
                                                                      setResult,
                                                                    }) => {
@@ -67,7 +67,7 @@ const NestedThinkingCreate: React.FC<NestedThinkingCreateProps> = ({
   // operation - create thinking
   const handleCreateThinking = async () => {
     if (!formData) {
-      console.log('[think] No thinking forms specified.');
+      console.log('[client][nested_thinking] No thinking forms specified.');
       return;
     }
     const thinkingDto = modelToDto(formData, speechVectorMap);
@@ -75,7 +75,7 @@ const NestedThinkingCreate: React.FC<NestedThinkingCreateProps> = ({
       routing,
       thinkingDto);
     if (!thinkingResultObj) {
-      throw new Error(`[news][audit] No thinking result returned. thinkingDto: ${thinkingDto}`);
+      throw new Error(`[client][nested_thinking] No thinking result returned. thinkingDto: ${thinkingDto}`);
     }
     setResult(thinkingResultObj);
   };

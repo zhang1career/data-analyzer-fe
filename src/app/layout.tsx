@@ -7,30 +7,26 @@ import {AUTHENTICATION} from "@/configs/Auth";
 import {BRANDING} from "@/configs/Branding";
 import {NAVIGATION} from "@/configs/Navigating.tsx";
 import AppContextProvider from "@/components/AppContextProvider.tsx";
-import {mainTheme} from "@/lookings/themes/mainTheme.ts";
-import {ThemeProvider} from "@mui/material/styles";
 
 export default async function RootLayout(props: { children: React.ReactNode }) {
   const session = await auth();
 
   return (
-    <ThemeProvider theme={mainTheme}>
-      <html lang="en" data-toolpad-color-scheme="light">
-      <body>
-      <SessionProvider session={session}>
-        <AppRouterCacheProvider options={{enableCssLayer: true}}>
-          <AppProvider authentication={AUTHENTICATION}
-                       session={session}
-                       branding={BRANDING}
-                       navigation={NAVIGATION}>
-            <AppContextProvider>
-              {props.children}
-            </AppContextProvider>
-          </AppProvider>
-        </AppRouterCacheProvider>
-      </SessionProvider>
-      </body>
-      </html>
-    </ThemeProvider>
+    <html lang="en" data-toolpad-color-scheme="light">
+    <body>
+    <SessionProvider session={session}>
+      <AppRouterCacheProvider options={{enableCssLayer: true}}>
+        <AppProvider authentication={AUTHENTICATION}
+                     session={session}
+                     branding={BRANDING}
+                     navigation={NAVIGATION}>
+          <AppContextProvider>
+            {props.children}
+          </AppContextProvider>
+        </AppProvider>
+      </AppRouterCacheProvider>
+    </SessionProvider>
+    </body>
+    </html>
   );
 }

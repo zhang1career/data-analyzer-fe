@@ -17,10 +17,10 @@ export function handleFieldChangeByEvent<T>(event: ChangeEvent<HTMLInputElement>
                                             setFormData: Dispatch<SetStateAction<T>>) {
   // todo: how to check if event is not a SyntheticEvent?
   if (typeof event !== 'object') {
-    console.debug('[adaptr][field_change][skip] event is not a SyntheticEvent:', event);
+    console.debug('[hoc][field_change][skip] event is not a SyntheticEvent:', event);
     return;
   }
-  console.debug('[adaptr][input_change] param:', event);
+  console.debug('[hoc][input_change] param:', event);
 
   if (event.target.type === 'checkbox') {
     setFormData((prevObj) => ({...prevObj, [event.target.name]: event.target.checked}));
@@ -44,10 +44,10 @@ export function handleNestedFieldChangeByEvent<T extends DerivableProps<T[]>>(ev
                                                                               path: number[]) {
   // todo: how to check if event is not a SyntheticEvent?
   if (typeof event !== 'object') {
-    console.debug('[adaptr][nest_field_change][skip] event is not a SyntheticEvent:', event);
+    console.debug('[hoc][nest_field_change][skip] event is not a SyntheticEvent:', event);
     return;
   }
-  console.debug('[adaptr][nest_field_change] param:', event);
+  console.debug('[hoc][nest_field_change] param:', event);
 
 
   if (event.target.type === 'checkbox') {

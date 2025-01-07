@@ -2,7 +2,7 @@
 
 import React, {useContext, useState} from 'react';
 import MuiModal from '@/components/hocs/mui/modals/MuiModal.tsx';
-import MyTextField from "@/components/hocs/mui/inputs/MyTextField.tsx";
+import MuiTextField from "@/components/hocs/mui/inputs/MuiTextField.tsx";
 import MuiEditableForm from "@/components/hocs/mui/forms/MuiEditableForm.tsx";
 import {createTerm} from "@/io/TermIO.ts";
 import {buildEmptyTermModel, TermModel, TermRelationModel} from "@/models/TermModel.ts";
@@ -64,13 +64,13 @@ const TermCreate: React.FC<TermCreateProps> = ({
         initFormData={buildEmptyTermModel()}
         onSetFormData={setFormData}
         onSave={handleCreate}>
-        <MyTextField
+        <MuiTextField
           id="outlined-controlled"
           label="name"
           name="name"
           value={formData?.['name']}
         />
-        <MyTextField
+        <MuiTextField
           id="outlined-controlled"
           label="content"
           name="content"

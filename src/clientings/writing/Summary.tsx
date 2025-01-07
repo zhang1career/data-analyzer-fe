@@ -9,7 +9,7 @@ import {StyledMuiIconButton} from "@/components/styled/buttons/StyledMuiIconButt
 import {Search} from "@mui/icons-material";
 import MuiJsonField from "@/components/hocs/mui/inputs/MuiJsonField.tsx";
 import {FormWOPropsBeta} from "@/defines/abilities/FormWOPropsBeta.ts";
-import MyTextField from "@/components/hocs/mui/inputs/MyTextField.tsx";
+import MuiTextField from "@/components/hocs/mui/inputs/MuiTextField.tsx";
 import {WritingSummaryDto} from "@/pojo/dto/WritingSummaryDto.ts";
 
 
@@ -53,7 +53,7 @@ const Summary: React.FC<SummaryProps> = ({
         <Search/>
       </StyledMuiIconButton>
 
-      {result && <MyTextField
+      {result && <MuiTextField
         isEditable={true}
         id={'summary'}
         label={'summary'}

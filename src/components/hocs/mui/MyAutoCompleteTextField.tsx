@@ -54,7 +54,7 @@ export const MyAutoCompleteTextField: React.FC<MyAutoCompleteTextFieldProps> = (
                                  value: string[],
                                  reason: AutocompleteChangeReason,
                                  details?: AutocompleteChangeDetails) => {
-    console.debug('[adaptr][autotext] selection change, value=', {event, value, reason, details});
+    console.debug('[hoc][autotext] selection change, value=', {event, value, reason, details});
     onSetValues(value)
     setLowFreqText(details?.option.toString() || '');
   };
@@ -63,7 +63,7 @@ export const MyAutoCompleteTextField: React.FC<MyAutoCompleteTextFieldProps> = (
   const handleInputChange = (event: React.SyntheticEvent,
                              value: string,
                              reason: string) => {
-    console.debug('[adaptr][autotexts] inputs change, value=', {event, value, reason});
+    console.debug('[hoc][autotexts] inputs change, value=', {event, value, reason});
     if (reason === 'input') {
       setLowFreqText(value);
     }

@@ -1,8 +1,8 @@
 import React from "react";
-import MyDropdownList from "@/components/hocs/mui/MyDropdownList.tsx";
+import MuiDropdownList from "@/components/hocs/mui/inputs/MuiDropdownList.tsx";
 import MuiSearchBar from "@/components/hocs/mui/MuiSearchBar.tsx";
 import {ParseTagQo} from "@/pojo/qo/TagQo.ts";
-import {TEXTBOX_WIDTH_MIN_PX} from "@/lookings/size.ts";
+import {WIDTH_MIN_PX} from "@/lookings/size.ts";
 import {NextableProps} from "@/defines/abilities/NextableProps.ts";
 import {FormRWProps} from "@/defines/combines/FormRWProps.ts";
 import {TitledProps} from "@/defines/abilities/TitledProps.ts";
@@ -39,13 +39,13 @@ const ParsingTagSearchBar: React.FC<SearchBarForParsingTagProps> = ({
       setActiveAt={setActiveSubmitAt}
       isNextEnabled={isNextEnabled}
     >
-      <MyDropdownList
+      <MuiDropdownList
         id={'subject_tag'}
         label={'subject'}
         name={name}
         value={formData?.[name as keyof ParseTagQo]}
         options={options}
-        sx={{width: TEXTBOX_WIDTH_MIN_PX}}
+        sx={{width: WIDTH_MIN_PX}}
       />
     </MuiSearchBar>
   );

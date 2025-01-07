@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from "react";
 import {buildEmptyTermModel, TermModel, TermRelationModel} from "@/models/TermModel.ts";
 import MuiDrawer from "@/components/hocs/mui/modals/MuiDrawer.tsx";
 import MuiEditableForm from "@/components/hocs/mui/forms/MuiEditableForm.tsx";
-import MyTextField from "@/components/hocs/mui/inputs/MyTextField.tsx";
+import MuiTextField from "@/components/hocs/mui/inputs/MuiTextField.tsx";
 import {setFormField} from "@/defines/combines/FormRWProps.ts";
 import {
   checkRelationBlank,
@@ -81,13 +81,13 @@ const TermCreateDrawer: React.FC<TermCreateDrawerProps> = ({
         initFormData={buildEmptyTermModel()}
         onSetFormData={setFormData}
         onSave={handleCreate}>
-        <MyTextField
+        <MuiTextField
           id="outlined-controlled"
           label="name"
           name="name"
           value={formData?.['name']}
         />
-        <MyTextField
+        <MuiTextField
           id="outlined-controlled"
           label="content"
           name="content"

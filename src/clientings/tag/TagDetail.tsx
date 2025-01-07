@@ -2,7 +2,7 @@
 
 import React, {useContext, useEffect, useState} from "react";
 import MuiEditableForm from "@/components/hocs/mui/forms/MuiEditableForm.tsx";
-import MyTextField from "@/components/hocs/mui/inputs/MyTextField.tsx";
+import MuiTextField from "@/components/hocs/mui/inputs/MuiTextField.tsx";
 import {updateTag} from "@/io/TagIO.ts";
 import {buildEmptyTagModel, TagModel} from "@/models/TagModel.ts";
 import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
@@ -69,14 +69,14 @@ const TagDetail: React.FC<TagDetailProps> = ({
           sxButton={{ml: "auto"}}
           key={activeEditableFormAt}
         >
-          <MyTextField
+          <MuiTextField
             id="outlined-controlled"
             label="id"
             name="id"
             value={formData['id'] ?? 0}
             isReadOnly={true}
           />
-          <MyTextField
+          <MuiTextField
             id="outlined-controlled"
             label="name"
             name="name"

@@ -2,7 +2,7 @@
 
 import React, {useContext, useState} from 'react';
 import MuiModal from '@/components/hocs/mui/modals/MuiModal.tsx';
-import MyTextField from '@/components/hocs/mui/inputs/MyTextField.tsx';
+import MuiTextField from '@/components/hocs/mui/inputs/MuiTextField.tsx';
 import MuiEditableForm from '@/components/hocs/mui/forms/MuiEditableForm.tsx';
 import {createNews} from '@/io/NewsIO.ts';
 import {buildEmptyNews, News} from '@/models/News.ts';
@@ -76,7 +76,7 @@ const NewsCreate: React.FC<NewsCreateProps> = ({
         onSetFormData={setFormData}
         onSave={handleCreate}
       >
-        <MyTextField
+        <MuiTextField
           id={'content'}
           label={'content'}
           name={'content'}
@@ -87,7 +87,7 @@ const NewsCreate: React.FC<NewsCreateProps> = ({
           variant="outlined"
           fullWidth
         />
-        <MyTextField
+        <MuiTextField
           id={'url'}
           label={'url'}
           name={'url'}

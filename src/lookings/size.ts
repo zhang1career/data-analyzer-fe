@@ -31,8 +31,9 @@ export const GRID_WIDTH_FULL = {
 };
 
 
-export const TEXTBOX_WIDTH_50_PX = 50;
-export const TEXTBOX_WIDTH_100_PX = 100;
-export const TEXTBOX_WIDTH_120_PX = 120;
-export const TEXTBOX_WIDTH_200_PX = 200;
-export const TEXTBOX_WIDTH_MIN_PX = 240;
+export const WIDTH_2_PX = 2;
+export const WIDTH_50_PX = 50;
+export const WIDTH_100_PX = 100;
+export const WIDTH_120_PX = 120;
+export const WIDTH_200_PX = 200;
+export const WIDTH_MIN_PX = 240;

@@ -7,8 +7,8 @@ import {TermRelationMetaModel} from "@/models/TermModel.ts";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
 import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
 import {accessVectorVoToTermRelationOptList} from "@/mappers/TermMapper.ts";
-import MyDropdownList from "@/components/hocs/mui/MyDropdownList.tsx";
-import {TEXTBOX_WIDTH_MIN_PX} from "@/lookings/size.ts";
+import MuiDropdownList from "@/components/hocs/mui/inputs/MuiDropdownList.tsx";
+import {WIDTH_MIN_PX} from "@/lookings/size.ts";
 import {FormRWProps} from "@/defines/combines/FormRWProps.ts";
 import {EMPTY_STRING} from "@/consts/StrConst.ts";
 import {EditableProps} from "@/defines/abilities/EditableProps.ts";
@@ -57,7 +57,7 @@ const TermAccessVector: React.FC<TermAccessVectorProps> = ({
 
   return (
     <>
-      <MyDropdownList
+      <MuiDropdownList
         isEditable={isEditable}
         id={'term-access-vector-access_vector'}
         label={'access_vector'}
@@ -67,7 +67,7 @@ const TermAccessVector: React.FC<TermAccessVectorProps> = ({
           setFormData(JSON.parse(event.target.value));
         }}
         options={termRelationOpt}
-        sx={{width: TEXTBOX_WIDTH_MIN_PX}}
+        sx={{width: WIDTH_MIN_PX}}
       />
     </>
   );

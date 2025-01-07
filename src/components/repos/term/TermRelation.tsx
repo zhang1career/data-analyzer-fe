@@ -1,13 +1,13 @@
 import React, {useContext, useEffect, useState} from "react";
 import {TermRelationModel} from "@/models/TermModel.ts";
-import MyTextField from "@/components/hocs/mui/inputs/MyTextField.tsx";
+import MuiTextField from "@/components/hocs/mui/inputs/MuiTextField.tsx";
 import MuiFieldGroup from "@/components/hocs/mui/inputs/MuiFieldGroup.tsx";
 import {EditableProps} from "@/defines/abilities/EditableProps.ts";
 import DirectionDropdownList from "@/components/gears/input/DirectionDropdownList.tsx";
 import {FormRWProps} from "@/defines/combines/FormRWProps.ts";
-import MyDropdownList from "@/components/hocs/mui/MyDropdownList.tsx";
+import MuiDropdownList from "@/components/hocs/mui/inputs/MuiDropdownList.tsx";
 import {EMPTY_STRING} from "@/consts/StrConst.ts";
-import {TEXTBOX_WIDTH_120_PX} from "@/lookings/size.ts";
+import {WIDTH_120_PX} from "@/lookings/size.ts";
 import {LabeledValueProps} from "@/defines/combines/LabeledValueProps.ts";
 import {getMiscDict} from "@/io/MiscIO.ts";
 import {DICT_SPEECH_ALL} from "@/consts/Misc.ts";
@@ -57,20 +57,20 @@ export const TermRelation: React.FC<TermRelationProps> = ({
       spacing={0.2}
       sx={{width: '80%'}}
     >
-      <MyTextField
+      <MuiTextField
         id="term-relation-id"
         label="id"
         name="id"
         value={formData?.['id'] ?? 0}
         isReadOnly={true}
       />
-      <MyDropdownList
+      <MuiDropdownList
         id={'term-relation-relation_type'}
         label={'relationType'}
         name={'relationType'}
         value={formData ? formData['relationType'] : EMPTY_STRING}
         options={relationTypeOpts}
-        sx={{width: TEXTBOX_WIDTH_120_PX}}
+        sx={{width: WIDTH_120_PX}}
       />
       <DirectionDropdownList
         id="term-relation-is_reverse"
@@ -78,7 +78,7 @@ export const TermRelation: React.FC<TermRelationProps> = ({
         name="isReverse"
         value={formData?.['isReverse'] ?? false}
       />
-      <MyTextField
+      <MuiTextField
         id="term-relation-name"
         label="destName"
         name="destName"

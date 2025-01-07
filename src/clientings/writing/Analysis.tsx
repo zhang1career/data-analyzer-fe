@@ -11,7 +11,7 @@ import {StyledMuiIconButton} from "@/components/styled/buttons/StyledMuiIconButt
 import {Search} from "@mui/icons-material";
 import MuiJsonField from "@/components/hocs/mui/inputs/MuiJsonField.tsx";
 import {FormWOPropsBeta} from "@/defines/abilities/FormWOPropsBeta.ts";
-import MyTextField from "@/components/hocs/mui/inputs/MyTextField.tsx";
+import MuiTextField from "@/components/hocs/mui/inputs/MuiTextField.tsx";
 
 
 interface AnalysisProps extends SteppableProps, FormROProps<WritingAnalysisDto>, FormWOPropsBeta<WritingAnalysisDto>, ResultROProps<string>, ResultWOPropsBeta<string> {
@@ -54,7 +54,7 @@ const Analysis: React.FC<AnalysisProps> = ({
         <Search/>
       </StyledMuiIconButton>
 
-      {result && <MyTextField
+      {result && <MuiTextField
         isEditable={true}
         id={'analysis'}
         label={'analysis'}

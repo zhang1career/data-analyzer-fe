@@ -1,5 +1,5 @@
 import React from "react";
-import MyDropdownList, {MyDropdownListProps} from "@/components/hocs/mui/MyDropdownList.tsx";
+import MuiDropdownList, {MuiDropdownListProps} from "@/components/hocs/mui/inputs/MuiDropdownList.tsx";
 import {EditableProps} from "@/defines/abilities/EditableProps.ts";
 
 
@@ -21,7 +21,7 @@ function buildLabel(value: boolean): string {
  * @param value
  * @param onChange event handler
  */
-interface DirectionDropdownListProps extends MyDropdownListProps<boolean>, EditableProps {
+interface DirectionDropdownListProps extends MuiDropdownListProps<boolean>, EditableProps {
   isReadOnly?: boolean,
   setValue?: (value: boolean) => void,
 }
@@ -35,7 +35,7 @@ const DirectionDropdownList: React.FC<DirectionDropdownListProps> = ({
                                                                      }) => {
 
   return (
-    <MyDropdownList
+    <MuiDropdownList
       value={value}
       options={directionOpt}
       onChange={onChange}

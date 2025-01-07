@@ -1,7 +1,6 @@
 'use client';
 
 import React, {FC, useContext, useEffect, useState} from 'react';
-import {List, ListItem} from "@mui/material";
 import {RoutingContext} from '@/components/providers/RoutingProvider.tsx';
 import {NoticingContext} from '@/components/providers/NoticingProvider.tsx';
 import MuiSearchBar from "@/components/hocs/mui/MuiSearchBar.tsx";
@@ -12,21 +11,20 @@ import {ObjMap} from "@/defines/structures/ObjMap.ts";
 import {getMiscDict} from "@/io/MiscIO.ts";
 import {DictVo} from "@/pojo/vo/misc/DictVo.ts";
 import {dictVoToOptBatch} from "@/mappers/misc/DictMapper.ts";
-import MyDropdownList from "@/components/hocs/mui/MyDropdownList.tsx";
+import MuiDropdownList from "@/components/hocs/mui/inputs/MuiDropdownList.tsx";
 import {DICT_SPEECH_ATTR, DICT_SPEECH_PRED} from "@/consts/Misc.ts";
 import {SteppableProps} from "@/defines/combines/SteppableProps.ts";
 import {EMPTY_STRING} from "@/consts/StrConst.ts";
 import {LabeledValueProps} from "@/defines/combines/LabeledValueProps.ts";
-import {TEXTBOX_WIDTH_200_PX} from "@/lookings/size.ts";
+import {WIDTH_200_PX} from "@/lookings/size.ts";
 import {SpeechVectorKey} from "@/pojo/map/SpeechVectorMap.ts";
 import {voToNewsTitleMap} from "@/mappers/ThinkingResultMapper.ts";
 import {ThinkingResultNewsTitleMap} from "@/models/ThinkingResult.ts";
 import {ThinkingResultVo} from "@/pojo/vo/ThinkingResultVo.ts";
-import Typography from "@mui/material/Typography";
 import {FormRWProps} from "@/defines/combines/FormRWProps.ts";
 import DirectionDropdownList from "@/components/gears/input/DirectionDropdownList.tsx";
 import {LabeledProps} from "@/defines/abilities/LabeledProps.ts";
-import MyTextField from "@/components/hocs/mui/inputs/MyTextField.tsx";
+import MuiTextField from "@/components/hocs/mui/inputs/MuiTextField.tsx";
 import ThinkingResult from "@/components/repos/thinking/ThinkingResult.tsx";
 
 
@@ -104,13 +102,13 @@ const ThinkingCreate: FC<ThinkingCreateProps> = ({
         isAutoSubmit={false}
         isNextEnabled={true}
       >
-        <MyDropdownList
+        <MuiDropdownList
           id={'attribute'}
           label={'attribute'}
           name={'attribute'}
           value={formData ? formData['attribute'] : EMPTY_STRING}
           options={attrOpts}
-          sx={{width: TEXTBOX_WIDTH_200_PX}}
+          sx={{width: WIDTH_200_PX}}
         />
         <DirectionDropdownList
           id={'isAttrReverse'}
@@ -118,13 +116,13 @@ const ThinkingCreate: FC<ThinkingCreateProps> = ({
           value={formData?.['isAttrReverse'] ?? false}
           label={'Is Attr Reverse?'}
         />
-        <MyDropdownList
+        <MuiDropdownList
           id={'predicate'}
           label={'predicate'}
           name={'predicate'}
           value={formData ? formData['predicate'] : EMPTY_STRING}
           options={predOpts}
-          sx={{width: TEXTBOX_WIDTH_200_PX}}
+          sx={{width: WIDTH_200_PX}}
         />
         <DirectionDropdownList
           id={'isPredReverse'}
@@ -132,7 +130,7 @@ const ThinkingCreate: FC<ThinkingCreateProps> = ({
           value={formData?.['isPredReverse'] ?? false}
           label={'Is Pred Reverse?'}
         />
-        <MyTextField
+        <MuiTextField
           id={'owner'}
           label={'owner'}
           name={'owner'}

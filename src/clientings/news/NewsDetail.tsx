@@ -2,7 +2,7 @@
 
 import React, {useContext, useEffect, useState} from "react";
 import MuiEditableForm from "@/components/hocs/mui/forms/MuiEditableForm.tsx";
-import MyTextField from "@/components/hocs/mui/inputs/MyTextField.tsx";
+import MuiTextField from "@/components/hocs/mui/inputs/MuiTextField.tsx";
 import {updateNews} from "@/io/NewsIO.ts";
 import {buildEmptyNews, News} from "@/models/News.ts";
 import {NewsVo} from "@/pojo/vo/NewsVo.ts";
@@ -72,14 +72,14 @@ const NewsDetail: React.FC<NewsDetailProps> = ({
         isVerbose={true}
         sxButton={{ml: 'auto'}}
         key={activeEditableFormAt}>
-        <MyTextField
+        <MuiTextField
           id={'news_id'}
           label={'id'}
           name={'id'}
           value={formData['id'] ?? 0}
           isReadOnly={true}
         />
-        <MyTextField
+        <MuiTextField
           id={'content'}
           label={'content'}
           name={'content'}
@@ -90,7 +90,7 @@ const NewsDetail: React.FC<NewsDetailProps> = ({
           variant={'outlined'}
           fullWidth
         />
-        <MyTextField
+        <MuiTextField
           id={'url'}
           label={'url'}
           name={'url'}
