@@ -11,7 +11,7 @@ import {
 import {HTTP_STATUS} from "@/consts/HttpStatusConst.ts";
 import {PATH_PARAM_CALLBACK, PATH_SIGNIN} from "@/consts/UrlConst.ts";
 import {sprintf} from "sprintf-js";
-import {ResponseObj} from "@/models/Http.ts";
+import {RespVo} from "@/pojo/vo/HttpVo.ts";
 
 const API_HUB_URL = 'api/hub';
 
@@ -70,7 +70,7 @@ async function requestApiHub({
     return handleHttpError(context, destBodyObj, response);
   }
 
-  const responseObj = await response.json() as ResponseObj<any>;
+  const responseObj = await response.json() as RespVo<any>;
   if (responseObj.code !== 0) {
     console.error('[apihub][client][skip] biz failed:', responseObj);
     throw new Error(`code=${responseObj.code}, msg=${responseObj.msg}`);

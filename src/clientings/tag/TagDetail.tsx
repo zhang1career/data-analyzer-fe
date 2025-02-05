@@ -45,10 +45,19 @@ const TagDetail: React.FC<TagDetailProps> = ({
   // operation - save
   const handleSave = async () => {
     console.debug('[tag][update] param', formData);
+    try {
     await updateTag(
       routing,
       item.id,
       formData);
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        console.error('Failed to get term.\n', e.message);
+      } else {
+        console.error('Failed to get term.\n', e);
+      }
+      return;
+    }
     // notice
     noticing('Tag updated!', {
       severity: 'success',

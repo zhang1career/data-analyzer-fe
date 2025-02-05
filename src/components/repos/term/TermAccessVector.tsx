@@ -38,11 +38,21 @@ const TermAccessVector: React.FC<TermAccessVectorProps> = ({
   }, [rawData]);
 
   const buildAccessOption = async (relation: TermRelationMetaModel) => {
-    const accessVectorVo = await accessGraphVector(
-      routing,
-      relation['relationType'],
-      relation['isReverse']
-    ) as AccessVectorVo;
+    let accessVectorVo;
+    try {
+      accessVectorVo = await accessGraphVector(
+        routing,
+        relation['relationType'],
+        relation['isReverse']
+      ) as AccessVectorVo;
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        console.error('Failed to get term.\n', e.message);
+      } else {
+        console.error('Failed to get term.\n', e);
+      }
+      return;
+    }
     if (!accessVectorVo) {
       noticing('No Access Found.', {
         severity: 'warning',

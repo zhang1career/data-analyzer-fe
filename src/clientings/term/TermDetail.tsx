@@ -94,10 +94,19 @@ const TermDetail: React.FC<TermDetailProps> = ({
   // operation - save
   const handleSave = async () => {
     console.debug('[term][update] param', formData);
-    await updateTerm(
-      routing,
-      item.id,
-      modelToDto(formData));
+    try {
+      await updateTerm(
+        routing,
+        item.id,
+        modelToDto(formData));
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        console.error('Failed to get term.\n', e.message);
+      } else {
+        console.error('Failed to get term.\n', e);
+      }
+      return;
+    }
     // notice
     noticing('Term updated!', {
       severity: 'success',

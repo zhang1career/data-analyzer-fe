@@ -1,7 +1,6 @@
 'use client';
 
 import React, {useContext, useEffect, useState} from "react";
-import MuiStepper from "@/components/hocs/mui/steppers/MuiStepper.tsx";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
 import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
 import {ObjMap} from "@/defines/structures/ObjMap.ts";
@@ -25,7 +24,6 @@ import {buildEmptyParseTagQo, ParseTagQo} from "@/pojo/qo/TagQo.ts";
 import {SpeechVectorKey} from "@/pojo/map/SpeechVectorMap.ts";
 import {GraphNodeVo, GraphVectorVo, GraphVo} from "@/pojo/vo/GraphVo.ts";
 import {DICT_SPEECH_ATTR, DICT_SPEECH_PRED, DICT_SPEECH_VECTOR} from "@/consts/Misc.ts";
-import {COLOR} from "@/lookings/color.ts";
 import ParsingTagSearchBar from "@/components/repos/tag/ParsingTagSearchBar.tsx";
 import TermGraphSearchBar from "@/components/repos/term/TermGraphSearchBar.tsx";
 import {checkEmpty, checkEmpty as ArrayUtil_checkEmpty} from "@/utils/ArrayUtil.ts";
@@ -48,6 +46,9 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
   // context
   const routing = useContext(RoutingContext);
   const noticing = useContext(NoticingContext);
+
+  // error
+  const [error, setError] = useState<any>(null);
 
   // prepare inputs
   // graph vector map
@@ -128,26 +129,50 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
     if (!parseTagQo['tags']) {
       throw new Error('[news][audit] No tags to parse.');
     }
-    const parseResultVoList = await parseTag(
-      routing,
-      parseTagQo['tags']);
-    const termMretOpts = parseResultVoToTermMretOptBatch(parseResultVoList);
-    setTermMretOpts(termMretOpts);
+    try {
+      const parseResultVoList = await parseTag(
+        routing,
+        parseTagQo['tags']);
+      const termMretOpts = parseResultVoToTermMretOptBatch(parseResultVoList);
+      setTermMretOpts(termMretOpts);
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        console.error('Failed to get term.\n', e.message);
+      } else {
+        console.error('Failed to get term.\n', e);
+      }
+    }
   }
 
   // term graph
   const [selectedTerm, setSelectedTerm] = useState<TermModel | null>(null);
   const [termGraph, setTermGraph] = useState<TermGraphModel | null>(null);
+  const [searchTermGraphOk, setSearchTermGraphOk] = useState(true);
   // search term graph
   const searchTermGraph = async () => {
+    // check params
     if (!searchTermGraphQo['name'] || !searchTermGraphQo['relation_type']) {
       console.debug('[news][audit][term_graph][skip] No search term graph qo specified:', searchTermGraphQo);
       return;
     }
-    const graphVectorVo = await searchGraphVector(
-      routing,
-      searchTermGraphQo['name'],
-      searchTermGraphQo['relation_type']) as GraphVo;
+    // init query status
+    setSearchTermGraphOk(true);
+    // query
+    let graphVectorVo;
+    try {
+      graphVectorVo = await searchGraphVector(
+        routing,
+        searchTermGraphQo['name'],
+        searchTermGraphQo['relation_type']) as GraphVo;
+    } catch (error) {
+      if (error instanceof Error) {
+        setSearchTermGraphOk(false);
+        console.error('Failed to search term graph:', error.message);
+      } else {
+        console.error("An unknown error occurred:", error);
+      }
+    }
+
     if (!graphVectorVo) {
       noticing('No TermGraph Found.', {
         severity: 'warning',
@@ -276,11 +301,11 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
   const [openTermCreateDrawer, setOpenTermCreateDrawer] = useState(false);
   // auto open term create drawer
   useEffect(() => {
-    if (!termRelation || openTermCreateDrawer) {
+    if ((searchTermGraphOk && !termRelation) || openTermCreateDrawer) {
       return;
     }
     setOpenTermCreateDrawer(true);
-  }, [termRelation]);
+  }, [searchTermGraphOk, termRelation]);
 
   return (
     <>

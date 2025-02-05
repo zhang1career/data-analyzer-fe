@@ -41,8 +41,17 @@ async function searchSimilarTagList(tagLike: string): Promise<TagVo[]> {
 }
 
 export async function searchSimilarTagNameList(tagLike: string): Promise<string[]> {
-  const tagList = await searchSimilarTagList(tagLike);
-  return tagList.map((tag) => tag.name);
+  try {
+    const tagList = await searchSimilarTagList(tagLike);
+    return tagList.map((tag) => tag.name);
+  } catch (e: unknown) {
+    if (e instanceof Error) {
+      console.error('Failed to get term.\n', e.message);
+    } else {
+      console.error('Failed to get term.\n', e);
+    }
+    return [];
+  }
 }
 
 export async function getTag(context: MyRouting,

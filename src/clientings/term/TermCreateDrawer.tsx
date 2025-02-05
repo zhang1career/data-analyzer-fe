@@ -53,9 +53,18 @@ const TermCreateDrawer: React.FC<TermCreateDrawerProps> = ({
       return;
     }
     console.debug('[term][create] param', formData);
-    await createTerm(
-      routing,
-      formData);
+    try {
+      await createTerm(
+        routing,
+        formData);
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        console.error('Failed to get term.\n', e.message);
+      } else {
+        console.error('Failed to get term.\n', e);
+      }
+      return;
+    }
     // notice
     noticing('Term created!', {
       severity: 'success',
@@ -71,8 +80,10 @@ const TermCreateDrawer: React.FC<TermCreateDrawerProps> = ({
   return (
     <MuiDrawer
       label={'Add'}
-      onClick={() => {}}
-      onClose={() => {}}
+      onClick={() => {
+      }}
+      onClose={() => {
+      }}
       openSesame={openSesame}
       setOpenSesame={setOpenSesame}
     >
