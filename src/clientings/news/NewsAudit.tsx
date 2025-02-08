@@ -34,6 +34,7 @@ import TermCreateDrawer from "@/clientings/term/TermCreateDrawer.tsx";
 import TermAccessVector from "@/components/repos/term/TermAccessVector.tsx";
 import {TermRelationOpt} from "@/pojo/opt/TermRelationOpt.ts";
 import {StyledMuiAuthorityStepper} from "@/components/styled/steppers/StyledMuiStepper.tsx";
+import {EMPTY_STRING} from "@/consts/StrConst.ts";
 
 
 interface NewsAuditProps {
@@ -72,15 +73,15 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
   }, [routing]);
 
   // query param
-  const [parseTagQo, setParseTagQo] = useState<ParseTagQo>(buildEmptyParseTagQo());
+  const [parseTagQo, setParseTagQo] = useState<ParseTagQo | null>(buildEmptyParseTagQo());
   const [termMretOpts, setTermMretOpts] = useState<TermMretOpt[] | null>(null);
-  const [searchTermGraphQo, setSearchTermGraphQo] = useState<SearchTermGraphQo>(buildEmptySearchTermGraphQo());
+  const [searchTermGraphQo, setSearchTermGraphQo] = useState<SearchTermGraphQo | null>(buildEmptySearchTermGraphQo());
   // actives
   const [activeTermGraphSearchAt, setActiveTermGraphSearchAt] = useState<number | null>(null);
 
   // inputs mapping
   useEffect(() => {
-    if (!termMretOpts) {
+    if (!termMretOpts || !searchTermGraphQo) {
       return;
     }
     // when name is selected, set the term and mret to the search qo
@@ -114,7 +115,7 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
     }
     // active term graph search
     setActiveTermGraphSearchAt(Date.now());
-  }, [searchTermGraphQo.term_mret]);
+  }, [searchTermGraphQo?.term_mret]);
 
   // item refreshment
   const [activeAuditAt, setActiveAuditAt] = useState(Date.now());
@@ -126,6 +127,9 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
   // function
   // parse tag
   const handleParseTag = async () => {
+    if (!parseTagQo) {
+      throw new Error('[news][audit] Stage parseTagQo is empty.');
+    }
     if (!parseTagQo['tags']) {
       throw new Error('[news][audit] No tags to parse.');
     }
@@ -151,6 +155,10 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
   // search term graph
   const searchTermGraph = async () => {
     // check params
+    if (!searchTermGraphQo) {
+      console.debug('[news][audit][term_graph][skip] State searchTermGraphQo is empty');
+      return;
+    }
     if (!searchTermGraphQo['name'] || !searchTermGraphQo['relation_type']) {
       console.debug('[news][audit][term_graph][skip] No search term graph qo specified:', searchTermGraphQo);
       return;
@@ -310,7 +318,7 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
   return (
     <>
       <TermCreateDrawer
-        termName={searchTermGraphQo['name']}
+        termName={searchTermGraphQo ? searchTermGraphQo['name'] : EMPTY_STRING}
         termRelation={termRelation ? termRelationOptToTermRelationModel(termRelation) : null}
         openSesame={openTermCreateDrawer}
         setOpenSesame={setOpenTermCreateDrawer}
@@ -346,8 +354,8 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
         >
           {checkTermGraphUncomplete() && <TermAccessVector
               rawData={{
-                relationType: searchTermGraphQo['relation_type'],
-                isReverse: searchTermGraphQo['is_reverse'] ?? false
+                relationType: searchTermGraphQo ? searchTermGraphQo['relation_type'] : EMPTY_STRING,
+                isReverse: searchTermGraphQo ? searchTermGraphQo['is_reverse'] ?? false : false
               }}
               formData={termRelation}
               setFormData={setTermRelation}

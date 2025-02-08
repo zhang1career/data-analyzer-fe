@@ -117,8 +117,8 @@ export const withListEditor = <V, P>(
                   formData={item}
                   setFormData={(_newItem) => {
                     setFormData(formData
-                      ? formData.map((_oldItem, _oldI) => _i === _oldI ? _newItem : _oldItem)
-                      : [_newItem]
+                      ? formData.map((_oldItem, _oldI) => _i === _oldI ? (_newItem ?? {} as V) : _oldItem)
+                      : [_newItem ?? {} as V]
                     );
                   }}
                   {...(rest as P)}

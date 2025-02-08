@@ -1,7 +1,7 @@
 import {NextRequest, NextResponse} from "next/server";
-import {auth as authMiddleware} from "@/auth.ts";
-import {loggingMiddleware} from "@/middlewares/LoggingMiddleware.ts";
-import {pageLocationMiddleware} from "@/middlewares/PageLocationMiddleware.ts";
+// import {auth as authMiddleware} from "@/auth.ts";
+// import {loggingMiddleware} from "@/middlewares/LoggingMiddleware.ts";
+// import {pageLocationMiddleware} from "@/middlewares/PageLocationMiddleware.ts";
 
 
 /**
@@ -29,16 +29,18 @@ const composeMiddlewares = (middlewares: {
   }
 };
 
-export default composeMiddlewares({
-  loggingMiddleware: loggingMiddleware,
-  authMiddleware: authMiddleware,
-  pageLocationMiddleware: pageLocationMiddleware,
-});
+// export default composeMiddlewares({
+//   loggingMiddleware: loggingMiddleware,
+//   // authMiddleware: authMiddleware,
+//   pageLocationMiddleware: pageLocationMiddleware,
+// });
+
+export { auth as middleware } from '@/auth';
 
 export const config = {
   // https://nextjs.org/docs/app/building-your-application/routing/middleware#matcher
   matcher: [
     '/terms/:path*',
-    '/((?!api|_next/static|_next/image|.*\\.png$).*)'
+    '/((?!api|_next/static|_next/image|.*\\.png$).*)',
   ],
 };

@@ -70,10 +70,8 @@ const MuiModal: React.FC<MuiModalProps> = ({
   );
 }
 
-const Backdrop = React.forwardRef<
-  HTMLDivElement,
-  { open?: boolean; className: string }
->((props, ref) => {
+const styler = (props: any,
+                ref: React.LegacyRef<HTMLDivElement> | undefined) => {
   const {open, className, ...other} = props;
   return (
     <div
@@ -82,7 +80,10 @@ const Backdrop = React.forwardRef<
       {...other}
     />
   );
-});
+};
+
+const Backdrop = React.forwardRef<HTMLDivElement,
+  { open?: boolean; className: string }>(styler);
 
 const Modal = styled(BaseModal)`
     position: fixed;

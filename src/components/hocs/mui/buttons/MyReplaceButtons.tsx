@@ -37,11 +37,19 @@ const MyReplaceButtons: React.FC<ReplaceButtonsProps> = ({
                                                            onSetShowButtonA
                                                          }) => {
   const handleButtonA = () => {
+    // check params
+    if (!buttonA || buttonA.onClick === undefined) {
+      throw new Error('[hoc][btn] buttonA and its onClick is not specified.');
+    }
     onSetShowButtonA(false);
     buttonA.onClick();
   };
 
   const handleButtonB = () => {
+    // check params
+    if (!buttonB || buttonB.onClick === undefined) {
+      throw new Error('[hoc][btn] buttonB and its onClick is not specified.');
+    }
     onSetShowButtonA(true);
     buttonB.onClick();
   };

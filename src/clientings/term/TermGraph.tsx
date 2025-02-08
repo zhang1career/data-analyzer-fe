@@ -2,7 +2,14 @@
 
 import React, {useEffect, useState} from 'react';
 import CytoscapeComponent from "react-cytoscapejs";
-import cytoscape, {ElementDefinition, LayoutOptions, SingularElementArgument} from "cytoscape";
+import cytoscape, {
+  BaseLayoutOptions,
+  ElementDefinition,
+  LayoutOptions,
+  RandomLayoutOptions,
+  ShapedLayoutOptions,
+  SingularElementArgument
+} from "cytoscape";
 import cola from 'cytoscape-cola';
 // import panzoom from 'cytoscape-panzoom';
 import makeStyles from '@mui/styles/makeStyles';
@@ -498,7 +505,15 @@ const layout = {
   directed: true
 };
 
-const layoutOptions: LayoutOptions = {
+interface MyLayoutOptions extends BaseLayoutOptions, ShapedLayoutOptions {
+  handleDisconnected: boolean;
+  infinite: boolean;
+  unconstrIter: number;
+  userConstIter: number;
+  allConstIter: number;
+}
+
+const layoutOptions: MyLayoutOptions = {
   name: 'cola',
   handleDisconnected: true,
   animate: true,

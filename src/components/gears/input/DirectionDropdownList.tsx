@@ -4,13 +4,13 @@ import {EditableProps} from "@/defines/abilities/EditableProps.ts";
 
 
 const directionOpt = [
-  {label: buildLabel(false), value: false},
-  {label: buildLabel(true), value: true},
+  {label: buildLabel('F'), value: 'F'},
+  {label: buildLabel('T'), value: 'T'},
 ];
 
 // build label by value
-function buildLabel(value: boolean): string {
-  return value ? '<-' : '->';
+function buildLabel(value: string): string {
+  return (value === 'T') ? '<-' : '->';
 }
 
 
