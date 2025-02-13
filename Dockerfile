@@ -1,6 +1,6 @@
 FROM node:20.18-alpine
 
-RUN sudo mkdir -p /app/node_modules && chown -R node:node /app
+RUN mkdir -p /app/node_modules && chown -R node:node /app
 
 WORKDIR /app
 
