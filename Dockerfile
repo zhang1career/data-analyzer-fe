@@ -8,7 +8,6 @@ COPY --chown=node:node package*.json ./
 
 USER node
 
-RUN npm config set registry http://registry.npmjs.org
 RUN npm install --production
 RUN npm install typescript
 
@@ -18,4 +17,4 @@ RUN npm run build
 
 EXPOSE 3000
 
-CMD [ "node", "dist/standalone/server.js" ]
+CMD [ "node", ".next/standalone/server.js" ]
