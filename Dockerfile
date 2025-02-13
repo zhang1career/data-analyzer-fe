@@ -1,17 +1,20 @@
 FROM node:20.18-alpine
 
-RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
+RUN sudo mkdir -p /app/node_modules && chown -R node:node /app
 
-WORKDIR /home/node/app
+WORKDIR /app
 
-COPY package*.json ./
+COPY --chown=node:node package*.json ./
 
 USER node
 
-RUN npm install
+RUN npm config set registry http://registry.npmjs.org
+RUN npm install --production
 
 COPY --chown=node:node . .
 
-EXPOSE 8080
+RUN npm run build
 
-CMD [ "node", "app.js" ]
+EXPOSE 3000
+
+CMD [ "node", ".next/standalone/server.js" ]
