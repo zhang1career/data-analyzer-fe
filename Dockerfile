@@ -19,5 +19,7 @@ COPY --chown=node:node --from=builder /app/package.json ./
 RUN npm install --omit=dev
 RUN npm install typescript
 COPY --chown=node:node --from=builder /app/.next ./.next
+COPY --chown=node:node ./.env ./.env.production
+COPY --chown=node:node ./favicon.ico ./favicon.ico
 EXPOSE 3000
 CMD ["npm", "start"]
