@@ -4,5 +4,5 @@ import {LabeledValueProps} from "@/defines/combines/LabeledValueProps.ts";
 
 
 export interface MuiOptionableProps<Value> extends BaseSelectProps<Value>, NamedValueProps<Value> {
-  options?: string[] | LabeledValueProps<string | boolean>[] | null,
+  options?: string[] | LabeledValueProps<string>[] | null,
 }

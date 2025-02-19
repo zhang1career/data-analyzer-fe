@@ -19,17 +19,3 @@ export function voToDto(vo: ThinkingResultVo): ThinkingResultDto {
     content: vo.content
   };
 }
-
-export function jsonToDto(json: JSONType): ThinkingResultDto {
-  if (!json || typeof json !== 'object') {
-    return {
-      content: []
-    };
-  }
-  if (Array.isArray(json)) {
-    throw new Error('[mapper][jsonToDto] Array is not supported.');
-  }
-  return {
-    content: json.content
-  } as ThinkingResultDto;
-}

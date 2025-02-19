@@ -2,13 +2,14 @@ import React, {Fragment} from "react";
 import {GridActionsCellItem, GridActionsCellItemProps} from "@mui/x-data-grid";
 import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
 
-
 type ConfirmActionItemProps = GridActionsCellItemProps & {
   dialogTitle: string,
   dialogContent: string,
+  onClick: () => void,
 }
 
 const MyConfirmActionItem = ({
+                               icon,
                                label,
                                dialogTitle,
                                dialogContent,
@@ -29,6 +30,8 @@ const MyConfirmActionItem = ({
   return (
     <Fragment>
       <GridActionsCellItem
+        icon={icon ?? <Button>{label}</Button>}
+        label={label}
         {...rest}
         onClick={() => handleOpen()}
       />

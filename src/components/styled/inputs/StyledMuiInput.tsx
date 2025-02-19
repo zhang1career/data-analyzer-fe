@@ -11,12 +11,9 @@ export const StyledMuiSmallPaddingTextField: React.FC<TextFieldProps> = ({
       {...rest}
       slotProps={{
         ...rest.slotProps,
-        input: {
-          ...rest.slotProps?.input,
-          inputProps: {
-            ...rest.slotProps?.input?.inputProps,
-            size: "small",
-          },
+        htmlInput: {
+          ...rest.slotProps?.htmlInput,
+          size: "small",
         },
       }}
     />

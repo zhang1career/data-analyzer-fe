@@ -25,6 +25,11 @@ const MuiAutoButton: React.FC<MuiAutoButtonProps> = ({
                                                        delayInMilliSeconds = 500,
                                                        disabled,
                                                      }) => {
+  // check params
+  if (!onClick) {
+    throw new Error('[hoc][btn] onClick is not specified.');
+  }
+
   // auto submit
   useDelayEffect(() => {
     if (disabled) {

@@ -18,6 +18,11 @@ const MuiJsonField: React.FC<MuiJsonFieldProps<any>> = <T, >({
                                                                label = 'Submit',
                                                                onClick = () => {console.debug('MuiJsonField.onClick is not set')},
                                                              }: MuiJsonFieldProps<T>) => {
+  // check params
+  if (!formData || !setFormData) {
+    throw new Error('[hoc][input] formData or setFormData is not specified.');
+  }
+
   // data
   // json string
   const [jsonText, setJsonText] = useState<string>(JSON.stringify(formData, null, 2));

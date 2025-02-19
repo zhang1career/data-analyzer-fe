@@ -6,7 +6,7 @@ import { providerMap, signIn } from '@/auth';
 export default function SignIn() {
   return (
     <SignInPage
-      providers={providerMap}
+      providers={providerMap as AuthProvider[]}
       signIn={async (provider: AuthProvider, formData: FormData, callbackUrl?: string) => {
         'use server';
         try {

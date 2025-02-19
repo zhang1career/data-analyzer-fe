@@ -1,6 +1,7 @@
 .env*
 node_modules/
 .next/
-/blob-report/
+blob-report/
+dist/
 
 .idea/
