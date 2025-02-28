@@ -6,6 +6,8 @@
     "test": "jest",
     "build": "NODE_OPTIONS='--max-old-space-size=4096' next build",
     "start": "next start",
+    "stop": "pkill -f 'next-server'",
+    "reload": "npm run stop && rm -rf .next && npm run build && npm run start",
     "lint": "next lint"
   },
   "dependencies": {
