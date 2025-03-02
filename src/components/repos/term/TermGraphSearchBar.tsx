@@ -119,7 +119,7 @@ const TermGraphSearchBar: React.FC<SearchBarForTermGraphProps> = ({
         id={'is_reverse'}
         label={'Is Reverse?'}
         name={'is_reverse'}
-        value={formData?.['is_reverse'] ?? false}
+        value={formData?.['is_reverse'] ? 'T' : 'F'}
       />
       {setupChildren(children, {
         isEditable: !isNextEnabled,
