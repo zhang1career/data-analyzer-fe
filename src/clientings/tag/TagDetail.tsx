@@ -8,6 +8,7 @@ import {buildEmptyTagModel, TagModel} from "@/models/TagModel.ts";
 import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
 import {List, ListItem} from "@mui/material";
+import {NOTICE_TTL_LONG} from "@/consts/Notice.ts";
 
 interface TagDetailProps {
   item: TagModel;
@@ -31,6 +32,19 @@ const TagDetail: React.FC<TagDetailProps> = ({
   const routing = useContext(RoutingContext);
   const noticing = useContext(NoticingContext);
 
+  // error
+  const [error, setError] = useState<string | null>(null);
+  // notice error
+  useEffect(() => {
+    if (!error) {
+      return;
+    }
+    noticing(error, {
+      severity: 'error',
+      autoHideDuration: NOTICE_TTL_LONG,
+    });
+  }, [error, noticing]);
+
   // forms
   const [formData, setFormData] = useState<TagModel>(buildEmptyTagModel());
 
@@ -46,15 +60,15 @@ const TagDetail: React.FC<TagDetailProps> = ({
   const handleSave = async () => {
     console.debug('[tag][update] param', formData);
     try {
-    await updateTag(
-      routing,
-      item.id,
-      formData);
+      await updateTag(
+        routing,
+        item.id,
+        formData);
     } catch (e: unknown) {
       if (e instanceof Error) {
-        console.error('Failed to get term.\n', e.message);
+        setError('Tag getting failed. ' + e.message);
       } else {
-        console.error('Failed to get term.\n', e);
+        setError('Tag getting failed. Unknown reason.');
       }
       return;
     }

@@ -13,6 +13,7 @@ import {searchSimilarTagNameList} from "@/io/TagIO.ts";
 import {MyAutoCompleteTextField} from "@/components/hocs/mui/MyAutoCompleteTextField.tsx";
 import {DerivableProps} from "@/defines/abilities/DerivableProps.ts";
 import DateField from "@/components/gears/input/DateField.tsx";
+import {NOTICE_TTL_LONG} from "@/consts/Notice.ts";
 
 interface NewsDetailProps extends DerivableProps {
   item: NewsVo;
@@ -35,6 +36,19 @@ const NewsDetail: React.FC<NewsDetailProps> = ({
   const routing = useContext(RoutingContext);
   const noticing = useContext(NoticingContext);
 
+  // error
+  const [error, setError] = useState<string | null>(null);
+  // notice error
+  useEffect(() => {
+    if (!error) {
+      return;
+    }
+    noticing(error, {
+      severity: 'error',
+      autoHideDuration: NOTICE_TTL_LONG,
+    });
+  }, [error, noticing]);
+
   // forms
   const [formData, setFormData] = useState<News>(buildEmptyNews());
 
@@ -49,10 +63,19 @@ const NewsDetail: React.FC<NewsDetailProps> = ({
   // operation - save
   const handleSave = async () => {
     console.debug('[news][update] param', formData);
+    try {
     await updateNews(
       routing,
       item.id,
       modelToDto(formData));
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        setError('News updating failed. ' + e.message);
+      } else {
+        setError('News updating failed. Unknown reason.');
+      }
+      return;
+    }
     // notice
     noticing('News updated!', {
       severity: 'success',

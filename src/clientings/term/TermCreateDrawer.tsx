@@ -15,6 +15,7 @@ import {createTerm} from "@/io/TermIO.ts";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
 import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
 import {OpenSesameProps} from "@/defines/abilities/OpenSesameProps.tsx";
+import {NOTICE_TTL_LONG} from "@/consts/Notice.ts";
 
 
 interface TermCreateDrawerProps extends OpenSesameProps {
@@ -33,6 +34,19 @@ const TermCreateDrawer: React.FC<TermCreateDrawerProps> = ({
   // context
   const routing = useContext(RoutingContext);
   const noticing = useContext(NoticingContext);
+
+  // error
+  const [error, setError] = useState<string | null>(null);
+  // notice error
+  useEffect(() => {
+    if (!error) {
+      return;
+    }
+    noticing(error, {
+      severity: 'error',
+      autoHideDuration: NOTICE_TTL_LONG,
+    });
+  }, [error, noticing]);
 
   // forms
   const [formData, setFormData] = useState<TermModel | null>(null);
@@ -59,9 +73,9 @@ const TermCreateDrawer: React.FC<TermCreateDrawerProps> = ({
         formData);
     } catch (e: unknown) {
       if (e instanceof Error) {
-        console.error('Failed to get term.\n', e.message);
+        setError('Term creating failed. ' + e.message);
       } else {
-        console.error('Failed to get term.\n', e);
+        setError('Term creating failed. Unknown reason.');
       }
       return;
     }

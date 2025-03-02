@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import MuiModal from '@/components/hocs/mui/modals/MuiModal.tsx';
 import MuiTextField from "@/components/hocs/mui/inputs/MuiTextField.tsx";
 import MuiEditableForm from "@/components/hocs/mui/forms/MuiEditableForm.tsx";
@@ -16,6 +16,7 @@ import {
 } from "@/components/repos/term/TermRelation.tsx";
 import {withListEditor} from "@/components/hocs/mui/iterations/MyListEditor.tsx";
 import {setFormField} from "@/defines/combines/FormRWProps.ts";
+import {NOTICE_TTL_LONG} from "@/consts/Notice.ts";
 
 
 interface TermCreateProps {
@@ -28,6 +29,19 @@ const TermCreate: React.FC<TermCreateProps> = ({
   // context
   const routing = useContext(RoutingContext);
   const noticing = useContext(NoticingContext);
+
+  // error
+  const [error, setError] = useState<string | null>(null);
+  // notice error
+  useEffect(() => {
+    if (!error) {
+      return;
+    }
+    noticing(error, {
+      severity: 'error',
+      autoHideDuration: NOTICE_TTL_LONG,
+    });
+  }, [error, noticing]);
 
   // forms
   const [formData, setFormData] = useState<TermModel | null>(null);
@@ -45,9 +59,9 @@ const TermCreate: React.FC<TermCreateProps> = ({
         formData);
     } catch (e: unknown) {
       if (e instanceof Error) {
-        console.error('Failed to get term.\n', e.message);
+        setError('Term creating failed. ' + e.message);
       } else {
-        console.error('Failed to get term.\n', e);
+        setError('Term creating failed. Unknown error');
       }
       return;
     }

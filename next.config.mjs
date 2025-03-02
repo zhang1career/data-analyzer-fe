@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    basePath: '/api/dafe',
+    basePath: '',
 };
 
 export default nextConfig;

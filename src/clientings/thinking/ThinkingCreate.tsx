@@ -26,6 +26,7 @@ import DirectionDropdownList from "@/components/gears/input/DirectionDropdownLis
 import {LabeledProps} from "@/defines/abilities/LabeledProps.ts";
 import MuiTextField from "@/components/hocs/mui/inputs/MuiTextField.tsx";
 import ThinkingResult from "@/components/repos/thinking/ThinkingResult.tsx";
+import {NOTICE_TTL_LONG} from "@/consts/Notice.ts";
 
 
 interface ThinkingCreateProps extends SteppableProps, LabeledProps, FormRWProps<ThinkingModel> {
@@ -45,6 +46,19 @@ const ThinkingCreate: FC<ThinkingCreateProps> = ({
   // context
   const routing = useContext(RoutingContext);
   const noticing = useContext(NoticingContext);
+
+  // error
+  const [error, setError] = useState<string | null>(null);
+  // notice error
+  useEffect(() => {
+    if (!error) {
+      return;
+    }
+    noticing(error, {
+      severity: 'error',
+      autoHideDuration: NOTICE_TTL_LONG,
+    });
+  }, [error, noticing]);
 
   // prepare inputs
   // graph vector map
@@ -75,13 +89,25 @@ const ThinkingCreate: FC<ThinkingCreateProps> = ({
       console.log('[news][audit] No thinking forms specified.');
       return;
     }
-    const thinkingDto = modelToDto(formData, speechVectorMap);
-    const thinkingResultObj = await createThinking(
-      routing,
-      thinkingDto);
-    if (!thinkingResultObj) {
-      throw new Error(`[news][audit] No thinking result returned. thinkingDto: ${thinkingDto}`);
+
+    let thinkingResultObj = null;
+    try {
+      thinkingResultObj = await createThinking(
+        routing,
+        modelToDto(formData, speechVectorMap));
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        setError('Thinking failed. ' + e.message);
+      } else {
+        setError('Thinking failed. Unknown reason.');
+      }
+      return;
     }
+    if (!thinkingResultObj) {
+      setError('No thinking result returned.');
+      return;
+    }
+
     setThinkingResultObj(thinkingResultObj);
     const newsTitleMap = voToNewsTitleMap(thinkingResultObj);
     onSetResultData(newsTitleMap);
@@ -113,7 +139,7 @@ const ThinkingCreate: FC<ThinkingCreateProps> = ({
         <DirectionDropdownList
           id={'isAttrReverse'}
           name={'isAttrReverse'}
-          value={formData?.['isAttrReverse'] ?? false}
+          value={formData?.['isAttrReverse'] ? 'T' : 'F'}
           label={'Is Attr Reverse?'}
         />
         <MuiDropdownList
@@ -127,7 +153,7 @@ const ThinkingCreate: FC<ThinkingCreateProps> = ({
         <DirectionDropdownList
           id={'isPredReverse'}
           name={'isPredReverse'}
-          value={formData?.['isPredReverse'] ?? false}
+          value={formData?.['isPredReverse'] ? 'T' : 'F'}
           label={'Is Pred Reverse?'}
         />
         <MuiTextField

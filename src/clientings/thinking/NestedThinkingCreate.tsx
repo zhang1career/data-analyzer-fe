@@ -22,6 +22,8 @@ import {ResultWOPropsBeta} from "@/defines/abilities/ResultWOPropsBeta.ts";
 import {ResultROProps} from "@/defines/abilities/ResultROProps.ts";
 import {FormROProps} from "@/defines/abilities/FormROProps.ts";
 import {FormWOPropsBeta} from "@/defines/abilities/FormWOPropsBeta.ts";
+import {NOTICE_TTL_LONG} from "@/consts/Notice.ts";
+import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
 
 
 interface NestedThinkingCreateProps extends SteppableProps,
@@ -39,6 +41,20 @@ const NestedThinkingCreate: React.FC<NestedThinkingCreateProps> = ({
                                                                    }) => {
   // context
   const routing = useContext(RoutingContext);
+  const noticing = useContext(NoticingContext);
+
+  // error
+  const [error, setError] = useState<string | null>(null);
+  // notice error
+  useEffect(() => {
+    if (!error) {
+      return;
+    }
+    noticing(error, {
+      severity: 'error',
+      autoHideDuration: NOTICE_TTL_LONG,
+    });
+  }, [error, noticing]);
 
   // dict
   const [speechVectorMap, setSpeechVectorMap] = useState<ObjMap<SpeechVectorKey, string>>(new ObjMap());
@@ -70,12 +86,23 @@ const NestedThinkingCreate: React.FC<NestedThinkingCreateProps> = ({
       console.log('[client][nested_thinking] No thinking forms specified.');
       return;
     }
-    const thinkingDto = modelToDto(formData, speechVectorMap);
-    const thinkingResultObj = await createThinking(
-      routing,
-      thinkingDto);
+
+    let thinkingResultObj = null;
+    try {
+      thinkingResultObj = await createThinking(
+        routing,
+        modelToDto(formData, speechVectorMap));
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        setError('Nested thinking failed. ' + e.message);
+      } else {
+        setError('Nested thinking failed. Unknown reason.');
+      }
+      return;
+    }
     if (!thinkingResultObj) {
-      throw new Error(`[client][nested_thinking] No thinking result returned. thinkingDto: ${thinkingDto}`);
+      setError('No nested thinking result returned.');
+      return;
     }
     setResult(thinkingResultObj);
   };

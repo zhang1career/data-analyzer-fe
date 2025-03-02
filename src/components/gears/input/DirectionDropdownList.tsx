@@ -21,7 +21,7 @@ function buildLabel(value: string): string {
  * @param value
  * @param onChange event handler
  */
-interface DirectionDropdownListProps extends MuiDropdownListProps<boolean>, EditableProps {
+interface DirectionDropdownListProps extends MuiDropdownListProps<string>, EditableProps {
   isReadOnly?: boolean,
   setValue?: (value: boolean) => void,
 }

@@ -66,8 +66,8 @@ async function requestApiHub({
   });
 
   if (!response.ok) {
-    console.error('[apihub][client][skip] http failure:', response.statusText);
-    return handleHttpError(context, destBodyObj, response);
+    console.error(`[apihub][client][skip] http failure, status=${response.status}, message=${response.statusText}, url=${context?.pathname}, requestBody=${JSON.stringify(destBodyObj)}`);
+    return handleHttpError(context, response);
   }
 
   const responseObj = await response.json() as RespVo<any>;
@@ -78,7 +78,7 @@ async function requestApiHub({
   return responseObj.data;
 }
 
-function handleHttpError(context: MyRouting | null, requestBody: any, response: Response): Promise<any> {
+function handleHttpError(context: MyRouting | null, response: Response): Promise<any> {
   if (!context) {
     throw new Error(`Nothing to do with error, status=${response.status}, message=${response.statusText}`);
   }
@@ -90,7 +90,7 @@ function handleHttpError(context: MyRouting | null, requestBody: any, response: 
     context.router.push(redirectUrl);
     return Promise.reject('Unauthorized');
   }
-  throw new Error(`status=${response.status}, message=${response.statusText}, url=${context.pathname}, requestBody=${JSON.stringify(requestBody)}`);
+  throw new Error(response.statusText);
 }
 
 

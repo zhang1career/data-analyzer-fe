@@ -19,6 +19,7 @@ import {searchTagPage} from "@/io/TagIO.ts";
 import {voToModelBatch} from "@/mappers/TagMapper.ts";
 import {TAG_COLUMNS_SIMPLE} from "@/schema/TagSchema.ts";
 import MyDataListRo from "@/components/hocs/mui/MyDataListRo.tsx";
+import {NOTICE_TTL_LONG, NOTICE_TTL_SHORT} from "@/consts/Notice.ts";
 
 
 /**
@@ -41,6 +42,19 @@ const TermDetail: React.FC<TermDetailProps> = ({
   // context
   const routing = useContext(RoutingContext);
   const noticing = useContext(NoticingContext);
+
+  // error
+  const [error, setError] = useState<string | null>(null);
+  // notice error
+  useEffect(() => {
+    if (!error) {
+      return;
+    }
+    noticing(error, {
+      severity: 'error',
+      autoHideDuration: NOTICE_TTL_LONG,
+    });
+  }, [error, noticing]);
 
   // forms
   const [formData, setFormData] = useState<TermModel>(buildEmptyTermModel());
@@ -68,9 +82,9 @@ const TermDetail: React.FC<TermDetailProps> = ({
       return voToModelBatch(tagVoPage.data);
     } catch (e: unknown) {
       if (e instanceof Error) {
-        console.error('Failed to search tags.\n', e.message);
+        setError('Term searching failed. ' + e.message);
       } else {
-        console.error('Failed to search tags.\n', e);
+        setError('Term searching failed. Unknown reason.');
       }
       return [];
     }
@@ -101,16 +115,16 @@ const TermDetail: React.FC<TermDetailProps> = ({
         modelToDto(formData));
     } catch (e: unknown) {
       if (e instanceof Error) {
-        console.error('Failed to get term.\n', e.message);
+        setError('Term updating failed. ' + e.message);
       } else {
-        console.error('Failed to get term.\n', e);
+        setError('Term updating failed. Unknown reason.');
       }
       return;
     }
     // notice
     noticing('Term updated!', {
       severity: 'success',
-      autoHideDuration: 3000,
+      autoHideDuration: NOTICE_TTL_SHORT,
     });
     // callback
     if (callbackRefresh) {

@@ -35,6 +35,7 @@ import TermAccessVector from "@/components/repos/term/TermAccessVector.tsx";
 import {TermRelationOpt} from "@/pojo/opt/TermRelationOpt.ts";
 import {StyledMuiAuthorityStepper} from "@/components/styled/steppers/StyledMuiStepper.tsx";
 import {EMPTY_STRING} from "@/consts/StrConst.ts";
+import {NOTICE_TTL_LONG} from "@/consts/Notice.ts";
 
 
 interface NewsAuditProps {
@@ -50,6 +51,16 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
 
   // error
   const [error, setError] = useState<any>(null);
+  // notice error
+  useEffect(() => {
+    if (!error) {
+      return;
+    }
+    noticing(error, {
+      severity: 'error',
+      autoHideDuration: NOTICE_TTL_LONG,
+    });
+  }, [error, noticing]);
 
   // prepare inputs
   // graph vector map
@@ -172,15 +183,15 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
         routing,
         searchTermGraphQo['name'],
         searchTermGraphQo['relation_type']) as GraphVo;
-    } catch (error) {
-      if (error instanceof Error) {
-        setSearchTermGraphOk(false);
-        console.error('Failed to search term graph:', error.message);
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        setError('Graph searching failed. ' + error.message);
       } else {
-        console.error("An unknown error occurred:", error);
+        setError('Graph searching failed. Unknown reason.');
       }
+      setSearchTermGraphOk(false);
+      return;
     }
-
     if (!graphVectorVo) {
       noticing('No TermGraph Found.', {
         severity: 'warning',

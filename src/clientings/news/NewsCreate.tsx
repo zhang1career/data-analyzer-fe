@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import MuiModal from '@/components/hocs/mui/modals/MuiModal.tsx';
 import MuiTextField from '@/components/hocs/mui/inputs/MuiTextField.tsx';
 import MuiEditableForm from '@/components/hocs/mui/forms/MuiEditableForm.tsx';
@@ -14,6 +14,7 @@ import {searchSimilarTagNameList} from "@/io/TagIO.ts";
 import {getCachedData, setCachedData} from "@/utils/CacheUtil.ts";
 import DateField from "@/components/gears/input/DateField.tsx";
 import {setFormField} from "@/defines/combines/FormRWProps.ts";
+import {NOTICE_TTL_LONG} from "@/consts/Notice.ts";
 
 
 interface NewsCreateProps {
@@ -26,6 +27,19 @@ const NewsCreate: React.FC<NewsCreateProps> = ({
   // context
   const routing = useContext(RoutingContext);
   const noticing = useContext(NoticingContext);
+
+  // error
+  const [error, setError] = useState<string | null>(null);
+  // notice error
+  useEffect(() => {
+    if (!error) {
+      return;
+    }
+    noticing(error, {
+      severity: 'error',
+      autoHideDuration: NOTICE_TTL_LONG,
+    });
+  }, [error, noticing]);
 
   // forms
   const [formData, setFormData] = useState<News | null>(null);
@@ -50,9 +64,18 @@ const NewsCreate: React.FC<NewsCreateProps> = ({
     } as News;
     setCachedData('inputs-news_form', newsForm, {ttl: 3600});
     // create
-    await createNews(
-      routing,
-      modelToDto(formData));
+    try {
+      await createNews(
+        routing,
+        modelToDto(formData));
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        setError('News creating failed. ' + e.message);
+      } else {
+        setError('News creating failed. Unknown reason.');
+      }
+      return;
+    }
     // notice
     noticing('News created!', {
       severity: 'success',

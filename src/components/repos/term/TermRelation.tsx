@@ -76,7 +76,7 @@ export const TermRelation: React.FC<TermRelationProps> = ({
         id="term-relation-is_reverse"
         label="isReverse"
         name="isReverse"
-        value={formData?.['isReverse'] ?? false}
+        value={formData?.['isReverse'] ? 'T' : 'F'}
       />
       <MuiTextField
         id="term-relation-name"

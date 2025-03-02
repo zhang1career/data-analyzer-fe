@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useContext, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {Grid2} from "@mui/material";
 import {GridFilterItem, GridRowId} from "@mui/x-data-grid";
 import {TAG_COLUMNS, translateQueryField} from "@/schema/TagSchema.ts";
@@ -13,6 +13,8 @@ import {GRID_WIDTH_1_OF_3, GRID_WIDTH_2_OF_3} from "@/lookings/size.ts";
 import {voToModel, voToModelBatch} from "@/mappers/TagMapper.ts";
 import {Paginate} from "@/models/Paginate.ts";
 import {TagModel} from "@/models/TagModel.ts";
+import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
+import {NOTICE_TTL_LONG} from "@/consts/Notice.ts";
 
 function handleBuildCondition(originCondition: { [key: string]: any }, item: GridFilterItem): { [key: string]: any } {
   if (item.operator !== 'equals') {
@@ -25,10 +27,20 @@ function handleBuildCondition(originCondition: { [key: string]: any }, item: Gri
 const TagList: React.FC = () => {
   // context
   const routing = useContext(RoutingContext);
+  const noticing = useContext(NoticingContext);
 
   // error
-  const [error, setError] = useState<any>(null);
-
+  const [error, setError] = useState<string | null>(null);
+  // notice error
+  useEffect(() => {
+    if (!error) {
+      return;
+    }
+    noticing(error, {
+      severity: 'error',
+      autoHideDuration: NOTICE_TTL_LONG,
+    });
+  }, [error, noticing]);
 
   // search refreshment
   const [activeSearchAt, setActiveSearchAt] = useState(Date.now());
@@ -65,11 +77,9 @@ const TagList: React.FC = () => {
       } as Paginate<TagModel>;
     } catch (e: unknown) {
       if (e instanceof Error) {
-        console.error('Failed to search tags.\n', e.message);
-        setError(e);
+        setError('Tag searching failed. ' + e.message);
       } else {
-        console.error('Failed to search tags.\n', e);
-        setError(e);
+        setError('Tag searching failed. Unknown reason.');
       }
       return EMPTY_PAGE;
     }
@@ -84,11 +94,9 @@ const TagList: React.FC = () => {
       return voToModel(tagVo);
     } catch (e: unknown) {
       if (e instanceof Error) {
-        console.error('Failed to get tag.\n', e.message);
-        setError(e);
+        setError('Tag getting failed. ' + e.message);
       } else {
-        console.error('Failed to get tag.\n', e);
-        setError(e);
+        setError('Tag getting failed. Unknown reason.');
       }
       return null;
     }
@@ -107,11 +115,9 @@ const TagList: React.FC = () => {
         tagId);
     } catch (e: unknown) {
       if (e instanceof Error) {
-        console.error('Failed to delete tag.\n', e.message);
-        setError(e);
+        setError('Tag deleting failed. ' + e.message);
       } else {
-        console.error('Failed to delete tag.\n', e);
-        setError(e);
+        setError('Tag deleting failed. Unknown reason.');
       }
     }
     return;

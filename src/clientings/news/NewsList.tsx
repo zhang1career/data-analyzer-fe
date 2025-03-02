@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useContext, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {Grid2} from "@mui/material";
 import {GridFilterItem, GridRowId} from "@mui/x-data-grid";
 import {NEWS_COLUMNS, translateQueryField} from "@/schema/NewsSchema.ts";
@@ -14,6 +14,8 @@ import {NewsVo} from "@/pojo/vo/NewsVo.ts";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
 import {GRID_WIDTH_1_OF_2} from "@/lookings/size.ts";
 import {voToModelBatch} from "@/mappers/NewsMapper.ts";
+import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
+import {NOTICE_TTL_LONG} from "@/consts/Notice.ts";
 
 function handleBuildCondition(originCondition: { [key: string]: any }, item: GridFilterItem): { [key: string]: any } {
   if (item.operator !== 'contains all') {
@@ -26,10 +28,20 @@ function handleBuildCondition(originCondition: { [key: string]: any }, item: Gri
 const NewsList: React.FC = () => {
   // context
   const routing = useContext(RoutingContext);
+  const noticing = useContext(NoticingContext);
 
   // error
-  const [error, setError] = useState<any>(null);
-
+  const [error, setError] = useState<string | null>(null);
+  // notice error
+  useEffect(() => {
+    if (!error) {
+      return;
+    }
+    noticing(error, {
+      severity: 'error',
+      autoHideDuration: NOTICE_TTL_LONG,
+    });
+  }, [error, noticing]);
 
   // search refreshment
   const [activeSearchAt, setActiveSearchAt] = useState(Date.now());
@@ -71,11 +83,9 @@ const NewsList: React.FC = () => {
         condition);
     } catch (e: unknown) {
       if (e instanceof Error) {
-        console.error('Failed to search news.\n', e.message);
-        setError(e);
+        setError('News searching failed. ' + e.message);
       } else {
-        console.error('Failed to search news.\n', e);
-        setError(e);
+        setError('News searching failed. Unknown reason.');
       }
       return EMPTY_PAGE;
     }
@@ -89,11 +99,9 @@ const NewsList: React.FC = () => {
         newsId);
     } catch (e: unknown) {
       if (e instanceof Error) {
-        console.error('Failed to get news.\n', e.message);
-        setError(e);
+        setError('News getting failed. ' + e.message);
       } else {
-        console.error('Failed to get news.\n', e);
-        setError(e);
+        setError('News getting failed. Unknown reason.');
       }
       return null;
     }
@@ -112,11 +120,9 @@ const NewsList: React.FC = () => {
         newsId);
     } catch (e: unknown) {
       if (e instanceof Error) {
-        console.error('Failed to delete news.\n', e.message);
-        setError(e);
+        setError('News deleting failed. ' + e.message);
       } else {
-        console.error('Failed to delete news.\n', e);
-        setError(e);
+        setError('News deleting failed. Unknown reason.');
       }
     }
     return;

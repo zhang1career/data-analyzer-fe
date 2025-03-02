@@ -25,6 +25,8 @@ import {Box} from "@mui/material";
 import {Search} from "@mui/icons-material";
 import {StyledMuiIconButton} from "@/components/styled/buttons/StyledMuiIconButton.tsx";
 import {FormROPropsBeta} from "@/defines/abilities/FormROPropsBeta.ts";
+import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
+import {NOTICE_TTL_LONG} from "@/consts/Notice.ts";
 
 
 interface ThinkingProps extends FormROPropsBeta<ThinkingModel>, FormWOPropsBeta<ThinkingModel> {
@@ -43,6 +45,20 @@ const Thinking: React.FC<ThinkingProps> = ({
                                            }) => {
   // context
   const routing = useContext(RoutingContext);
+  const noticing = useContext(NoticingContext);
+
+  // error
+  const [error, setError] = useState<string | null>(null);
+  // notice error
+  useEffect(() => {
+    if (!error) {
+      return;
+    }
+    noticing(error, {
+      severity: 'error',
+      autoHideDuration: NOTICE_TTL_LONG,
+    });
+  }, [error, noticing]);
 
   // local formData
   const [localFormData, setLocalFormData] = useState<ThinkingModel | null>(buildEmptyThinkingModel());
@@ -78,11 +94,22 @@ const Thinking: React.FC<ThinkingProps> = ({
       return;
     }
     const thinkingDto = modelToDto(formData, speechVectorMap);
-    const thinkingResultObj = await createThinking(
-      routing,
-      thinkingDto);
+
+    let thinkingResultObj = null;
+    try {
+      thinkingResultObj = await createThinking(
+        routing,
+        thinkingDto);
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        setError('Nested thinking failed. ' + e.message);
+      } else {
+        setError('Nested thinking failed. Unknown reason.');
+      }
+      return;
+    }
     if (!thinkingResultObj) {
-      throw new Error(`[news][audit] No thinking result returned. thinkingDto: ${thinkingDto}`);
+      setError('No thinking result returned.');
     }
     setThinkingResultObj(thinkingResultObj);
   };
@@ -135,7 +162,7 @@ const Thinking: React.FC<ThinkingProps> = ({
             <DirectionDropdownList
               id={"isAttrReverse"}
               name={"isAttrReverse"}
-              value={data?.["isAttrReverse"] ?? false}
+              value={data?.["isAttrReverse"] ? 'T' : 'F'}
               label={"Is Attr Reverse?"}
               sx={{width: WIDTH_200_PX, margin: "normal", paddingTop: 0.25, paddingBottom: 0.25}}
             />
@@ -149,7 +176,7 @@ const Thinking: React.FC<ThinkingProps> = ({
             <DirectionDropdownList
               id={"isPredReverse"}
               name={"isPredReverse"}
-              value={data?.["isPredReverse"] ?? false}
+              value={data?.["isPredReverse"] ? 'T' : 'F'}
               label={"Is Pred Reverse?"}
               sx={{width: WIDTH_200_PX, margin: "normal", paddingTop: 0.25, paddingBottom: 0.25}}
             />

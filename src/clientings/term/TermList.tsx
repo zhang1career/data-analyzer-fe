@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useContext, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {Grid2} from "@mui/material";
 import {GridFilterItem, GridRowId} from "@mui/x-data-grid";
 import {TERM_COLUMNS, translateQueryField} from "@/schema/TermSchema.ts";
@@ -10,12 +10,13 @@ import TermDetail from "@/clientings/term/TermDetail.tsx";
 import TermGraph from "@/clientings/term/TermGraph.tsx";
 import {deleteTerm, getTerm, searchTermPage} from "@/io/TermIO.ts";
 import {EMPTY_PAGE} from "@/consts/PaginateConst.ts";
-import {TermVo} from "@/pojo/vo/TermVo.ts";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
 import {GRID_WIDTH_1_OF_3, GRID_WIDTH_2_OF_3} from "@/lookings/size.ts";
 import {TermModel} from "@/models/TermModel.ts";
 import {voToModel, voToModelBatch} from "@/mappers/TermMapper.ts";
 import {Paginate} from "@/models/Paginate.ts";
+import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
+import {NOTICE_TTL_LONG} from "@/consts/Notice.ts";
 
 function handleBuildCondition(originCondition: { [key: string]: any }, item: GridFilterItem): { [key: string]: any } {
   if (item.operator !== 'equals') {
@@ -28,10 +29,20 @@ function handleBuildCondition(originCondition: { [key: string]: any }, item: Gri
 const TermList: React.FC = () => {
   // context
   const routing = useContext(RoutingContext);
+  const noticing = useContext(NoticingContext);
 
   // error
-  const [error, setError] = useState<any>(null);
-
+  const [error, setError] = useState<string | null>(null);
+  // notice error
+  useEffect(() => {
+    if (!error) {
+      return;
+    }
+    noticing(error, {
+      severity: 'error',
+      autoHideDuration: NOTICE_TTL_LONG,
+    });
+  }, [error, noticing]);
 
   // search refreshment
   const [activeSearchAt, setActiveSearchAt] = useState(Date.now());
@@ -76,11 +87,9 @@ const TermList: React.FC = () => {
       } as Paginate<TermModel>;
     } catch (e: unknown) {
       if (e instanceof Error) {
-        console.error('Failed to search terms.\n', e.message);
-        setError(e);
+        setError('Term searching failed. ' + e.message);
       } else {
-        console.error('Failed to search terms.\n', e);
-        setError(e);
+        setError('Term searching failed. Unknown reason.');
       }
       return EMPTY_PAGE;
     }
@@ -95,11 +104,9 @@ const TermList: React.FC = () => {
       return voToModel(termVo);
     } catch (e: unknown) {
       if (e instanceof Error) {
-        console.error('Failed to get term.\n', e.message);
-        setError(e);
+        setError('Term getting failed. ' + e.message);
       } else {
-        console.error('Failed to get term.\n', e);
-        setError(e);
+        setError('Term getting failed. Unknown reason.');
       }
       return null;
     }
@@ -118,11 +125,9 @@ const TermList: React.FC = () => {
         termId);
     } catch (e: unknown) {
       if (e instanceof Error) {
-        console.error('Failed to delete term.\n', e.message);
-        setError(e);
+        setError('Term deleting failed. ' + e.message);
       } else {
-        console.error('Failed to delete term.\n', e);
-        setError(e);
+        setError('Term deleting failed. Unknown reason.');
       }
     }
     return;

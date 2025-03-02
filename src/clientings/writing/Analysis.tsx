@@ -1,4 +1,4 @@
-import React, {useContext} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {analysis} from "@/io/WritingIO.ts";
 import {FormROProps} from "@/defines/abilities/FormROProps.ts";
 import {WritingAnalysisDto} from "@/pojo/dto/WritingAnalysisDto.ts";
@@ -12,6 +12,8 @@ import {Search} from "@mui/icons-material";
 import MuiJsonField from "@/components/hocs/mui/inputs/MuiJsonField.tsx";
 import {FormWOPropsBeta} from "@/defines/abilities/FormWOPropsBeta.ts";
 import MuiTextField from "@/components/hocs/mui/inputs/MuiTextField.tsx";
+import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
+import {NOTICE_TTL_LONG} from "@/consts/Notice.ts";
 
 
 interface AnalysisProps extends SteppableProps, FormROProps<WritingAnalysisDto>, FormWOPropsBeta<WritingAnalysisDto>, ResultROProps<string>, ResultWOPropsBeta<string> {
@@ -26,6 +28,20 @@ const Analysis: React.FC<AnalysisProps> = ({
                                            }) => {
   // context
   const routing = useContext(RoutingContext);
+  const noticing = useContext(NoticingContext);
+
+  // error
+  const [error, setError] = useState<string | null>(null);
+  // notice error
+  useEffect(() => {
+    if (!error) {
+      return;
+    }
+    noticing(error, {
+      severity: 'error',
+      autoHideDuration: NOTICE_TTL_LONG,
+    });
+  }, [error, noticing]);
 
   // operation - analysis
   const handleAnalysis = async () => {
