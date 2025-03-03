@@ -13,12 +13,14 @@ import {ComponentProps} from "@/defines/combines/ComponentProps.ts";
 
 
 interface MuiStepperProps extends ComponentProps {
+  onFinish?: () => void;
   finishText?: string;
   isResetable?: boolean;
   children: ReactElement<SteppableProps>[];
 }
 
 const MuiStepper: React.FC<MuiStepperProps> = ({
+                                                 onFinish,
                                                  finishText = 'All steps completed - you\'re finished',
                                                  isResetable = false,
                                                  children,
@@ -41,10 +43,19 @@ const MuiStepper: React.FC<MuiStepperProps> = ({
   }, [activeStep, children]);
 
   const handleNext = () => {
-    if (canProceed) {
-      setActiveStep((prevStep) => prevStep + 1);
+    if (!canProceed) {
+      return;
     }
+    setActiveStep((prevStep) => prevStep + 1);
   };
+
+  const handleFinish = () => {
+    if (!canProceed) {
+      return;
+    }
+    onFinish && onFinish();
+    setActiveStep((prevStep) => prevStep + 1);
+  }
 
   const handleBack = () => {
     setActiveStep((prevStep) => prevStep - 1);
@@ -81,7 +92,7 @@ const MuiStepper: React.FC<MuiStepperProps> = ({
               <Box sx={{mb: 2}}>
                 <Button
                   variant="contained"
-                  onClick={handleNext}
+                  onClick={(index < children.length - 1) ? handleNext : handleFinish}
                   disabled={!canProceed}
                   sx={{mt: 1, mr: 1}}
                 >

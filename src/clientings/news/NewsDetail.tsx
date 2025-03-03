@@ -4,7 +4,7 @@ import React, {useContext, useEffect, useState} from "react";
 import MuiEditableForm from "@/components/hocs/mui/forms/MuiEditableForm.tsx";
 import MuiTextField from "@/components/hocs/mui/inputs/MuiTextField.tsx";
 import {updateNews} from "@/io/NewsIO.ts";
-import {buildEmptyNews, News} from "@/models/News.ts";
+import {buildEmptyNews, NewsModel} from "@/models/NewsModel.ts";
 import {NewsVo} from "@/pojo/vo/NewsVo.ts";
 import {NoticingContext} from "@/components/providers/NoticingProvider.tsx";
 import {RoutingContext} from "@/components/providers/RoutingProvider.tsx";
@@ -50,7 +50,7 @@ const NewsDetail: React.FC<NewsDetailProps> = ({
   }, [error, noticing]);
 
   // forms
-  const [formData, setFormData] = useState<News>(buildEmptyNews());
+  const [formData, setFormData] = useState<NewsModel>(buildEmptyNews());
 
   // editable forms refreshment
   const [activeEditableFormAt, setActiveEditableFormAt] = useState<number>(Date.now());

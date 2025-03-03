@@ -13,7 +13,7 @@ import {voToModel as termGraphVoToModel} from "@/mappers/TermGraphMapper.ts";
 import {termRelationOptToTermRelationModel, voToModel as termVoToModel} from "@/mappers/TermMapper.ts";
 import {speechVectorVoToMapBatch} from "@/mappers/SpeechMapper.ts";
 import {parseResultVoToTermMretOptBatch} from "@/mappers/TagMapper.ts";
-import {buildEmptyNews, News} from "@/models/News.ts";
+import {buildEmptyNews, NewsModel} from "@/models/NewsModel.ts";
 import {GraphPath, metaEqual} from "@/models/GraphPath.ts";
 import {TermGraphModel, TermModel} from "@/models/TermModel.ts";
 import {ThinkingModel} from "@/models/ThinkingModel.ts";
@@ -36,10 +36,13 @@ import {TermRelationOpt} from "@/pojo/opt/TermRelationOpt.ts";
 import {StyledMuiAuthorityStepper} from "@/components/styled/steppers/StyledMuiStepper.tsx";
 import {EMPTY_STRING} from "@/consts/StrConst.ts";
 import {NOTICE_TTL_LONG} from "@/consts/Notice.ts";
+import {updateNews} from "@/io/NewsIO.ts";
+import {modelToDto} from "@/mappers/NewsMapper.ts";
+import {getDateTimeString, getNow} from "@/utils/DatetimeUtil.ts";
 
 
 interface NewsAuditProps {
-  formData?: News;
+  formData?: NewsModel;
 }
 
 const NewsAudit: React.FC<NewsAuditProps> = ({
@@ -67,7 +70,7 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
   const [speechVectorMap, setSpeechVectorMap] = useState<ObjMap<SpeechVectorKey, string>>(new ObjMap());
   const [attrSet, setAttrSet] = useState<Set<string> | null>(null);
   const [predSet, setPredSet] = useState<Set<string> | null>(null);
-
+  // fetch misc dict
   useEffect(() => {
     const miscDictPromise = getMiscDict(
       routing,
@@ -185,7 +188,7 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
         searchTermGraphQo['relation_type']) as GraphVo;
     } catch (e: unknown) {
       if (e instanceof Error) {
-        setError('Graph searching failed. ' + error.message);
+        setError('Graph searching failed. ' + e.message);
       } else {
         setError('Graph searching failed. Unknown reason.');
       }
@@ -326,6 +329,28 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
     setOpenTermCreateDrawer(true);
   }, [searchTermGraphOk, termRelation]);
 
+  // news audit
+  const handleAuditNews = async () => {
+    if (!formData.id) {
+      setError('News id is empty.');
+      return;
+    }
+    formData.audited_at = getDateTimeString(getNow());
+    try {
+      await updateNews(
+        routing,
+        formData.id,
+        modelToDto(formData));
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        setError('News updating failed. ' + e.message);
+      } else {
+        setError('News updating failed. Unknown reason.');
+      }
+      return;
+    }
+  };
+
   return (
     <>
       <TermCreateDrawer
@@ -336,7 +361,9 @@ const NewsAudit: React.FC<NewsAuditProps> = ({
         callbackRefresh={refreshRelation}
       />
 
-      <StyledMuiAuthorityStepper>
+      <StyledMuiAuthorityStepper
+        onFinish={handleAuditNews}
+      >
         <ParsingTagSearchBar
           title={'Choose a tag as subject'}
           name={'tags'}

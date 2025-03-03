@@ -7,4 +7,5 @@ export interface NewsVo {
   url: string;
   published_at: string;
   tags: NewsTagRelationType;
+  audited_at: string;
 }

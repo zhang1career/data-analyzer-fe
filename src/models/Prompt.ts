@@ -1,3 +1,5 @@
+// todo: rename all models with 'Model' suffix
+
 import axios from 'axios';
 
 export interface PromptQo {

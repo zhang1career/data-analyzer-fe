@@ -21,6 +21,7 @@ export const NEWS_COLUMNS: GridColDef[] = [
         pl: '20px',
       })
   },
+  {field: 'audited_at', headerName: 'Audited At', width: 105, filterable: false},
 ];
 
 const QUERY_FIELD_MAP: { [key: string]: string } = {}

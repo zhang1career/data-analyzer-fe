@@ -5,7 +5,7 @@ import MuiModal from '@/components/hocs/mui/modals/MuiModal.tsx';
 import MuiTextField from '@/components/hocs/mui/inputs/MuiTextField.tsx';
 import MuiEditableForm from '@/components/hocs/mui/forms/MuiEditableForm.tsx';
 import {createNews} from '@/io/NewsIO.ts';
-import {buildEmptyNews, News} from '@/models/News.ts';
+import {buildEmptyNews, NewsModel} from '@/models/NewsModel.ts';
 import {RoutingContext} from '@/components/providers/RoutingProvider.tsx';
 import {NoticingContext} from '@/components/providers/NoticingProvider.tsx';
 import {modelToDto} from '@/mappers/NewsMapper.ts';
@@ -42,7 +42,7 @@ const NewsCreate: React.FC<NewsCreateProps> = ({
   }, [error, noticing]);
 
   // forms
-  const [formData, setFormData] = useState<News | null>(null);
+  const [formData, setFormData] = useState<NewsModel | null>(null);
 
   // init
   const initFormData = () => {
@@ -61,7 +61,7 @@ const NewsCreate: React.FC<NewsCreateProps> = ({
       ...buildEmptyNews(),
       url: formData.url,
       published_at: formData.published_at,
-    } as News;
+    } as NewsModel;
     setCachedData('inputs-news_form', newsForm, {ttl: 3600});
     // create
     try {
